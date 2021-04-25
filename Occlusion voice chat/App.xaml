@@ -1,0 +1,21 @@
+﻿<Application x:Class="Occlusion_voice_chat.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:Occlusion_voice_chat"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/ButtonStyle.xaml"/>
+                <ResourceDictionary Source="/DefaultComboBoxStyle.xaml"/>
+                <ResourceDictionary Source="/DefaultMenuItemStyle.xaml"/>
+                <ResourceDictionary Source="/DropdownMenuStyle.xaml"/>
+                <ResourceDictionary Source="/ScrollbarStyle.xaml"/>
+                <ResourceDictionary Source="/DefaultSliderStyle.xaml"/>
+                <ResourceDictionary Source="/ContextMenuStyle.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+
+    </Application.Resources>
+</Application>

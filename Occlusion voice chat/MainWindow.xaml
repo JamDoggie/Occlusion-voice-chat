@@ -1,0 +1,67 @@
+﻿<Window x:Class="Occlusion_voice_chat.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Occlusion_voice_chat"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" Background="#32323b">
+    <Window.Resources>
+        <Storyboard x:Key="ErrorMessageAnim">
+            <DoubleAnimation To="1.0" From="0.0" Duration="0:0:0.3" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Key="GenericMessageGroupAnim">
+            <DoubleAnimation To="1.0" From="0.0" Duration="0:0:0.3" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
+        </Storyboard>
+    </Window.Resources>
+    <Grid>
+
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <StackPanel Orientation="Vertical">
+                    <TextBlock HorizontalAlignment="Center" Foreground="#BDC3C7">IP</TextBlock>
+                    <TextBox x:Name="IpTextbox" Width="200" Margin="0 0 2 0" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Padding="2">localhost</TextBox>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical">
+                    <TextBlock HorizontalAlignment="Center" Foreground="#BDC3C7">Port</TextBlock>
+                    <TextBox x:Name="PortTextbox" Width="100" Margin="2 0 0 0" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Padding="2">9755</TextBox>
+                </StackPanel>
+                
+            </StackPanel>
+            <TextBlock HorizontalAlignment="Center" Foreground="#BDC3C7">Code</TextBlock>
+            <TextBox  Width="80" Name="CodeTextBox" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Padding="2"></TextBox>
+            <Button x:Name="ConnectButton" Template="{DynamicResource ButtonTemplate1}" Cursor="Hand" Width="90" Height="40" Margin="0 20 0 0" Background="#3f3f4a" BorderBrush="#31313b" Foreground="#BDC3C7" Click="Connect_Click">
+                Connect
+            </Button>
+        </StackPanel>
+
+        <Grid Opacity="1" Background="#77282830" Name="ErrorMessageGroup" Visibility="Hidden">
+            
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="300" Height="200" Background="#3f3f4a" Opacity="1">
+                <Grid.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.1" Direction="-45" ShadowDepth="3"></DropShadowEffect>
+                </Grid.Effect>
+
+                <TextBlock HorizontalAlignment="Center" Padding="5" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Connection rejected by server, code is invalid. Please ensure you have typed your code correctly. The code will be simply a number. When you log in to the minecraft server, you will be given your code. It will look something like this:</TextBlock>
+
+                <Image Source="resources/occlusion_code_example.png" HorizontalAlignment="Center" Margin="0 30 0 0" Width="293" RenderOptions.BitmapScalingMode="NearestNeighbor"></Image>
+
+                <Button Template="{DynamicResource ButtonTemplate1}" Cursor="Hand" VerticalAlignment="Bottom" Margin="5" BorderBrush="#454552" Width="80" Height="30" Foreground="#BDC3C7" Background="#454552" Click="Button_Click">Ok</Button>
+            </Grid>
+        </Grid>
+
+        <Grid Opacity="1" Background="#77282830" Name="GenericMessageGroup" Visibility="Hidden">
+
+            <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="300" Height="200" Background="#3f3f4a" Opacity="1">
+                <Grid.Effect>
+                    <DropShadowEffect BlurRadius="10" Opacity="0.1" Direction="-45" ShadowDepth="3"></DropShadowEffect>
+                </Grid.Effect>
+
+                <TextBlock HorizontalAlignment="Center" Padding="5" Name="GenericErrorMessage" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Disconnected</TextBlock>
+                <Button Template="{DynamicResource ButtonTemplate1}" Cursor="Hand" VerticalAlignment="Bottom" Margin="5" BorderBrush="#454552" Width="80" Height="30" Foreground="#BDC3C7" Background="#454552" Click="Error_Message_Ok">Ok</Button>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

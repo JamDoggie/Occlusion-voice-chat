@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;SERVER</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DotNetty.Codecs" Version="0.6.0" />
+    <PackageReference Include="DotNetty.Common" Version="0.6.0" />
+    <PackageReference Include="DotNetty.Transport" Version="0.6.0" />
+    <PackageReference Include="Lidgren.Network" Version="1.0.2" />
+    <PackageReference Include="Network" Version="6.2.4.21" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <Import Project="..\OcclusionShared\OcclusionShared.projitems" Label="Shared" />
+
+</Project>

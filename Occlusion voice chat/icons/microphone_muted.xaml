@@ -1,0 +1,26 @@
+﻿<UserControl x:Class="Occlusion_voice_chat.icons.microphone_muted"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Occlusion_voice_chat.icons"
+             mc:Ignorable="d" 
+             d:DesignHeight="35" d:DesignWidth="35">
+    <Grid>
+        <Canvas xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Name="SVGRoot" Width="35.0" Height="35.0">
+            <Canvas.RenderTransform>
+                <ScaleTransform ScaleX="0.035" ScaleY="0.035"/>
+            </Canvas.RenderTransform>
+            <Canvas.Resources/>
+            <!--Unknown tag: sodipodi:namedview-->
+            <!--Unknown tag: metadata-->
+            <Canvas Name="layer1">
+                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path1410" Fill="#FF969A9D" StrokeThickness="2.2891" StrokeLineJoin="Round" Data="m 578.93069 798.21466 v 56.73536 c 0 17.04662 -13.48454 30.77009 -30.2344 30.77009 H 427.75876 c -16.74985 0 -30.23437 -13.72347 -30.23437 -30.77009 v -54.7386 A 279.66807 107.6953 0 0 0 216.11807 901.04055 279.66807 107.6953 0 0 0 495.78613 1008.7359 279.66807 107.6953 0 0 0 775.45419 901.04055 279.66807 107.6953 0 0 0 578.93069 798.21466 Z"/>
+                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="rect14128" Fill="#FF969A9D" StrokeThickness="22.8786" StrokeLineJoin="Round" Data="m 408.35221 648.73585 v 196.07211 c 0 16.08542 16.45733 29.03478 36.90032 29.03478 h 86.19936 c 20.44299 0 36.90032 -12.94936 36.90032 -29.03478 V 648.73585 Z"/>
+                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path1453" Fill="#FF969A9D" StrokeThickness="2.28451" StrokeLineJoin="Round" Data="m 248.35221 468.73585 -75.49507 52.69272 c 0 0 157.0959 148.83631 315.09171 148.83631 C 645.94467 670.26488 800 520 800 520 l -71.64779 -51.26415 c 0 0 -113.03601 99.9998 -240 100 -127.52476 -2.8e-4 -240 -100 -240 -100 z"/>
+                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="rect834" Fill="#FF969A9D" StrokeThickness="3.43908" StrokeLineJoin="Round" Data="M 397.08789 19.232422 C 359.00824 19.232422 328.35156 49.889089 328.35156 87.96875 L 328.35156 110.88086 L 328.35156 145.73438 L 649.11914 285.5293 L 649.11914 87.96875 C 649.11914 49.889089 618.46246 19.232422 580.38281 19.232422 L 397.08789 19.232422 z M 649.11914 285.5293 L 649.11914 394.61133 L 743.37891 435.69141 C 763.69354 444.54473 787.17597 435.31854 796.0293 415.00391 L 804.01953 396.66992 C 812.87286 376.35529 803.64471 352.87286 783.33008 344.01953 L 649.11914 285.5293 z M 649.11914 394.61133 L 328.35156 254.81836 L 328.35156 294.17578 L 328.35156 340 L 328.35156 408.73633 L 328.35156 477.47266 C 328.35156 515.55232 359.00824 546.20703 397.08789 546.20703 L 580.38281 546.20703 C 618.46246 546.20703 649.11914 515.55232 649.11914 477.47266 L 649.11914 394.61133 z M 328.35156 254.81836 L 328.35156 225.43945 L 328.35156 179.61719 L 328.35156 145.73438 L 233.29492 104.30859 C 212.98029 95.455266 189.49981 104.68146 180.64648 124.99609 L 172.65625 143.33008 C 163.80292 163.64471 173.02912 187.12714 193.34375 195.98047 L 328.35156 254.81836 z "/>
+            </Canvas>
+        </Canvas>
+
+    </Grid>
+</UserControl>

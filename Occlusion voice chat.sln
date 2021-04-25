@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Occlusion voice chat", "Occlusion voice chat\Occlusion voice chat.csproj", "{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcclusionServerLib", "OcclusionServerLib\OcclusionServerLib.csproj", "{98F04B78-1213-4786-B576-3EEBDB50EBBE}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "OcclusionShared", "OcclusionShared\OcclusionShared.shproj", "{B348ADAB-955E-46F7-87EB-27F9DE5B0CF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcclusionDedicatedServer", "OcclusionDedicatedServer\OcclusionDedicatedServer.csproj", "{0B542EE2-5344-4F0B-92D5-43AF6706A841}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		OcclusionShared\OcclusionShared.projitems*{98f04b78-1213-4786-b576-3eebdb50ebbe}*SharedItemsImports = 5
+		OcclusionShared\OcclusionShared.projitems*{b348adab-955e-46f7-87eb-27f9de5b0cf3}*SharedItemsImports = 13
+		OcclusionShared\OcclusionShared.projitems*{f44ba0b0-290b-4e64-a9a5-2da02c21fbb0}*SharedItemsImports = 5
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|x64.ActiveCfg = Debug|x64
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|x64.Build.0 = Debug|x64
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|x64.ActiveCfg = Release|x64
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|x64.Build.0 = Release|x64
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|x64.Build.0 = Debug|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|x64.ActiveCfg = Release|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|x64.Build.0 = Release|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|x64.Build.0 = Debug|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|x64.ActiveCfg = Release|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {ABF65697-55EF-4F0A-962B-5F2566F56CE0}
+	EndGlobalSection
+EndGlobal

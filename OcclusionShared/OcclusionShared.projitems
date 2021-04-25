@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>b348adab-955e-46f7-87eb-27f9de5b0cf3</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>OcclusionShared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\IPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\NetworkingUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\PacketManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\Attributes\PacketIdAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ClientVerificationPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ClientVoiceDataPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\NetworkPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ServerConnectedPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ServerDisconnectPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ServerUserConnectedPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ServerUserLeftPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ServerValidationRejected.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ServerVoiceDataPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\VoiceUser.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Util\ConcurrentList.cs" />
+  </ItemGroup>
+</Project>
