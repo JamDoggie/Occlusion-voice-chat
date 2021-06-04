@@ -5,49 +5,101 @@ VisualStudioVersion = 16.0.31005.135
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Occlusion voice chat", "Occlusion voice chat\Occlusion voice chat.csproj", "{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcclusionServerLib", "OcclusionServerLib\OcclusionServerLib.csproj", "{98F04B78-1213-4786-B576-3EEBDB50EBBE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OcclusionServerLib", "OcclusionServerLib\OcclusionServerLib.csproj", "{98F04B78-1213-4786-B576-3EEBDB50EBBE}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "OcclusionShared", "OcclusionShared\OcclusionShared.shproj", "{B348ADAB-955E-46F7-87EB-27F9DE5B0CF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcclusionDedicatedServer", "OcclusionDedicatedServer\OcclusionDedicatedServer.csproj", "{0B542EE2-5344-4F0B-92D5-43AF6706A841}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OcclusionDedicatedServer", "OcclusionDedicatedServer\OcclusionDedicatedServer.csproj", "{0B542EE2-5344-4F0B-92D5-43AF6706A841}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Occlusion Voice Chat_CrossPlatform", "Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj", "{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AD04A82C-724A-4E74-B6A6-CD0D939B1A9B}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		OcclusionShared\OcclusionShared.projitems*{65629756-6bee-42d3-a2e9-d8ac2282f7e0}*SharedItemsImports = 5
 		OcclusionShared\OcclusionShared.projitems*{98f04b78-1213-4786-b576-3eebdb50ebbe}*SharedItemsImports = 5
 		OcclusionShared\OcclusionShared.projitems*{b348adab-955e-46f7-87eb-27f9de5b0cf3}*SharedItemsImports = 13
 		OcclusionShared\OcclusionShared.projitems*{f44ba0b0-290b-4e64-a9a5-2da02c21fbb0}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|osx-x64 = Debug|osx-x64
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|osx-x64 = Release|osx-x64
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|osx-x64.ActiveCfg = Debug|x64
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|osx-x64.Build.0 = Debug|x64
 		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|x64.ActiveCfg = Debug|x64
 		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|x64.Build.0 = Debug|x64
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|x86.ActiveCfg = Debug|x86
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Debug|x86.Build.0 = Debug|x86
 		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|osx-x64.ActiveCfg = Release|x64
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|osx-x64.Build.0 = Release|x64
 		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|x64.ActiveCfg = Release|x64
 		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|x64.Build.0 = Release|x64
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|x86.ActiveCfg = Release|x86
+		{F44BA0B0-290B-4E64-A9A5-2DA02C21FBB0}.Release|x86.Build.0 = Release|x86
 		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|osx-x64.ActiveCfg = Debug|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|osx-x64.Build.0 = Debug|Any CPU
 		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|x64.Build.0 = Debug|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|x86.ActiveCfg = Debug|x86
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Debug|x86.Build.0 = Debug|x86
 		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|osx-x64.ActiveCfg = Release|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|osx-x64.Build.0 = Release|Any CPU
 		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|x64.ActiveCfg = Release|Any CPU
 		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|x64.Build.0 = Release|Any CPU
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|x86.ActiveCfg = Release|x86
+		{98F04B78-1213-4786-B576-3EEBDB50EBBE}.Release|x86.Build.0 = Release|x86
 		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|osx-x64.ActiveCfg = Debug|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|osx-x64.Build.0 = Debug|Any CPU
 		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|x64.Build.0 = Debug|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|x86.ActiveCfg = Debug|x86
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Debug|x86.Build.0 = Debug|x86
 		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|osx-x64.ActiveCfg = Release|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|osx-x64.Build.0 = Release|Any CPU
 		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|x64.ActiveCfg = Release|Any CPU
 		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|x64.Build.0 = Release|Any CPU
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|x86.ActiveCfg = Release|x86
+		{0B542EE2-5344-4F0B-92D5-43AF6706A841}.Release|x86.Build.0 = Release|x86
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Debug|osx-x64.ActiveCfg = Debug|x64
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Debug|osx-x64.Build.0 = Debug|x64
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Debug|x64.Build.0 = Debug|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Debug|x86.Build.0 = Debug|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Release|osx-x64.ActiveCfg = Release|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Release|osx-x64.Build.0 = Release|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Release|x64.ActiveCfg = Release|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Release|x64.Build.0 = Release|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Release|x86.ActiveCfg = Release|Any CPU
+		{65629756-6BEE-42D3-A2E9-D8AC2282F7E0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

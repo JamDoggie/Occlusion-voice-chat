@@ -8,7 +8,7 @@ namespace Occlusion_voice_chat.Mojang
 {
     public class MojangAPIException : Exception
     {
-        public MojangAPIException(string message) : base(message)
+        public MojangAPIException(string? message) : base(message)
         {
             
         }

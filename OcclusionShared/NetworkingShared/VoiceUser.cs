@@ -13,19 +13,24 @@ using SdlSharp.Sound;
 using Occlusion_voice_chat.Opus;
 using System.Collections.Concurrent;
 using Occlusion_voice_chat;
+
+#endif
+
+#if CLIENT_CROSSPLATFORM
+using Occlusion_Voice_Chat_CrossPlatform;
 #endif
 
 namespace OcclusionShared.NetworkingShared
 {
     public class VoiceUser
     {
-        #region shared
+#region shared
         public int id { get; set; }
 
         public int verificationCode { get; set; } = -1;
 
         public string MCUUID { get; set; }
-        #endregion
+#endregion
 
 #if SERVER
         public NetConnection Connection { get; set; }
@@ -62,20 +67,7 @@ namespace OcclusionShared.NetworkingShared
         public OpusCodec codec { get; set; }
 
         private byte[] _micQueue;
-        public byte[] MicQueue
-        {
-            get
-            {
-                lock (_lockObj)
-                    return _micQueue;
-            }
-
-            set
-            {
-                lock (_lockObj)
-                    _micQueue = value;
-            }
-        }
+        public byte[] MicQueue { get; set; }
 
         public float ClientVolume { get; set; } = 1.0f;
 
@@ -88,6 +80,13 @@ namespace OcclusionShared.NetworkingShared
 
         private object _lockObj = new object();
 
+
+        public void InitializeArrays()
+        {
+            MicQueue = new byte[App.GetSampleSizeInBytes(TimeSpan.FromMilliseconds(500), App.samplingRate, 1)];
+            micShorts = AudioMath.BytesToShorts(MicQueue);
+            stereoMicShorts = new short[micShorts.Length * 2];
+        }
 
         public void QueueAudio(Span<byte> audio)
         {
@@ -116,21 +115,27 @@ namespace OcclusionShared.NetworkingShared
             }
         }
 
+        private short[] micShorts;
+        private short[] stereoMicShorts;
+        private short[] destinationShorts;
+
         public void MixMicIntoSpanAndCutQueue(ref Span<byte> destination)
         {
             lock (_lockObj)
             {
+                for(int i = 0; i < stereoMicShorts.Length; i++)
+                {
+                    stereoMicShorts[i] = 0;
+                }
+
                 if (_queueOffset > 0)
                 {
                     int amountCut = 0;
 
-                    short[] micShorts;
-                    short[] destinationShorts;
 
                     micShorts = AudioMath.BytesToShorts(MicQueue);
 
                     // Convert mic from mono input(one channel) to stereo output(two channels)
-                    short[] stereoMicShorts = new short[micShorts.Length * 2];
 
                     float rightOffset = 1f + (Pan);
                     float leftOffset = 1f - (Pan);
@@ -138,12 +143,8 @@ namespace OcclusionShared.NetworkingShared
                     int k = 0;
                     for (int i = 0; i < stereoMicShorts.Length / 2; i++)
                     {
-                        AudioChunk leftChunk = new AudioChunk(micShorts[i], App.samplingRate).Amplify(DistanceVolume);
-                        AudioChunk rightChunk = new AudioChunk(micShorts[i], App.samplingRate).Amplify(DistanceVolume);
-
-                        leftChunk = leftChunk.Amplify(leftOffset);
-
-                        rightChunk = rightChunk.Amplify(rightOffset);
+                        AudioChunk leftChunk = new AudioChunk(micShorts[i], App.samplingRate).Amplify(DistanceVolume * leftOffset);
+                        AudioChunk rightChunk = new AudioChunk(micShorts[i], App.samplingRate).Amplify(DistanceVolume * rightOffset);
 
                         stereoMicShorts[k] = leftChunk.Data[0];
                         stereoMicShorts[k + 1] = rightChunk.Data[0];

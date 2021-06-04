@@ -6,7 +6,7 @@
         xmlns:AttachedBehavior="clr-namespace:Occlusion_voice_chat.wpf"
         xmlns:local="clr-namespace:Occlusion_voice_chat" xmlns:icons="clr-namespace:Occlusion_voice_chat.icons" xmlns:controls="clr-namespace:Occlusion_voice_chat.wpf.controls"
         mc:Ignorable="d"
-        Title="VoiceChatWindow" Height="720" Width="1280" Closed="Window_Closed" MouseDown="Window_MouseDown" Loaded="Window_Loaded" Background="#32323b">
+        Title="VoiceChatWindow" Height="720" Width="1280" Closed="Window_Closed" Loaded="Window_Loaded" Background="#32323b">
     <Window.Resources>
         <Storyboard x:Key="AudioSettingsOpenAnim">
             <DoubleAnimation To="1.0" From="0.0" Duration="0:0:0.3" Storyboard.TargetProperty="Opacity"></DoubleAnimation>
@@ -76,6 +76,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <ToolTip x:Key="infoTooltip" MouseMove="InfoToolTip_MouseMove" Foreground="#BDC3C7" BorderBrush="#282830" Name="InfoToolTip" Background="#3f3f4a">
+            Ping: 0ms
+        </ToolTip>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -90,10 +94,15 @@
             </MenuItem>
         </Menu>
 
+        <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
+                              AttachedBehavior:ScrollAnimationBehavior.IsEnabled="True"
+                              AttachedBehavior:ScrollAnimationBehavior.TimeDuration="00:00:00.20"
+                              AttachedBehavior:ScrollAnimationBehavior.PointsToScroll="1">
+            <WrapPanel Name="PlayerIconsPanel" >
 
-        <WrapPanel Name="PlayerIconsPanel" Grid.Row="1">
-
-        </WrapPanel>
+            </WrapPanel>
+        </ScrollViewer>
+        
 
         <StackPanel Grid.Row="2" Background="#282830" Orientation="Horizontal">
             <Button BorderBrush="Transparent" Margin="5 0 0 0" Width="40" Height="40" Background="Transparent" Cursor="Hand" Template="{DynamicResource ButtonTemplate1}" Click="Mute_Click_1">
@@ -109,6 +118,12 @@
 
             <ProgressBar x:Name="SpeakerDecibalMeter" Margin="5 0 0 0" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Height="40" Width="8" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
         </StackPanel>
+
+
+        <Button x:Name="InfoButton" BorderBrush="Transparent" Width="40" Height="40" Grid.Row="2" MouseLeave="InfoButton_MouseMove" Click="InfoButton_Click" Background="Transparent" HorizontalAlignment="Right" Margin="0 0 50 0" Cursor="Hand" Template="{DynamicResource ButtonTemplate1}">
+            <Image Width="40" RenderOptions.BitmapScalingMode="Fant" Source="resources/info_icon.png"></Image>
+        </Button>
+
         <Button BorderBrush="Transparent" Width="40" Height="40" Grid.Row="2" Background="Transparent" HorizontalAlignment="Right" Margin="0 0 5 0" Cursor="Hand" Template="{DynamicResource ButtonTemplate1}" MouseEnter="Button_MouseEnter" MouseLeave="Button_MouseLeave" Click="Button_Click">
             <Image Width="40" RenderOptions.BitmapScalingMode="Fant"  VerticalAlignment="Center" Source="resources/settings_cog.png">
                 <Image.RenderTransform>
@@ -128,14 +143,14 @@
         </Canvas>
 
 
-        <Grid Opacity="1" Background="#77282830" Name="AudioSettingsGroup" Grid.RowSpan="3" Visibility="Visible">
+        <Grid Opacity="1" Background="#77282830" Name="AudioSettingsGroup" Grid.RowSpan="3" Visibility="Hidden">
 
             <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="500" Height="400" Background="#3f3f4a" Opacity="1">
                 <Grid.Effect>
                     <DropShadowEffect BlurRadius="10" Opacity="0.1" Direction="-45" ShadowDepth="3"></DropShadowEffect>
                 </Grid.Effect>
 
-                <TextBlock HorizontalAlignment="Center" Name="AudioSettingsHeader" Padding="5" FontSize="15" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Before you can talk, please look over your audio settings. You can always access these from the settings cog on the bottom right.</TextBlock>
+                <TextBlock HorizontalAlignment="Center" Name="AudioSettingsHeader" Padding="5" FontSize="15" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Please look over your audio settings. You can always access these from the settings cog on the bottom right.</TextBlock>
 
                 <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Center" Height="300" VerticalScrollBarVisibility="Auto"
                               AttachedBehavior:ScrollAnimationBehavior.IsEnabled="True"

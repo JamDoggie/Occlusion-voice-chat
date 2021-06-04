@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Occlusion_voice_chat.Mojang
 {
-    public class MojangAPIException : Exception
+    public class APIErrorJson
     {
-        public MojangAPIException(string message) : base(message)
-        {
-            
-        }
+        public string error { get; set; } = null;
+
+        public string errorMessage { get; set; } = null;
     }
 }

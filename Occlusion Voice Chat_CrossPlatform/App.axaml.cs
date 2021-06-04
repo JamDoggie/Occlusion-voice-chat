@@ -1,14 +1,18 @@
-﻿#nullable enable
-
+#nullable enable
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Lidgren.Network;
 using Occlusion.NetworkingShared;
 using Occlusion.NetworkingShared.Packets;
+using Occlusion_voice_chat;
 using Occlusion_voice_chat.Mojang;
 using Occlusion_voice_chat.Networking;
 using Occlusion_voice_chat.Opus;
 using Occlusion_voice_chat.util;
 using Occlusion_voice_chat.util.json_structs;
-using Occlusion_voice_chat.wpf.controls;
+using Occlusion_Voice_Chat_CrossPlatform.avalonia;
 using OcclusionShared.NetworkingShared;
 using OcclusionShared.NetworkingShared.Packets;
 using OcclusionShared.Util;
@@ -16,27 +20,16 @@ using SdlSharp;
 using SdlSharp.Sound;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
+using System.Reflection;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
 
-namespace Occlusion_voice_chat
+namespace Occlusion_Voice_Chat_CrossPlatform
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// </summary>
-    public partial class App : System.Windows.Application
+    public class App : Avalonia.Application
     {
         public static AudioDevice RecordingDevice;
-
-        public static MixChannel PlaybackChannel;
 
         public static AudioDevice PlaybackDevice;
 
@@ -56,171 +49,31 @@ namespace Occlusion_voice_chat
 
         public OpusCodec mainCodec = new OpusCodec();
 
-        #region janky region for changing the input and output devices across threads safely
-        // Janky threading stuff, this is for changing the audio device from the UI thread.
-        private static object _inputDeviceLock = new object();
+        #region region for changing the input and output devices across threads safely
+        public static string? NewInputDevice { get; set; } = null;
 
-        private static string? _newInputDevice = null;
-        public static string? NewInputDevice
-        {
-            get
-            {
-                lock(_inputDeviceLock)
-                {
-                    return _newInputDevice;
-                }
-            }
-
-            set
-            {
-                lock(_inputDeviceLock)
-                {
-                    _newInputDevice = value;
-                }
-            }
-        }
-
-        private static object _outputDeviceLock = new object();
-
-        private static string? _newOutputDevice = null;
-        public static string? NewOutputDevice
-        {
-            get
-            {
-                lock (_outputDeviceLock)
-                {
-                    return _newOutputDevice;
-                }
-            }
-
-            set
-            {
-                lock (_outputDeviceLock)
-                {
-                    _newOutputDevice = value;
-                }
-            }
-        }
+        public static string? NewOutputDevice { get; set; } = null;
 
 
         // Volume controls
-        private static object _inputVolumeLock = new object();
+        public static float InputVolume { get; set; } = 1f;
 
-        private static float _inputVolume = 1f;
-        public static float InputVolume
-        {
-            get
-            {
-                lock (_inputVolumeLock)
-                {
-                    return _inputVolume;
-                }
-            }
+        public static float OutputVolume { get; set; } = 1f;
 
-            set
-            {
-                lock (_inputVolumeLock)
-                {
-                    _inputVolume = value;
-                }
-            }
-        }
+        public static bool MicMuted { get; set; }
 
-        private static object _outputVolumeLock = new object();
+        public static bool Deafened { get; set; }
 
-        private static float _outputVolume = 1f;
-        public static float OutputVolume
-        {
-            get
-            {
-                lock (_outputVolumeLock)
-                {
-                    return _outputVolume;
-                }
-            }
-
-            set
-            {
-                lock (_outputVolumeLock)
-                {
-                    _outputVolume = value;
-                }
-            }
-        }
-
-
-        private static object _micMutedLock = new object();
-        private static bool _micMuted = false;
-
-        public static bool MicMuted
-        {
-            get
-            {
-                lock(_micMutedLock)
-                {
-                    return _micMuted;
-                }
-            }
-
-            set
-            {
-                lock (_micMutedLock)
-                {
-                    _micMuted = value;
-                }
-            }
-        }
-
-        private static object _deafenedLock = new object();
-        private static bool _deafened = false;
-
-        public static bool Deafened
-        {
-            get
-            {
-                lock (_deafenedLock)
-                {
-                    return _deafened;
-                }
-            }
-
-            set
-            {
-                lock (_deafenedLock)
-                {
-                    _deafened = value;
-                }
-            }
-        }
-
-        private static object _voiceActivityLock = new object();
-        private static float _voiceActivity = 0;
-
-        public static float VoiceActivity
-        {
-            get
-            {
-                lock (_voiceActivityLock)
-                {
-                    return _voiceActivity;
-                }
-            }
-
-            set
-            {
-                lock (_voiceActivityLock)
-                {
-                    _voiceActivity = value;
-                }
-            }
-        }
+        public static float VoiceActivity { get; set; }
         #endregion
 
         public static ConcurrentList<VoiceUser> Users = new ConcurrentList<VoiceUser>();
 
-        public static VoiceChatWindow VoiceChatWindow = new VoiceChatWindow();
+        public static VoiceChatWindow VoiceChatWindow { get; set; }
 
         public static JsonFile<OptionsJson> Options { get; set; } = new JsonFile<OptionsJson>("occlusion_options.json", new OptionsJson());
+
+        public static object AudioInfoRetrieveLock = new object();
 
         private static Client _client = new Client();
         public static Client Client
@@ -235,12 +88,17 @@ namespace Occlusion_voice_chat
             }
         }
 
-        public App()
+        public override void Initialize()
         {
-            ConsoleManager.ShowConsoleWindow();
+            AvaloniaXamlLoader.Load(this);
+            
+            Debug.WriteLine(Assembly.GetExecutingAssembly().Location);
 
+#if WINDOWS
+            ConsoleManager.ShowConsoleWindow();
+#endif
             Client.PacketRecievedEvent += Client_PacketRecievedEvent;
-            Console.WriteLine($"The entry point thread is {Thread.CurrentThread.ManagedThreadId}");
+            Console.WriteLine($"The entry point thread is Thread #{Thread.CurrentThread.ManagedThreadId} ({Thread.CurrentThread.ManagedThreadId.ToString("X")})");
             InitSound();
 
             PlayerCache.RetrieveCacheFile();
@@ -248,6 +106,18 @@ namespace Occlusion_voice_chat
             InputVolume = Options.Obj.InputVolume;
             OutputVolume = Options.Obj.OutputVolume;
             VoiceActivity = Options.Obj.VoiceActivity;
+        }
+
+        public override void OnFrameworkInitializationCompleted()
+        {
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                desktop.MainWindow = new MainWindow();
+            }
+
+            base.OnFrameworkInitializationCompleted();
+
+            VoiceChatWindow = new VoiceChatWindow();
         }
 
         private void Client_PacketRecievedEvent(NetIncomingMessage message, IPacket packet, Client client)
@@ -265,15 +135,15 @@ namespace Occlusion_voice_chat
                             codec = new OpusCodec()
                         };
 
-                        voiceUser.MicQueue = new byte[GetSampleSizeInBytes(TimeSpan.FromMilliseconds(500), samplingRate, 1)];
+                        voiceUser.InitializeArrays();
 
                         voiceUser.codec.SetFrameSize(20);
-                        voiceUser.codec.SetApplication(Concentus.Enums.OpusApplication.OPUS_APPLICATION_VOIP);
-                        
+                        voiceUser.codec.SetApplication(Concentus.Enums.OpusApplication.VOIP);
+
                         Users.Add(voiceUser);
 
                         // Add user to grid on UI
-                        Dispatcher.Invoke(() =>
+                        Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             if (VoiceChatWindow != null && VoiceChatWindow.IsOpen)
                             {
@@ -310,10 +180,9 @@ namespace Occlusion_voice_chat
                 // We've successfully verified and connected ourselves.
                 Client.ConnectionVerified = true;
 
-                Dispatcher.Invoke(() =>
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     VoiceChatWindow.Show();
-                    VoiceChatWindow.OpenAudioSettings();
                 });
             }
 
@@ -321,7 +190,7 @@ namespace Occlusion_voice_chat
             {
                 if (VoiceChatWindow != null && VoiceChatWindow.IsOpen)
                 {
-                    Dispatcher.Invoke(() =>
+                    Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         PlayerIcon icon = VoiceChatWindow.GetPlayerIconByUUID(userLeft.UUID);
 
@@ -342,7 +211,7 @@ namespace Occlusion_voice_chat
             {
                 Options.Obj.InputDevice = "Default";
             }
-
+            
             if (!Audio.NonCaptureDevices.Contains(Options.Obj.OutputDevice))
             {
                 Options.Obj.OutputDevice = "Default";
@@ -372,22 +241,23 @@ namespace Occlusion_voice_chat
             RecordingDevice = Audio.Open(inputDevice, true, wantedSettingsMic, out finalSettingsMic, AudioAllowChange.None);
 
             // Speaker output
-            AudioSpec wantedSettingsSpeaker = new AudioSpec(samplingRate, AudioFormat.Signed16Bit, 2, 0, (ushort)(queueLength * 4), 0, speakerCallback, 0);
+            AudioSpec wantedSettingsSpeaker = new AudioSpec(samplingRate, AudioFormat.Signed16Bit, 2, 0, (ushort)((queueLength / 4) * 2), 0, speakerCallback, 0);
             PlaybackDevice = Audio.Open(outputDevice, false, wantedSettingsSpeaker, out finalSettingsSpeaker, AudioAllowChange.None);
 
 
             queuedMicrophoneAudio = new byte[queueLength];
 
-            mainCodec.SetApplication(Concentus.Enums.OpusApplication.OPUS_APPLICATION_VOIP);
+            mainCodec.SetApplication(Concentus.Enums.OpusApplication.VOIP);
             mainCodec.SetFrameSize(20);
 
             RecordingDevice.Unpause();
             PlaybackDevice.Unpause();
         }
 
+        private object deviceSwitchLock = new object();
+
         void speakerCallback(Span<byte> stream, nint userdata)
         {
-            Console.WriteLine("bruh");
 
             // Ensure this current chunk of audio data starts as silence.
             for (int i = 0; i < stream.Length; i++)
@@ -413,20 +283,20 @@ namespace Occlusion_voice_chat
 
             // Microphone volume bar
             AudioChunk chunk = new AudioChunk(stream.ToArray(), samplingRate);
-            Dispatcher.Invoke(() =>
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
-                if (VoiceChatWindow != null && VoiceChatWindow.IsLoaded && PlaybackDevice.Status == AudioStatus.Playing)
+                if (VoiceChatWindow != null && VoiceChatWindow.IsOpen && PlaybackDevice.Status == AudioStatus.Playing)
                 {
                     VoiceChatWindow.SpeakerDecibalMeter.Value = Math.Clamp(chunk.Volume(), 0, 3000);
 
                     if (VoiceChatWindow.AudioSettingsOpen)
                     {
-                        VoiceChatWindow.SpeakerDecibalMeter.Value = Math.Clamp(chunk.Volume(), 0, 3000);
+                        ProgressBarAnimationExtensions.SetValue(VoiceChatWindow.SettingsSpeakerMeter, Math.Clamp(chunk.Volume(), 0, 3000));
                     }
                 }
             });
 
-            // Silence audio if we're deafened. We still calculate the mix though so that we can show the gray decibal bar.
+            // Silence audio if we're deafened. We still calculate the mix earlier though so that we can show the gray decibal bar.
             if (Deafened)
                 for (int i = 0; i < stream.Length; i++)
                     stream[i] = 0;
@@ -434,8 +304,10 @@ namespace Occlusion_voice_chat
 
 
             // We can change audio input here as well because this is on the sdl thread.
+            
             if (NewInputDevice != null && RecordingDevice != null)
             {
+
                 string? newDevice = NewInputDevice;
                 if (newDevice == "Default")
                     newDevice = null;
@@ -447,111 +319,117 @@ namespace Occlusion_voice_chat
                 RecordingDevice.Unpause();
 
                 NewInputDevice = null;
+                
+                
             }
+            
         }
 
         private short _residualVoiceVolume = 0;
 
         void micCallback(Span<byte> stream, nint userdata)
         {
-            if (RecordingDevice != null && Client.IsConnected())
-            {
-                if (stream.Length > 0)
+
+                if (RecordingDevice != null && Client.IsConnected())
                 {
-                    // Microphone volume bar
-                    AudioChunk rawChunk = new AudioChunk(stream.ToArray(), samplingRate);
-
-                    rawChunk = rawChunk.Amplify(InputVolume);
-
-                    AudioChunk chunk = new AudioChunk(stream.ToArray(), samplingRate);
-
-                    chunk = chunk.Amplify(InputVolume);
-
-                    var volume = chunk.Volume();
-
-                    if (volume > _residualVoiceVolume)
-                        _residualVoiceVolume = (short)volume;
-
-                    // If our total volume is under the voice activity threshold, just set it all to silence.
-                    if (_residualVoiceVolume <= VoiceActivity)
+                    if (stream.Length > 0)
                     {
-                        for (int i = 0; i < chunk.DataLength; i++)
+                        // Microphone volume bar
+                        AudioChunk rawChunk = new AudioChunk(stream.ToArray(), samplingRate);
+
+                        rawChunk = rawChunk.Amplify(InputVolume);
+
+                        AudioChunk chunk = new AudioChunk(stream.ToArray(), samplingRate);
+
+                        chunk = chunk.Amplify(InputVolume);
+
+                        var volume = chunk.Volume();
+
+                        if (volume > _residualVoiceVolume)
+                            _residualVoiceVolume = (short)volume;
+
+                        // If our total volume is under the voice activity threshold, just set it all to silence.
+                        if (_residualVoiceVolume <= VoiceActivity)
                         {
-                            chunk.Data[i] = 0;
-                        }
-                    }
-
-
-                    byte[] newBytes = chunk.GetDataAsBytes();
-                    
-                    for(int i = 0; i < stream.Length; i++)
-                    {
-                        stream[i] = newBytes[i];
-                    }
-
-                    Dispatcher.Invoke(() =>
-                    {
-                        if (VoiceChatWindow != null && VoiceChatWindow.IsLoaded && RecordingDevice.Status == AudioStatus.Playing)
-                        {
-                            VoiceChatWindow.MicDecibalMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * VoiceChatWindow.InputVolumeSlider.Value;
-
-                            if (VoiceChatWindow.AudioSettingsOpen)
+                            for (int i = 0; i < chunk.DataLength; i++)
                             {
-                                VoiceChatWindow.SettingsMicMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * VoiceChatWindow.InputVolumeSlider.Value;
+                                chunk.Data[i] = 0;
                             }
                         }
-                    });
 
 
-                    // Fill the buffer until it's full
-                    if (currentMicQueueOffset + 1 >= queueLength)
-                    {
-                        if (!MicMuted)
+                        byte[] newBytes = chunk.GetDataAsBytes();
+
+                        for (int i = 0; i < stream.Length; i++)
                         {
-                            // Buffer is full, time to do what we need to do with the audio.
-
-                            // First we encode the audio with Opus so it's small enough to send over the network
-                            byte[] compressedAudio = mainCodec.Compress(new AudioChunk(queuedMicrophoneAudio, samplingRate));
-
-                            // Now we send the compressed audio data to the server
-                            ClientVoiceDataPacket voiceDataPacket = new ClientVoiceDataPacket();
-                            voiceDataPacket.VoiceData = compressedAudio;
-                            Client.SendMessage(voiceDataPacket, NetDeliveryMethod.UnreliableSequenced);
+                            stream[i] = newBytes[i];
                         }
 
-                        currentMicQueueOffset = 0;
-                    }
-
-                    // Buffer is not full, fill in the data we just got from the microphone into it.
-                    for (int i = 0; i < stream.Length; i++)
-                    {
-                        if (currentMicQueueOffset < queuedMicrophoneAudio.Length)
+                        Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            queuedMicrophoneAudio[currentMicQueueOffset] = stream[i];
-                            currentMicQueueOffset++;
-                        }
-                    }
+                            if (VoiceChatWindow != null && VoiceChatWindow.IsOpen && RecordingDevice.Status == AudioStatus.Playing)
+                            {
+                                VoiceChatWindow.MicDecibalMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * VoiceChatWindow.InputVolumeSlider.Value;
 
-                    double speed = Math.Abs((int)_residualVoiceVolume - ((int)VoiceActivity - 30)) / 25;
-                    _residualVoiceVolume -= (short)Math.Clamp(speed, short.MinValue, short.MaxValue);
+                                if (VoiceChatWindow.AudioSettingsOpen)
+                                {
+                                    VoiceChatWindow.SettingsMicMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * VoiceChatWindow.InputVolumeSlider.Value;
+                                }
+                            }
+                        });
+
+
+                        // Fill the buffer until it's full
+                        if (currentMicQueueOffset + 1 >= queueLength)
+                        {
+                            if (!MicMuted)
+                            {
+                                // Buffer is full, time to do what we need to do with the audio.
+
+                                // First we encode the audio with Opus so it's small enough to send over the network
+                                byte[] compressedAudio = mainCodec.Compress(new AudioChunk(queuedMicrophoneAudio, samplingRate));
+
+                                // Now we send the compressed audio data to the server
+                                ClientVoiceDataPacket voiceDataPacket = new ClientVoiceDataPacket();
+                                voiceDataPacket.VoiceData = compressedAudio;
+                                Client.SendMessage(voiceDataPacket, NetDeliveryMethod.Unreliable);
+                            }
+
+                            currentMicQueueOffset = 0;
+                        }
+
+                        // Buffer is not full, fill in the data we just got from the microphone into it.
+                        for (int i = 0; i < stream.Length; i++)
+                        {
+                            if (currentMicQueueOffset < queuedMicrophoneAudio.Length)
+                            {
+                                queuedMicrophoneAudio[currentMicQueueOffset] = stream[i];
+                                currentMicQueueOffset++;
+                            }
+                        }
+
+                        double speed = Math.Abs((int)_residualVoiceVolume - ((int)VoiceActivity - 30)) / 25;
+                        _residualVoiceVolume -= (short)Math.Clamp(speed, short.MinValue, short.MaxValue);
+                    }
                 }
-            }
 
-            // We can change audio output here as well because this is on the sdl thread.
-            if (NewOutputDevice != null && PlaybackDevice != null)
-            {
-                string? newDevice = NewOutputDevice;
-                if (newDevice == "Default")
-                    newDevice = null;
+                // We can change audio output here as well because this is on the sdl thread.
+                if (NewOutputDevice != null && PlaybackDevice != null && NewInputDevice == null && RecordingDevice == null)
+                {
+                    string? newDevice = NewOutputDevice;
+                    if (newDevice == "Default")
+                        newDevice = null;
 
-                PlaybackDevice.ClearQueuedAudio();
-                PlaybackDevice.Pause();
-                PlaybackDevice.Dispose();
-                PlaybackDevice = Audio.Open(newDevice, false, finalSettingsSpeaker, out _, AudioAllowChange.None);
-                PlaybackDevice.Unpause();
+                    PlaybackDevice.ClearQueuedAudio();
+                    PlaybackDevice.Pause();
+                    PlaybackDevice.Dispose();
+                    PlaybackDevice = Audio.Open(newDevice, false, finalSettingsSpeaker, out _, AudioAllowChange.None);
+                    PlaybackDevice.Unpause();
 
-                NewOutputDevice = null;
-            }
+                    NewOutputDevice = null;
+                    
+                }
+            
         }
 
         public static VoiceUser GetUserById(int id)

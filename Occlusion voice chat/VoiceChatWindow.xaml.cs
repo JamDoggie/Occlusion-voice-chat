@@ -317,6 +317,16 @@ namespace Occlusion_voice_chat
         {
             MainWindow.mainWindow.ConnectButton.IsEnabled = false;
             VoiceActivityBar.Value = Math.Clamp(App.Options.Obj.VoiceActivity, 0, 3000);
+
+            InputVolumeSlider.Value = App.Options.Obj.InputVolume;
+            OutputVolumeSlider.Value = App.Options.Obj.OutputVolume;
+
+            InputManager.Current.PreProcessInput += (sender, e) =>
+            {
+                if (e.StagingItem.Input is MouseButtonEventArgs)
+                    Window_MouseDown(sender,
+                      (MouseButtonEventArgs)e.StagingItem.Input);
+            };
         }
 
         private void Menu_Disconnect_Click(object sender, RoutedEventArgs e)
@@ -382,6 +392,27 @@ namespace Occlusion_voice_chat
         private void VoiceActivityBar_MouseLeave(object sender, MouseEventArgs e)
         {
             isVoiceMouseDown = false;
+        }
+
+        private void InfoButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(Resources["infoTooltip"] is ToolTip tip)
+            {
+                tip.IsOpen = true;
+            }
+        }
+
+        private void InfoToolTip_MouseMove(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void InfoButton_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (Resources["infoTooltip"] is ToolTip tip)
+            {
+                if (tip.IsOpen)
+                    tip.IsOpen = false;
+            }
         }
     }
 }

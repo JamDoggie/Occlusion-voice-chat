@@ -1,0 +1,134 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:occlusionVoiceChatCrossPlatform="clr-namespace:Occlusion_Voice_Chat_CrossPlatform"
+        xmlns:svg="clr-namespace:Avalonia.Svg;assembly=Avalonia.Svg"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Occlusion_Voice_Chat_CrossPlatform.MainWindow"
+        Title="Occlusion_Voice_Chat_CrossPlatform" Background="#32323b" 
+        Height="450" Width="800" Icon="resources/Occlusion_icon.ico">
+  <Window.Styles>
+    <StyleInclude Source="avares://Occlusion Voice Chat_CrossPlatform/DefaultTheme.xaml"/>
+    <Style Selector="Button.opacityfadebutton">
+      <Setter Property="Opacity" Value="0.5"></Setter>
+    </Style>
+    
+    <Style Selector="Button.opacityfadebutton:pointerover">
+      <Setter Property="Opacity" Value="1.0"></Setter>
+    </Style> 
+  </Window.Styles>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"></RowDefinition>
+      <RowDefinition Height="*"></RowDefinition>
+    </Grid.RowDefinitions>
+    
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"></ColumnDefinition>
+      <ColumnDefinition Width="*"></ColumnDefinition>
+    </Grid.ColumnDefinitions>
+    
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+      <Button Classes="opacityfadebutton" Cursor="Hand" Name="AddServerButton" Background="Transparent"  Width="40" Height="40">
+        
+        <Button.Transitions>
+          <Transitions>
+            <DoubleTransition Property="Opacity" Duration="0:0:0.3">
+              <DoubleTransition.Easing>
+                <CubicEaseOut></CubicEaseOut>
+              </DoubleTransition.Easing>
+            </DoubleTransition>
+          </Transitions>
+        </Button.Transitions>
+
+        <Image>
+          <Image.Source>
+            <svg:SvgImage Source="/resources/add_server.svg" />
+          </Image.Source>
+        </Image>
+      </Button>
+      
+      <Button Classes="opacityfadebutton" Cursor="Hand" Name="RemoveServerButton" Background="Transparent" Width="40" Height="40">
+        <Button.Transitions>
+          <Transitions>
+            <DoubleTransition Property="Opacity" Duration="0:0:0.2">
+              <DoubleTransition.Easing>
+                <CubicEaseOut></CubicEaseOut>
+              </DoubleTransition.Easing>
+            </DoubleTransition>
+          </Transitions>
+        </Button.Transitions>
+        <Image>
+          <Image.Source>
+            <svg:SvgImage Source="/resources/remove_server.svg" />
+          </Image.Source>
+        </Image>
+      </Button>
+    </StackPanel>
+    
+    <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0 40 0 0" VerticalAlignment="Top" HorizontalAlignment="Center">
+      <Image Source="resources/Occlusion_icon.png" Width="100" Height="100" ></Image>
+      <TextBlock Margin="20 0 0 0" FontSize="23" FontWeight="DemiBold" FontFamily="Corbel" VerticalAlignment="Center">
+        Welcome. To start, select a server or create one.
+      </TextBlock>
+    </StackPanel>
+    
+    <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical" VerticalAlignment="Center">
+      <StackPanel Orientation="Horizontal" Margin="0 0 0 10" HorizontalAlignment="Center">
+        <StackPanel Orientation="Vertical">
+          <TextBlock HorizontalAlignment="Center" Foreground="#BDC3C7">Name</TextBlock>
+          <TextBox x:Name="NameTextbox" Watermark="My Server" HorizontalAlignment="Center" Width="200" Margin="0 0 2 0" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Padding="2"></TextBox>
+        </StackPanel>
+      </StackPanel>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+        <StackPanel Orientation="Vertical">
+          <TextBlock HorizontalAlignment="Center" Foreground="#BDC3C7">IP</TextBlock>
+          <TextBox x:Name="IpTextbox" Width="200" Watermark="0.0.0.0" Margin="0 0 2 0" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Padding="2"></TextBox>
+        </StackPanel>
+
+        <StackPanel Orientation="Vertical">
+          <TextBlock HorizontalAlignment="Center" Foreground="#BDC3C7">Port</TextBlock>
+          <TextBox x:Name="PortTextbox" Width="100" Margin="2 0 0 0" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Watermark="9755" Padding="2">9755</TextBox>
+        </StackPanel>
+
+      </StackPanel>
+      
+      <StackPanel Orientation="Horizontal" Margin="0 20 0 0" HorizontalAlignment="Center">
+        <TextBox  Width="70" Height="30" Name="CodeTextBox" Background="#3f3f4a" Watermark="Code..." HorizontalContentAlignment="Center" BorderBrush="#31313b" BorderThickness="1" Foreground="#BDC3C7" Padding="5" FontSize="12" VerticalContentAlignment="Center"></TextBox>
+        <Button x:Name="ConnectButton" Cursor="Hand" Width="90" Height="30" HorizontalAlignment="Center" Background="#454552" BorderBrush="#31313b" Foreground="#BDC3C7">
+          Connect
+        </Button>
+      </StackPanel>
+     
+    </StackPanel>
+
+    <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+      <WrapPanel Name="ServerIconsPanel">
+        
+      </WrapPanel>
+    </ScrollViewer>
+    
+    <Border Grid.Row="1" BorderThickness="0.5" BorderBrush="#282830" HorizontalAlignment="Right"></Border>
+    
+    <Grid Grid.ColumnSpan="2" Grid.RowSpan="2" Opacity="1" Background="#77282830" Name="ErrorMessageGroup" IsVisible="False">
+      <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="300" Height="200" Background="#3f3f4a" Opacity="1">
+
+        <TextBlock HorizontalAlignment="Center" Padding="5" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Connection rejected by server, code is invalid. Please ensure you have typed your code correctly. The code will be simply a number. When you log in to the minecraft server, you will be given your code. It will look something like this:</TextBlock>
+
+        <Image Source="resources/occlusion_code_example.png" HorizontalAlignment="Center" Margin="0 30 0 0" Width="293"></Image>
+
+        <Button Name="ErrorMessageOk" Cursor="Hand" VerticalAlignment="Bottom" Margin="5" BorderBrush="#454552" Width="80" Height="30" Foreground="#BDC3C7" Background="#454552">Ok</Button>
+      </Grid>
+    </Grid>
+
+    <Grid Grid.ColumnSpan="2" Grid.RowSpan="2" Opacity="1" Background="#77282830" Name="GenericMessageGroup" IsVisible="False">
+
+      <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Width="300" Height="200" Background="#3f3f4a" Opacity="1">
+
+        <TextBlock HorizontalAlignment="Center" Padding="5" Name="GenericErrorMessage" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Disconnected</TextBlock>
+        <Button Name="GenericMessageOk" Cursor="Hand" VerticalAlignment="Bottom" Margin="5" BorderBrush="#454552" Width="80" Height="30" Foreground="#BDC3C7" Background="#454552">Ok</Button>
+      </Grid>
+    </Grid>
+  </Grid>
+</Window>

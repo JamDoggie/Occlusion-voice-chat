@@ -2,7 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Occlusion_Voice_Chat_CrossPlatform.ServerSelection">
-    Welcome to Avalonia!
+             mc:Ignorable="d" d:DesignWidth="150" d:DesignHeight="40"
+             x:Class="Occlusion_Voice_Chat_CrossPlatform.ServerSelection" Cursor="Hand" Background="#454552">
+    <Grid>
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+            <Button Name="SelectionButton" Background="#454552" Margin="0" HorizontalContentAlignment="Left" Height="40" Width="150" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <TextBlock Name="NameText" Margin="5 0 0 0" HorizontalAlignment="Left" FontSize="17">...</TextBlock>
+            </Button>
+        </StackPanel>
+    </Grid>
 </UserControl>

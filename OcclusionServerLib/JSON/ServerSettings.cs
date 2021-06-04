@@ -9,5 +9,7 @@ namespace OcclusionServerLib.JSON
         public string GameIP { get; set; } = "";
 
         public string GamePort { get; set; } = "";
+
+        public float HearingDistance { get; set; } = 78;
     }
 }

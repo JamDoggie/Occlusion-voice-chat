@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Occlusion.NetworkingShared;
 using Occlusion.NetworkingShared.Packets;
+using OcclusionDedicatedServer.json;
 using OcclusionServerLib.JSON;
 using OcclusionServerLib.MCNetworking;
 using OcclusionShared.NetworkingShared;
@@ -40,6 +41,8 @@ namespace OcclusionServerLib
         public static ConcurrentDictionary<int, NetConnection> codesBeingVerified = new ConcurrentDictionary<int, NetConnection>();
 
         public GameClient GameClient;
+
+        public JsonFile<ServerSettings> SettingsFile = new JsonFile<ServerSettings>("settings.json", new ServerSettings());
         #endregion
 
         #region loggers
@@ -106,15 +109,15 @@ namespace OcclusionServerLib
             // Game client
             Thread gameClientThread = new Thread(async () =>
             {
-                var settings = GetServerSettings();
+                
 
                 int port = -1;
 
-                int.TryParse(settings.GamePort, out port);
+                int.TryParse(SettingsFile.Obj.GamePort, out port);
 
-                if (settings.GameIP != "" && port != -1)
+                if (SettingsFile.Obj.GameIP != "" && port != -1)
                 {
-                    await GameClient.Connect(settings.GameIP, port);
+                    await GameClient.Connect(SettingsFile.Obj.GameIP, port);
                 }
                 else
                 {
@@ -188,7 +191,7 @@ namespace OcclusionServerLib
                             foreach (VoiceUser user in Users)
                             {
                                 if (user.IsVerified && user != GetUserByConnection(message.SenderConnection))
-                                    userConnectedPacket.idsToAdd.Add(new KeyValuePair<int, string>(user.id, user.MCUUID));
+                                    userConnectedPacket.idsToAdd.Add(new KeyValuePair<int, string>(user.verificationCode, user.MCUUID));
                             }
 
                             SendMessage(userConnectedPacket, message.SenderConnection, NetDeliveryMethod.ReliableOrdered);
@@ -252,24 +255,6 @@ namespace OcclusionServerLib
             return null;
         }
 
-        public static ServerSettings GetServerSettings()
-        {
-            if (!File.Exists("settings.json"))
-            {
-                File.WriteAllText("settings.json", JsonConvert.SerializeObject(new ServerSettings()));
-                return new ServerSettings();
-            }
-            else
-            {
-                ServerSettings settings = JsonConvert.DeserializeObject<ServerSettings>(File.ReadAllText("settings.json"));
-
-                if (settings == null)
-                    return new ServerSettings();
-
-                return settings;
-            }
-
-        }
         public void SendMessage(IPacket packet, NetConnection peer, NetDeliveryMethod method)
         {
             NetOutgoingMessage message = LidgrenServer.CreateMessage();

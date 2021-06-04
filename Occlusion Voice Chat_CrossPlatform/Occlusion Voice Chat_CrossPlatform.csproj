@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RuntimeIdentifiers>osx-x64</RuntimeIdentifiers>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <PropertyGroup>
+    <CFBundleName>Occlusion Voice Chat_CrossPlatform</CFBundleName> <!-- Also defines .app file name -->
+    <CFBundleDisplayName>Occlusion Voice Chat</CFBundleDisplayName>
+    <CFBundleIdentifier>com.occlusion.macos</CFBundleIdentifier>
+    <CFBundleVersion>1.0.0</CFBundleVersion>
+    <CFBundlePackageType>APPL</CFBundlePackageType>
+    <CFBundleExecutable>Occlusion Voice Chat</CFBundleExecutable>
+	<CFBundleShortVersionString>1.0.0</CFBundleShortVersionString>
+    <NSPrincipalClass>NSApplication</NSPrincipalClass>
+    <NSHighResolutionCapable>true</NSHighResolutionCapable>
+</PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>CLIENT, CLIENT_CROSSPLATFORM</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <DefineConstants>CLIENT, CLIENT_CROSSPLATFORM</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.4" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.4" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.4" />
+    <PackageReference Include="Avalonia.Svg" Version="0.10.4" />
+    <PackageReference Include="Lidgren.Network" Version="1.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="SdlSharp" Version="0.9.3-alpha" />
+    <PackageReference Include="Dotnet.Bundle" Version="*" />
+   </ItemGroup>
+  <ItemGroup>
+	<AvaloniaResource Include="resources\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="DefaultTheme.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="DefaultTheme.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Concentus">
+      <HintPath>..\..\..\..\Documents\concentus_netstandard\Concentus\bin\Debug\netstandard2.0\Concentus.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Update="resources\occlusion_mic_icon_muted.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="SDL2.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="..\OcclusionShared\OcclusionShared.projitems" Label="Shared" />
+  
+  <PropertyGroup>
+    <UseAppHost>true</UseAppHost>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>CLIENT, CLIENT_CROSSPLATFORM</DefineConstants>
+  </PropertyGroup>
+
+  
+</Project>

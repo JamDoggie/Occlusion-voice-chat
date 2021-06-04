@@ -1,5 +1,8 @@
-﻿using Lidgren.Network;
+﻿using Avalonia.Controls;
+using Avalonia.Threading;
+using Lidgren.Network;
 using Occlusion.NetworkingShared;
+using Occlusion_Voice_Chat_CrossPlatform;
 using OcclusionShared.NetworkingShared.Packets;
 using System;
 using System.Collections.Generic;
@@ -8,8 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace Occlusion_voice_chat.Networking
 {
@@ -143,7 +144,7 @@ namespace Occlusion_voice_chat.Networking
 
 
                                 // Now we update the UI to reflect we were disconnected.
-                                Application.Current.Dispatcher.Invoke(() =>
+                                Dispatcher.UIThread.InvokeAsync(() =>
                                 {
                                     if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
                                     {
@@ -154,10 +155,6 @@ namespace Occlusion_voice_chat.Networking
                                     if (MainWindow.mainWindow != null)
                                     {
                                         MainWindow.mainWindow.ShowErrorMessage(errorMessage);
-                                    }
-                                    else
-                                    {
-                                        Debug.WriteLine(Application.Current.MainWindow.GetType());
                                     }
                                 });
 
@@ -187,19 +184,16 @@ namespace Occlusion_voice_chat.Networking
                         break;
 
                     case NetIncomingMessageType.ConnectionLatencyUpdated:
-                        int latency = (int)message.ReadFloat();
+                        int latency = (int)message.ReadFloat(); 
 
-                        Application.Current.Dispatcher.Invoke(() =>
+                        Dispatcher.UIThread.InvokeAsync(() =>
                         {
                             if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
                             {
-                                if (App.VoiceChatWindow.Resources["infoTooltip"] is ToolTip tip)
-                                {
-                                    if (tip.IsOpen)
-                                    {
-                                        tip.Content = $"Ping: {latency}ms";
-                                    }
-                                }
+                                var tip = App.VoiceChatWindow.FindControl<TextBlock>("InfoToolTipText");
+                                tip.Text = $"Ping: {latency}ms";
+                                
+                                
                             }
                         });
                         
@@ -221,8 +215,8 @@ namespace Occlusion_voice_chat.Networking
             ConnectionVerified = false;
 
             App.Users.Clear();
-            
-            Application.Current.Dispatcher.Invoke(() =>
+
+            Dispatcher.UIThread.InvokeAsync(() =>
             {
                 if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
                 {
@@ -233,7 +227,8 @@ namespace Occlusion_voice_chat.Networking
 
             if (showReasonMessageBox)
             {
-                Application.Current.Dispatcher.Invoke(() =>
+
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
                     if (MainWindow.mainWindow != null)
                     {

@@ -1,0 +1,14 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="100" d:DesignHeight="100"
+        x:Class="Occlusion_Voice_Chat_CrossPlatform.PlayerIcon">
+  <Button Margin="10" Background="Transparent" Cursor="Hand">
+    <Grid Width="100" Height="100" Name="PlayerIconButton">
+      <Image x:Name="PlayerIconImg" Width="100" Height="100" RenderOptions.BitmapInterpolationMode="Default"></Image>
+      <Grid VerticalAlignment="Bottom" Name="BackgroundGrid" Background="#282830" Opacity="0.5" HorizontalAlignment="Stretch" Height="0"></Grid>
+      <TextBlock x:Name="PlayerName" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#BDC3C7" Text="Player"></TextBlock>
+    </Grid>
+  </Button>
+</Window>

@@ -5,10 +5,14 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <RootNamespace>Occlusion_voice_chat</RootNamespace>
     <UseWPF>true</UseWPF>
-    <Platforms>AnyCPU;x64</Platforms>
+    <Platforms>AnyCPU;x64;x86</Platforms>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
@@ -25,7 +29,13 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DefineConstants>TRACE;CLIENT</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
+    <None Remove="resources\info_icon.png" />
     <None Remove="resources\occlusion_code_example.png" />
     <None Remove="resources\occlusion_mic_icon.png" />
     <None Remove="resources\occlusion_mic_icon_muted.png" />
@@ -35,8 +45,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Concentus" Version="1.1.7" />
-    <PackageReference Include="GlobalHotkeys" Version="1.0.0.6" />
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Lidgren.Network" Version="1.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="OpusDotNet" Version="1.0.3" />
@@ -44,6 +56,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="resources\info_icon.png" />
     <Resource Include="resources\occlusion_code_example.png" />
     <Resource Include="resources\occlusion_mic_icon.png" />
     <Resource Include="resources\occlusion_mic_icon_muted.png" />
