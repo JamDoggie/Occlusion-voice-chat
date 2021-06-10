@@ -39,6 +39,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         public static bool RecordingSwitching = false;
 
+        public static bool EnableVoiceIconMeterOnClients { get; set; } = true;
+
         private byte[] queuedMicrophoneAudio;
 
         private int currentMicQueueOffset = 0;
@@ -135,6 +137,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                             codec = new OpusCodec()
                         };
 
+                        if (voiceUser.id == client.verificationCode)
+                        {
+                            voiceUser.IsLocalClient = true;
+                        }
+                        
                         voiceUser.InitializeArrays();
 
                         voiceUser.codec.SetFrameSize(20);
@@ -258,7 +265,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         void speakerCallback(Span<byte> stream, nint userdata)
         {
-
             // Ensure this current chunk of audio data starts as silence.
             for (int i = 0; i < stream.Length; i++)
                 stream[i] = 0;
@@ -348,6 +354,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                         if (volume > _residualVoiceVolume)
                             _residualVoiceVolume = (short)volume;
 
+                        bool isTalking = true;
+                        
                         // If our total volume is under the voice activity threshold, just set it all to silence.
                         if (_residualVoiceVolume <= VoiceActivity)
                         {
@@ -355,8 +363,19 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                             {
                                 chunk.Data[i] = 0;
                             }
+
+                            isTalking = false;
                         }
 
+                        // Set voice activity variable that controls the animation on our player icon.
+                        foreach (VoiceUser user in Users)
+                        {
+                            if (user.IsLocalClient)
+                            {
+                                user.IsTalking = isTalking;
+                            }
+                        }
+                        
 
                         byte[] newBytes = chunk.GetDataAsBytes();
 
@@ -392,7 +411,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                                 // Now we send the compressed audio data to the server
                                 ClientVoiceDataPacket voiceDataPacket = new ClientVoiceDataPacket();
                                 voiceDataPacket.VoiceData = compressedAudio;
-                                Client.SendMessage(voiceDataPacket, NetDeliveryMethod.Unreliable);
+                                Client.SendMessage(voiceDataPacket, NetDeliveryMethod.UnreliableSequenced);
                             }
 
                             currentMicQueueOffset = 0;
@@ -473,13 +492,17 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             // Client thread
             // We call connect on a seperate thread so the client is essentially "started" on another thread,
             // giving it space to run it's message loop without halting the ui thread.
-            new Thread(() =>
+            var clientThread = new Thread(() =>
             {
                 if (verificationCode >= 0)
                 {
                     Client.Connect(ip, port, verificationCode);
                 }
-            }).Start();
+            });
+
+            clientThread.IsBackground = true;
+
+            clientThread.Start();
         }
     }
 }

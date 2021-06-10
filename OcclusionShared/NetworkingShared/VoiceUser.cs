@@ -1,18 +1,17 @@
-﻿using Lidgren.Network;
+﻿
 #if SERVER
 using OcclusionServerLib.structs;
 #endif
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Avalonia;
 #if CLIENT
-using SdlSharp.Sound;
+using Avalonia.Threading;
 using Occlusion_voice_chat.Opus;
-using System.Collections.Concurrent;
-using Occlusion_voice_chat;
 
 #endif
 
@@ -78,6 +77,43 @@ namespace OcclusionShared.NetworkingShared
         private int _queueOffset = 0;
         public int QueueOffset { get { return _queueOffset; } }
 
+        private bool _isTalking = false;
+        public bool IsTalking
+        {
+            get
+            {
+                return _isTalking;
+            }
+            
+            set
+            {
+                _isTalking = value;
+                
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsVisible && App.VoiceChatWindow.IsOpen)
+                    {
+                        if (value)
+                        {
+                            App.VoiceChatWindow.GetPlayerIconByUUID(MCUUID).VoiceActivityBorder.BorderThickness =
+                                new Thickness(5);
+                        }
+                        else
+                        {
+                            if (App.VoiceChatWindow.GetPlayerIconByUUID(MCUUID).VoiceActivityBorder.BorderThickness.Left != 0)
+                            {
+                                App.VoiceChatWindow.GetPlayerIconByUUID(MCUUID).VoiceActivityBorder.BorderThickness =
+                                    new Thickness(0);
+                            }
+                        }
+                    }
+                });
+                
+            }
+        }
+
+        public bool IsLocalClient { get; set; } = false;
+        
         private object _lockObj = new object();
 
 
@@ -117,7 +153,8 @@ namespace OcclusionShared.NetworkingShared
 
         private short[] micShorts;
         private short[] stereoMicShorts;
-        private short[] destinationShorts;
+        private short[] destinationShorts = null;
+        private byte[] destBytes = null;
 
         public void MixMicIntoSpanAndCutQueue(ref Span<byte> destination)
         {
@@ -132,27 +169,47 @@ namespace OcclusionShared.NetworkingShared
                 {
                     int amountCut = 0;
 
+                    if (!IsLocalClient)
+                        IsTalking = true;
 
-                    micShorts = AudioMath.BytesToShorts(MicQueue);
+                    for (int c = 0; c < micShorts.Length; c++)
+                    {
+                        micShorts[c] = (short)(((int)MicQueue[(c * 2)]) << 0);
+                        micShorts[c] += (short)(((int)MicQueue[(c * 2) + 1]) << 8);
+                    }
 
-                    // Convert mic from mono input(one channel) to stereo output(two channels)
 
+                    // Convert mic from mono input (one channel) to stereo output (two channels)
                     float rightOffset = 1f + (Pan);
                     float leftOffset = 1f - (Pan);
 
                     int k = 0;
                     for (int i = 0; i < stereoMicShorts.Length / 2; i++)
                     {
-                        AudioChunk leftChunk = new AudioChunk(micShorts[i], App.samplingRate).Amplify(DistanceVolume * leftOffset);
-                        AudioChunk rightChunk = new AudioChunk(micShorts[i], App.samplingRate).Amplify(DistanceVolume * rightOffset);
-
-                        stereoMicShorts[k] = leftChunk.Data[0];
-                        stereoMicShorts[k + 1] = rightChunk.Data[0];
+                        stereoMicShorts[k] = AudioMath.AmplifyShort(micShorts[i], DistanceVolume * leftOffset);
+                        stereoMicShorts[k + 1] = AudioMath.AmplifyShort(micShorts[i], DistanceVolume * rightOffset);
 
                         k += 2;
                     }
 
-                    destinationShorts = AudioMath.BytesToShorts(destination.ToArray());
+                    // First time initializations
+                    if (destinationShorts == null)
+                    {
+                        
+                        destinationShorts = new short[destination.Length / sizeof(short)]; // sizeof(short) = 2
+                    }
+
+                    if (destBytes == null)
+                    {
+                        destBytes = new byte[destination.Length];
+                    }
+
+
+                    for (int c = 0; c < destinationShorts.Length; c++)
+                    {
+                        destinationShorts[c] = (short)(((int)destination[(c * 2)]) << 0);
+                        destinationShorts[c] += (short)(((int)destination[(c * 2) + 1]) << 8);
+                    }
 
                     for (int i = 0; i < destinationShorts.Length; i++)
                     {
@@ -183,11 +240,30 @@ namespace OcclusionShared.NetworkingShared
                         }
                     }
 
-                    var destBytes = AudioMath.ShortsToBytes(destinationShorts);
+                    for (int c = 0; c < destinationShorts.Length; c++)
+                    {
+                        destBytes[c * 2] = (byte)(destinationShorts[c] & 0xFF);
+                        destBytes[c * 2 + 1] = (byte)((destinationShorts[c] >> 8) & 0xFF);
+                    }
 
-                    for(int i = 0; i < destBytes.Length; i++)
+                    for (int i = 0; i < destBytes.Length; i++)
                     {
                         destination[i] = destBytes[i];
+                    }
+
+                    // Voice activity
+                    short[] queuedShorts = new short[destinationShorts.Length];
+
+                    for(int i = 0; i < queuedShorts.Length; i++)
+                    {
+                        queuedShorts[i] = stereoMicShorts[i];
+                    }
+
+                    AudioChunk stereoChunk = new AudioChunk(queuedShorts, App.samplingRate);
+                    if (stereoChunk.Volume() < 10)
+                    {
+                        if (!IsLocalClient)
+                            IsTalking = false;
                     }
 
 
@@ -218,7 +294,11 @@ namespace OcclusionShared.NetworkingShared
                     if (_queueOffset < 0)
                         _queueOffset = 0;
                 }
-                
+                else
+                {
+                    if (!IsLocalClient)
+                        IsTalking = false;
+                }
             }
         }
 #endif

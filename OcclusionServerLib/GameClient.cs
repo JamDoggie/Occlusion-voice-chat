@@ -31,7 +31,6 @@ namespace OcclusionServerLib
         {
             if (packet is MCServerVerificationPacket)
             {
-                Console.WriteLine("got verification packet");
 
                 var serverVerificationPacket = packet as MCServerVerificationPacket;
 
@@ -86,8 +85,6 @@ namespace OcclusionServerLib
                         break;
                     }
                 }
-
-                //Console.WriteLine($"{playerLocationPacket.PosX} {playerLocationPacket.PosY} {playerLocationPacket.PosZ} {playerLocationPacket.Pitch} {playerLocationPacket.Yaw} {playerLocationPacket.World}");
             }
 
             if (packet is MCServerPlayerLeave playerLeave)
@@ -104,18 +101,8 @@ namespace OcclusionServerLib
                     server.SendMessage(new ServerDisconnectPacket() { DisconnectMessage = "disconnected from the minecraft server." }, user.Connection, NetDeliveryMethod.ReliableOrdered);
 
                     server.Users.Remove(user);
-
-                    Console.WriteLine("got leave packet");
                 }
-                else
-                {
-                    Console.WriteLine($"mismatched id {playerLeave.ID}");
-                }
-
-                
             }
-
-            //Console.WriteLine("PACKET GOT");
         }
         #endregion
 
@@ -218,13 +205,13 @@ namespace OcclusionServerLib
             }
             catch(PacketIDNotFoundException e)
             {
-                Console.WriteLine(e.Message);
+                Server.ServerLogger.Log(e.Message);
             }
         }
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)
         {
-            Console.WriteLine("Exception: " + exception);
+            Server.ServerLogger.Log("Exception: " + exception);
             context.CloseAsync();
         }
     }

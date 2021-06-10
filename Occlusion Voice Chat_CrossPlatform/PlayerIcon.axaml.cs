@@ -6,6 +6,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media.Imaging;
 using Occlusion_voice_chat.Mojang;
 using System;
+using Avalonia.Media;
 
 namespace Occlusion_Voice_Chat_CrossPlatform
 {
@@ -16,6 +17,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public Image PlayerIconImg;
         public Grid BackgroundGrid;
         public TextBlock PlayerName;
+        public Button IconButton;
+        public Border VoiceActivityBorder;
         #endregion
 
         public int PlayerID { get; set; } = -1;
@@ -25,9 +28,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public PlayerIcon()
         {
             InitializeComponent();
-#if DEBUG
-            //this.AttachDevTools();
-#endif
         }
 
         private void InitializeComponent()
@@ -38,26 +38,52 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             PlayerIconImg = this.FindControl<Image>("PlayerIconImg");
             BackgroundGrid = this.FindControl<Grid>("BackgroundGrid");
             PlayerName = this.FindControl<TextBlock>("PlayerName");
-
+            IconButton = this.FindControl<Button>("IconButton");
+            VoiceActivityBorder = this.FindControl<Border>("VoiceActivityBorder");
+            
             PlayerIconButton.PointerPressed += Button_Click;
+            PlayerIconButton.PointerEnter += PlayerIconButtonOnPointerEnter;
+            PlayerIconButton.PointerLeave += PlayerIconButtonOnPointerLeave;
         }
 
-        // NOTE: Come back to this, as there is no DownloadCompleted event in Avalonia.
+        private void PlayerIconButtonOnPointerLeave(object? sender, PointerEventArgs e)
+        {
+            PlayerName.Opacity = 0;
+
+            if (PlayerName.RenderTransform is TranslateTransform transform)
+            {
+                transform.Y = 0;
+            }
+
+            BackgroundGrid.Height = 0;
+        }
+
+        private void PlayerIconButtonOnPointerEnter(object? sender, PointerEventArgs e)
+        {
+            BackgroundGrid.Height = 20;
+            
+            if (PlayerName.RenderTransform is TranslateTransform transform)
+            {
+                transform.Y = -3;
+            }
+            
+            PlayerName.Opacity = 1;
+        }
+        
         public void InitImages()
         {
             if (PlayerIconImg.Source is Bitmap)
             {
-                Image_DownloadCompleted(null, null);
+                Image_DownloadCompleted();
             }
         }
 
-        private void Image_DownloadCompleted(object sender, EventArgs e)
+        private void Image_DownloadCompleted()
         {
             CroppedBitmap cropped = new CroppedBitmap((Bitmap)PlayerIconImg.Source, new PixelRect(8, 8, 8, 8));
             PlayerIconImg.Source = cropped;
         }
         
-        // NOTE: come back to this
         private void Button_Click(object sender, PointerPressedEventArgs e)
         {
             App.VoiceChatWindow.UserControlPanel.UserNameText.Text = PlayerCache.GetCachedPlayerUsername(UUID);

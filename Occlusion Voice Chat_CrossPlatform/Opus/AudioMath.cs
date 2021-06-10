@@ -221,5 +221,16 @@ namespace Occlusion_voice_chat.Opus
             double x = (band - start) / (width * 2);
             return SmoothStep(x);
         }
+
+        /// <summary>
+        /// Helper function that returns the given short multiplied by the amount and then Math.Clamped between short.MinValue and short.MaxValue
+        /// </summary>
+        /// <param name="sh"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
+        public static short AmplifyShort(short sh, float amount)
+        {
+            return (short)Math.Clamp(sh * amount, short.MinValue, short.MaxValue);
+        }
     }
 }

@@ -35,9 +35,6 @@
         <Button.Transitions>
           <Transitions>
             <DoubleTransition Property="Opacity" Duration="0:0:0.3">
-              <DoubleTransition.Easing>
-                <CubicEaseOut></CubicEaseOut>
-              </DoubleTransition.Easing>
             </DoubleTransition>
           </Transitions>
         </Button.Transitions>
@@ -52,10 +49,7 @@
       <Button Classes="opacityfadebutton" Cursor="Hand" Name="RemoveServerButton" Background="Transparent" Width="40" Height="40">
         <Button.Transitions>
           <Transitions>
-            <DoubleTransition Property="Opacity" Duration="0:0:0.2">
-              <DoubleTransition.Easing>
-                <CubicEaseOut></CubicEaseOut>
-              </DoubleTransition.Easing>
+            <DoubleTransition Property="Opacity" Duration="0:0:0.3">
             </DoubleTransition>
           </Transitions>
         </Button.Transitions>
@@ -99,8 +93,37 @@
         <Button x:Name="ConnectButton" Cursor="Hand" Width="90" Height="30" HorizontalAlignment="Center" Background="#454552" BorderBrush="#31313b" Foreground="#BDC3C7">
           Connect
         </Button>
+        
+        
       </StackPanel>
-     
+      <StackPanel HorizontalAlignment="Center" Margin="0 15 0 0" Orientation="Horizontal">
+        <TextBlock VerticalAlignment="Center" Name="ConnectionStatusText"></TextBlock>
+        <Image Classes="LoadingImage" IsVisible="False" Name="ConnectingLoadingBar" VerticalAlignment="Center" Margin="10 0 0 0">
+          <Image.Source>
+            <svg:SvgImage Source="/resources/occlusion_loading.svg" />
+          </Image.Source>
+          
+          <Image.RenderTransform>
+            <RotateTransform Angle="0"></RotateTransform>
+          </Image.RenderTransform>
+          
+          <Image.Styles>
+            <Style Selector="Image.LoadingImage">
+              <Style.Animations>
+                <Animation Duration="0:0:0:1" IterationCount="INFINITE">
+                  <KeyFrame Cue="0%">
+                    <Setter Property="RotateTransform.Angle" Value="0"/>
+                  </KeyFrame>
+                  <KeyFrame Cue="100%">
+                    <Setter Property="RotateTransform.Angle" Value="360"/>
+                  </KeyFrame>
+                  <Animation.Easing><QuadraticEaseOut></QuadraticEaseOut></Animation.Easing>
+                </Animation>
+              </Style.Animations>
+            </Style>
+          </Image.Styles>
+        </Image>
+      </StackPanel>
     </StackPanel>
 
     <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">

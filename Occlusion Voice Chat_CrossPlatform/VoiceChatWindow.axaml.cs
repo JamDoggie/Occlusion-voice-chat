@@ -9,6 +9,9 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using MessageBox.Avalonia;
+using MessageBox.Avalonia.DTO;
+using MessageBox.Avalonia.Enums;
 using Occlusion_voice_chat.Mojang;
 using Occlusion_Voice_Chat_CrossPlatform.avalonia.view_models;
 using SdlSharp.Sound;
@@ -61,8 +64,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         public bool AudioSettingsOpen { get; set; } = false;
 
-        //public List<string> InputDevices { get; set; } = new List<string>();
-
         public VoiceChatWindowModel ViewModel { get; set; } = new VoiceChatWindowModel();
 
         private List<PlayerIcon> _playerIcons = new List<PlayerIcon>();
@@ -96,7 +97,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             SettingsSpeakerMeter = this.FindControl<ProgressBar>("SettingsSpeakerMeter");
 
 
-            Closing += Window_Closed;
+            Closed += Window_Closed;
+            Closing += OnClosing;
             PointerPressed += Window_MouseDown;
 
 
@@ -142,6 +144,33 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             this.FindControl<Button>("SettingsOkButton").Click += Settings_Ok_Click;
 
             OpenAudioSettings();
+        }
+
+        public bool ForceClose { get; set; } = false;
+
+        public async void OnClosing(object sender, CancelEventArgs e)
+        {
+            if (!ForceClose)
+            {
+                var msBoxStandardWindow = MessageBoxManager.GetMessageBoxStandardWindow(
+                    new MessageBoxStandardParams
+                    {
+                        ButtonDefinitions = ButtonEnum.OkCancel,
+                        ContentTitle = "Warning",
+                        ContentMessage = "Closing this will disconnect you from the server.",
+                        Icon = MessageBox.Avalonia.Enums.Icon.Warning,
+                        Style = Style.Windows,
+
+                    });
+
+                e.Cancel = true;
+                var result = await msBoxStandardWindow.ShowDialog(this);
+
+                if (result == ButtonResult.Ok)
+                {
+                    App.Client.DisconnectClient("", false);
+                }  
+            }
         }
 
         private void AudioSettingsGroup_PropertyChanged(object sender, AvaloniaPropertyChangedEventArgs e)
@@ -346,7 +375,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 App.NewOutputDevice = App.Options.Obj.OutputDevice;
         }
 
-        public void Window_Closed(object sender, CancelEventArgs e)
+        public void Window_Closed(object sender, EventArgs e)
         {
             IsOpen = false;
             MainWindow.mainWindow.ConnectButton.IsEnabled = true;
@@ -400,6 +429,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public void Menu_Disconnect_Click(object sender, RoutedEventArgs e)
         {
             App.Client.DisconnectClient("", false);
+            
         }
 
         public void Deafen_Click(object sender, RoutedEventArgs e)

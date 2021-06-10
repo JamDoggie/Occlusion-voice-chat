@@ -7,6 +7,9 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using Lidgren.Network;
+using MessageBox.Avalonia;
+using MessageBox.Avalonia.DTO;
+using MessageBox.Avalonia.Enums;
 using Occlusion.NetworkingShared;
 using Occlusion_voice_chat.Networking;
 using Occlusion_voice_chat.util.json_structs;
@@ -31,6 +34,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public WrapPanel ServerIconsPanel;
         public Button AddServerButton;
         public Button RemoveServerButton;
+        public Image ConnectingLoadingBar;
+        public TextBlock ConnectionStatusText;
         #endregion
 
         private ServerSelection? _currentServerSelection = null;
@@ -109,6 +114,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             ServerIconsPanel = this.FindControl<WrapPanel>("ServerIconsPanel");
             AddServerButton = this.FindControl<Button>("AddServerButton");
             RemoveServerButton = this.FindControl<Button>("RemoveServerButton");
+            ConnectingLoadingBar = this.FindControl<Image>("ConnectingLoadingBar");
+            ConnectionStatusText = this.FindControl<TextBlock>("ConnectionStatusText");
             
             AddServerButton.Click += AddServerButtonOnClick;
             RemoveServerButton.Click += RemoveServerButtonOnClick;
@@ -116,7 +123,10 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             NameTextbox.PropertyChanged += NameTextboxOnPropertyChanged;
             IpTextbox.PropertyChanged += IpTextboxOnPropertyChanged;
             PortTextbox.PropertyChanged += PortTextboxOnPropertyChanged;
-            
+
+            Closing += MainWindow_Closing;
+            Closed += MainWindow_Closed;
+
                 App.Client.PacketRecievedEvent += Client_PacketRecievedEvent;
 
             ConnectButton.Click += Connect_Click;
@@ -130,6 +140,36 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             }
 
             SettingsActive = false;
+        }
+
+        public async void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (App.Client.IsConnected())
+            {
+                e.Cancel = true;
+                var msBoxStandardWindow = MessageBoxManager.GetMessageBoxStandardWindow(
+                    new MessageBoxStandardParams
+                    {
+                        ButtonDefinitions = ButtonEnum.YesNoCancel,
+                        ContentTitle = "Warning",
+                        ContentMessage = "Really close the program and disconnect from the server?",
+                        Icon = MessageBox.Avalonia.Enums.Icon.Warning,
+                        Style = Style.Windows,
+
+                    });
+
+                var result = await msBoxStandardWindow.ShowDialog(this);
+                if (result == ButtonResult.Yes)
+                {
+                    App.Client.DisconnectClient("", false);
+                    Close();
+                }
+            }
+        }
+
+        private void MainWindow_Closed(object? sender, EventArgs e)
+        {
+            
         }
 
         private void PortTextboxOnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)

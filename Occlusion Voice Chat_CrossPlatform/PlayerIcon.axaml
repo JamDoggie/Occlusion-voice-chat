@@ -4,11 +4,62 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="100" d:DesignHeight="100"
         x:Class="Occlusion_Voice_Chat_CrossPlatform.PlayerIcon">
-  <Button Margin="10" Background="Transparent" Cursor="Hand">
-    <Grid Width="100" Height="100" Name="PlayerIconButton">
+  <Button Name="IconButton" Margin="10" Background="Transparent" Cursor="Hand">
+    <Grid Classes="playerIconGrid" Width="100" Height="100" Name="PlayerIconButton">
       <Image x:Name="PlayerIconImg" Width="100" Height="100" RenderOptions.BitmapInterpolationMode="Default"></Image>
-      <Grid VerticalAlignment="Bottom" Name="BackgroundGrid" Background="#282830" Opacity="0.5" HorizontalAlignment="Stretch" Height="0"></Grid>
-      <TextBlock x:Name="PlayerName" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#BDC3C7" Text="Player"></TextBlock>
+      
+      <Border Name="VoiceActivityBorder" BorderBrush="#32a852" BorderThickness="5" Width="100" Height="100">
+        <Border.Transitions>
+          <Transitions>
+            <ThicknessTransition Property="BorderThickness" Duration="0:0:0.1">
+              <ThicknessTransition.Easing>
+                <CubicEaseIn></CubicEaseIn>
+              </ThicknessTransition.Easing>
+            </ThicknessTransition>
+          </Transitions>
+        </Border.Transitions>
+      </Border>
+      
+      <Grid Classes="playerIconBg" VerticalAlignment="Bottom"  Name="BackgroundGrid" Background="#282830" HorizontalAlignment="Stretch" Opacity="0.5">
+        <Grid.Transitions>
+          <Transitions>
+            <DoubleTransition Property="Height" Duration="0:0:0.2">
+              <DoubleTransition.Easing>
+                <QuadraticEaseOut></QuadraticEaseOut>
+              </DoubleTransition.Easing>
+            </DoubleTransition>
+          </Transitions>
+        </Grid.Transitions>
+      </Grid>
+      
+      <TextBlock x:Name="PlayerName" Opacity="0" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="#BDC3C7" Text="Player">
+        <TextBlock.RenderTransform>
+          <TranslateTransform Y="0">
+            
+            <TranslateTransform.Transitions>
+              <Transitions>
+                <DoubleTransition Property="Y" Duration="0:0:0.2">
+                  <DoubleTransition.Easing>
+                    <QuadraticEaseOut></QuadraticEaseOut>
+                  </DoubleTransition.Easing>
+                </DoubleTransition>
+              </Transitions>
+            </TranslateTransform.Transitions>
+            
+          </TranslateTransform>
+        </TextBlock.RenderTransform>
+        
+        <TextBlock.Transitions>
+          <Transitions>
+            <DoubleTransition Property="Opacity" Duration="0:0:0.2">
+              <DoubleTransition.Easing>
+                <QuadraticEaseOut></QuadraticEaseOut>
+              </DoubleTransition.Easing>
+            </DoubleTransition>
+          </Transitions>
+        </TextBlock.Transitions>
+      </TextBlock>
+      
     </Grid>
   </Button>
 </Window>

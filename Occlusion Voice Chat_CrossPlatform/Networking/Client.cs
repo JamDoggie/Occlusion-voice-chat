@@ -24,7 +24,7 @@ namespace Occlusion_voice_chat.Networking
 
         public bool ConnectionVerified { get; set; } = false;
 
-        private int verificationCode = -1;
+        public int verificationCode { get; set; } = -1;
 
         #region Events
         public delegate void PacketRecieved(NetIncomingMessage message, IPacket packet, Client client);
@@ -44,13 +44,11 @@ namespace Occlusion_voice_chat.Networking
             if (packet is ServerValidationRejected)
             {
                 DisconnectClient("Code validation rejected", false);
-                Console.WriteLine("validation rejected!!!!!");
             }
 
             if (packet is ServerDisconnectPacket disconnectPacket)
             {
-                DisconnectClient(disconnectPacket.DisconnectMessage, false);
-                Console.WriteLine("Disconnected!!!!!!");
+                DisconnectClient(disconnectPacket.DisconnectMessage, true);
             }
         }
         #endregion
@@ -119,14 +117,23 @@ namespace Occlusion_voice_chat.Networking
                     case NetIncomingMessageType.StatusChanged:
                         // Status messages
                         NetConnectionStatus statusType = (NetConnectionStatus)message.ReadByte();
-                        Console.WriteLine(statusType.ToString());
+                        
                         switch (statusType)
                         {
-                            //When connected to the server
+                            // When connected to the server
                             case NetConnectionStatus.Connected:
+                                Dispatcher.UIThread.InvokeAsync(() =>
+                                {
+                                    if (MainWindow.mainWindow != null)
+                                    {
+                                        MainWindow.mainWindow.ConnectionStatusText.Text = string.Empty;
+                                        MainWindow.mainWindow.ConnectingLoadingBar.IsVisible = false;
+                                    }
+                                });
+
                                 break;
 
-                            //When disconnected from the server
+                            // When disconnected from the server
                             case NetConnectionStatus.Disconnected:
                                 string reason = message.ReadString();
                                 string errorMessage = "";
@@ -137,7 +144,6 @@ namespace Occlusion_voice_chat.Networking
                                 else
                                 {
                                     errorMessage = $"Disconnected, Reason: {reason}";
-                                    
                                 }
 
                                 Console.WriteLine(errorMessage);
@@ -148,6 +154,7 @@ namespace Occlusion_voice_chat.Networking
                                 {
                                     if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
                                     {
+                                        App.VoiceChatWindow.ForceClose = true;
                                         App.VoiceChatWindow.Close();
                                         App.VoiceChatWindow = new VoiceChatWindow();
                                     }
@@ -155,13 +162,28 @@ namespace Occlusion_voice_chat.Networking
                                     if (MainWindow.mainWindow != null)
                                     {
                                         MainWindow.mainWindow.ShowErrorMessage(errorMessage);
+                                        MainWindow.mainWindow.ConnectionStatusText.Text = "Server connection lost or failed.";
+                                        MainWindow.mainWindow.ConnectingLoadingBar.IsVisible = false;
                                     }
                                 });
 
                                 Running = false;
                                 break;
+                            
+                            case NetConnectionStatus.InitiatedConnect:
+                                Dispatcher.UIThread.InvokeAsync(() =>
+                                {
+                                    if (MainWindow.mainWindow != null)
+                                    {
+                                        MainWindow.mainWindow.ConnectingLoadingBar.IsVisible = true;
+                                        MainWindow.mainWindow.ConnectionStatusText.Text = "Connecting...";
+                                    }
+                                });
+                                break;
+                            
+                            
                         }
-                        Console.WriteLine("status changed");
+                        
                         break;
 
                     case NetIncomingMessageType.DebugMessage:
@@ -220,6 +242,7 @@ namespace Occlusion_voice_chat.Networking
             {
                 if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
                 {
+                    App.VoiceChatWindow.ForceClose = true; // This bypasses the "are you sure you want to disconnect" message box.
                     App.VoiceChatWindow.Close();
                     App.VoiceChatWindow = new VoiceChatWindow();
                 }

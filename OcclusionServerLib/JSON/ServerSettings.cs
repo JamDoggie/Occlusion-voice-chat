@@ -11,5 +11,7 @@ namespace OcclusionServerLib.JSON
         public string GamePort { get; set; } = "";
 
         public float HearingDistance { get; set; } = 78;
+
+        public bool EnableVoiceIconMeterOnClients { get; set; } = true;
     }
 }

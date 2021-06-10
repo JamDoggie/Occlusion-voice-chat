@@ -181,8 +181,9 @@ namespace OcclusionServerLib
                                 id = userIdIter
                             });
 
-                            // Send packet to client that tells it we've properly connected
+                            // Send packet to client that tells it we've properly connected as well as tells the client about the server's settings.
                             ServerConnectedPacket serverConnectedPacket = new ServerConnectedPacket();
+                            serverConnectedPacket.EnableVoiceIconMeterOnClients = SettingsFile.Obj.EnableVoiceIconMeterOnClients;
                             SendMessage(serverConnectedPacket, message.SenderConnection, NetDeliveryMethod.ReliableOrdered);
 
                             // Send full list of users to the user that just connected
