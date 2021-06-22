@@ -3,20 +3,24 @@
     <RuntimeIdentifiers>osx-x64</RuntimeIdentifiers>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <!--<PublishSingleFile>true</PublishSingleFile>-->
     <Nullable>enable</Nullable>
     <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <PropertyGroup>
     <CFBundleName>Occlusion Voice Chat_CrossPlatform</CFBundleName> <!-- Also defines .app file name -->
     <CFBundleDisplayName>Occlusion Voice Chat</CFBundleDisplayName>
-    <CFBundleIdentifier>com.occlusion.macos</CFBundleIdentifier>
-    <CFBundleVersion>1.0.0</CFBundleVersion>
+    <CFBundleIdentifier>com.occlusion</CFBundleIdentifier>
+    <CFBundleVersion>1</CFBundleVersion>
     <CFBundlePackageType>APPL</CFBundlePackageType>
-    <CFBundleExecutable>Occlusion Voice Chat</CFBundleExecutable>
-	<CFBundleShortVersionString>1.0.0</CFBundleShortVersionString>
+    <CFBundleIconFile>Occlusion Voice Chat_CrossPlatform.icns</CFBundleIconFile>
+    <CFBundleExecutable>Occlusion Voice Chat_CrossPlatform</CFBundleExecutable>
+	  <CFBundleShortVersionString>1.0.0</CFBundleShortVersionString>
     <NSPrincipalClass>NSApplication</NSPrincipalClass>
     <NSHighResolutionCapable>true</NSHighResolutionCapable>
-</PropertyGroup>
+  </PropertyGroup>
+  
+    
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>CLIENT, CLIENT_CROSSPLATFORM</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -56,8 +60,11 @@
     </AvaloniaResource>
   </ItemGroup>
   <ItemGroup>
-    <None Update="SDL2.dll">
+    <None Update="Occlusion Voice Chat_CrossPlatform.icns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SDL2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="..\OcclusionShared\OcclusionShared.projitems" Label="Shared" />
@@ -65,6 +72,7 @@
   <PropertyGroup>
     <UseAppHost>true</UseAppHost>
     <ApplicationIcon>Occlusion_icon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -7,7 +7,7 @@
         xmlns:occ="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia"
   mc:Ignorable="d"
   x:Class="Occlusion_Voice_Chat_CrossPlatform.VoiceChatWindow"
-  Title="VoiceChatWindow" Height="720" Width="1280" Background="#32323b"
+  Title="Occlusion Voice Chat" Height="720" Width="1280" Background="#32323b"
         Icon="resources/Occlusion_icon.ico">
   <Window.Resources>
     

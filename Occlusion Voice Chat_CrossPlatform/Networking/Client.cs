@@ -33,10 +33,12 @@ namespace Occlusion_voice_chat.Networking
 
         private void InternalPacketRecieved(NetIncomingMessage message, IPacket packet, Client client)
         {
-            if (packet is ServerConnectedPacket)
+            if (packet is ServerConnectedPacket connectedPacket)
             {
                 var clientVerification = new ClientVerificationPacket();
                 clientVerification.VerificationCode = verificationCode;
+
+                App.EnableVoiceIconMeterOnClients = connectedPacket.EnableVoiceIconMeterOnClients;
 
                 SendMessage(clientVerification, NetDeliveryMethod.ReliableOrdered);
             }

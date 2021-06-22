@@ -68,6 +68,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         private List<PlayerIcon> _playerIcons = new List<PlayerIcon>();
 
+
         public VoiceChatWindow()
         {
             InitializeComponent();
@@ -181,6 +182,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 if ((double)e.OldValue != 0 && (double)e.NewValue == 0)
                 {
                     AudioSettingsGroup.IsVisible = false;
+                    AudioSettingsHeader.Text = "Audio Settings";
                 }
 
                 if ((double)e.OldValue == 0 && (double)e.NewValue != 0)
@@ -225,12 +227,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             AudioSettingsGroup.Opacity = 1;
 
             
-                // Populate combo boxes
-                // Input Device
-                RetrieveInputDevices();
+            // Populate combo boxes
+            // Input Device
+            RetrieveInputDevices();
 
-                // Output Device
-                RetrieveOutputDevices();
+            // Output Device
+            RetrieveOutputDevices();
             
         }
 
@@ -355,8 +357,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         /*private void SettingsCloseAnim_Completed(object sender, EventArgs e)
         {
-            AudioSettingsGroup.IsVisible = false;
-            AudioSettingsHeader.Text = "Audio Settings";
+            
         }*/
 
         public void InputDeviceDropdown_DropDownClosed(object sender, SelectionChangedEventArgs e)

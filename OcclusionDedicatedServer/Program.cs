@@ -45,6 +45,15 @@ namespace OcclusionDedicatedServer
                 .Executes(c =>
                 {
                     Server.ServerLogger.Log("Stopping server...");
+
+                    foreach(VoiceUser user in Server.Users)
+                    {
+                        ServerDisconnectPacket disconnectPacket = new ServerDisconnectPacket();
+                        disconnectPacket.DisconnectMessage = "Server stopped.";
+
+                        Server.SendMessage(disconnectPacket, user.Connection, NetDeliveryMethod.ReliableOrdered);
+                    }
+
                     IsRunning = false;
 
                     return 1;

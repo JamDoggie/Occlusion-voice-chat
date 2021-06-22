@@ -39,7 +39,26 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         public static bool RecordingSwitching = false;
 
-        public static bool EnableVoiceIconMeterOnClients { get; set; } = true;
+        private static bool _enableVoiceIconMeterOnClients = true;
+        public static bool EnableVoiceIconMeterOnClients
+        {
+            get => _enableVoiceIconMeterOnClients;
+            set
+            {
+                _enableVoiceIconMeterOnClients = value;
+
+                if (!_enableVoiceIconMeterOnClients)
+                {
+                    foreach(VoiceUser user in Users)
+                    {
+                        if(!user.IsLocalClient)
+                        {
+                            user.IsTalking = false;
+                        }
+                    }
+                }
+            }
+        }
 
         private byte[] queuedMicrophoneAudio;
 
@@ -94,11 +113,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         {
             AvaloniaXamlLoader.Load(this);
             
-            Debug.WriteLine(Assembly.GetExecutingAssembly().Location);
+            Debug.WriteLine(Assembly.GetEntryAssembly().Location);
 
-#if WINDOWS
-            ConsoleManager.ShowConsoleWindow();
-#endif
+
+            //ConsoleManager.ShowConsoleWindow();
+
             Client.PacketRecievedEvent += Client_PacketRecievedEvent;
             Console.WriteLine($"The entry point thread is Thread #{Thread.CurrentThread.ManagedThreadId} ({Thread.CurrentThread.ManagedThreadId.ToString("X")})");
             InitSound();
@@ -182,7 +201,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 }
             }
 
-            if (packet is ServerConnectedPacket)
+            if (packet is ServerConnectedPacket connectedPacket)
             {
                 // We've successfully verified and connected ourselves.
                 Client.ConnectionVerified = true;

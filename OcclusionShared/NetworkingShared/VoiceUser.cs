@@ -8,7 +8,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Avalonia;
+
+using Lidgren.Network;
 #if CLIENT
 using Avalonia.Threading;
 using Occlusion_voice_chat.Opus;
@@ -16,6 +17,7 @@ using Occlusion_voice_chat.Opus;
 #endif
 
 #if CLIENT_CROSSPLATFORM
+using Avalonia;
 using Occlusion_Voice_Chat_CrossPlatform;
 #endif
 
@@ -70,9 +72,67 @@ namespace OcclusionShared.NetworkingShared
 
         public float ClientVolume { get; set; } = 1.0f;
 
-        public float Pan { get; set; } = 1f;
+        private DateTime _lastPanTime = DateTime.Now;
+        private DateTime _lastDistTime = DateTime.Now;
+        private float audioInterpolationStep = 6.5f;
 
-        public float DistanceVolume { get; set; } = 1f;
+        private float _panTarget = 1f;
+        private float _currentPan = 1f;
+        public float Pan
+        {
+            get => _currentPan;
+            set
+            {
+                _panTarget = value;
+
+                double deltaTime = (DateTime.Now - _lastPanTime).TotalSeconds;
+
+                if (_panTarget < _currentPan)
+                {
+                    _currentPan -= audioInterpolationStep * (float)deltaTime;
+
+                    _currentPan = Math.Max(_currentPan, _panTarget);
+                }
+
+                if (_panTarget > _currentPan)
+                {
+                    _currentPan += audioInterpolationStep * (float)deltaTime;
+
+                    _currentPan = Math.Min(_currentPan, _panTarget);
+                }
+
+                _lastPanTime = DateTime.Now;
+            }
+        }
+
+        private float _distTarget = 1f;
+        private float _currentdist = 1f;
+        public float DistanceVolume
+        {
+            get => _currentdist;
+            set
+            {
+                _distTarget = value;
+
+                double deltaTime = (DateTime.Now - _lastDistTime).TotalSeconds;
+
+                if (_distTarget < _currentdist)
+                {
+                    _currentdist -= audioInterpolationStep * (float)deltaTime;
+
+                    _currentdist = Math.Max(_currentdist, _distTarget);
+                }
+
+                if (_distTarget > _currentdist)
+                {
+                    _currentdist += audioInterpolationStep * (float)deltaTime;
+
+                    _currentdist = Math.Min(_currentdist, _distTarget);
+                }
+
+                _lastDistTime = DateTime.Now;
+            }
+        }
 
         private int _queueOffset = 0;
         public int QueueOffset { get { return _queueOffset; } }
@@ -95,8 +155,9 @@ namespace OcclusionShared.NetworkingShared
                     {
                         if (value)
                         {
+                            
                             App.VoiceChatWindow.GetPlayerIconByUUID(MCUUID).VoiceActivityBorder.BorderThickness =
-                                new Thickness(5);
+                                                                new Thickness(5);
                         }
                         else
                         {
@@ -169,8 +230,8 @@ namespace OcclusionShared.NetworkingShared
                 {
                     int amountCut = 0;
 
-                    if (!IsLocalClient)
-                        IsTalking = true;
+                    if (!IsLocalClient && App.EnableVoiceIconMeterOnClients)
+                            IsTalking = true;
 
                     for (int c = 0; c < micShorts.Length; c++)
                     {
@@ -262,7 +323,7 @@ namespace OcclusionShared.NetworkingShared
                     AudioChunk stereoChunk = new AudioChunk(queuedShorts, App.samplingRate);
                     if (stereoChunk.Volume() < 10)
                     {
-                        if (!IsLocalClient)
+                        if (!IsLocalClient && App.EnableVoiceIconMeterOnClients)
                             IsTalking = false;
                     }
 
@@ -296,7 +357,7 @@ namespace OcclusionShared.NetworkingShared
                 }
                 else
                 {
-                    if (!IsLocalClient)
+                    if (!IsLocalClient && App.EnableVoiceIconMeterOnClients)
                         IsTalking = false;
                 }
             }
