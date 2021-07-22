@@ -3,7 +3,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using Lidgren.Network;
+using LiteNetLib;
+
 using Occlusion.NetworkingShared;
 using Occlusion.NetworkingShared.Packets;
 using Occlusion_voice_chat;
@@ -24,6 +25,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Runtime.InteropServices;
+using System.IO;
+
+#if WINDOWS
+using GlobalLowLevelHooks;
+using static GlobalLowLevelHooks.KeyboardHook;
+#endif
 
 namespace Occlusion_Voice_Chat_CrossPlatform
 {
@@ -109,24 +117,82 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             }
         }
 
+        #region WindowsOnly
+#if WINDOWS
+        /// <summary>
+        /// This function is used in Occlusion currently only to change the window title bar to black.
+        /// This function is not imported on any other platform.
+        /// </summary>
+        /// <param name="hwnd"></param>
+        /// <param name="attr"></param>
+        /// <param name="attrValue"></param>
+        /// <param name="attrSize"></param>
+        /// <returns></returns>
+        [DllImport("dwmapi.dll", PreserveSig = true)]
+        public static extern int DwmSetWindowAttribute(IntPtr hwnd, uint attr, ref int attrValue, int attrSize);
+#endif
+        #endregion
+
+#if WINDOWS
+        public static KeyboardHook keyboardHook = new KeyboardHook();
+
+        public delegate void HotkeyKeyUpEventDelegate(VKeys key);
+        public static event HotkeyKeyUpEventDelegate HotkeyKeyUpEvent;
+
+        public delegate void HotkeyKeyDownEventDelegate(VKeys key);
+        public static event HotkeyKeyUpEventDelegate HotkeyKeyDownEvent;
+
+        public static List<VKeys> CurrentKeysPressed = new List<VKeys>();
+
+        public static void ClearHotKeys()
+        {
+            CurrentKeysPressed.Clear();
+        }
+#endif
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
-            
-            Debug.WriteLine(Assembly.GetEntryAssembly().Location);
 
-
-            //ConsoleManager.ShowConsoleWindow();
+            Console.WriteLine(Assembly.GetEntryAssembly().Location);
 
             Client.PacketRecievedEvent += Client_PacketRecievedEvent;
             Console.WriteLine($"The entry point thread is Thread #{Thread.CurrentThread.ManagedThreadId} ({Thread.CurrentThread.ManagedThreadId.ToString("X")})");
             InitSound();
-
+            
             PlayerCache.RetrieveCacheFile();
 
             InputVolume = Options.Obj.InputVolume;
             OutputVolume = Options.Obj.OutputVolume;
             VoiceActivity = Options.Obj.VoiceActivity;
+
+#if WINDOWS
+
+            keyboardHook.KeyDown += KeyboardHook_KeyDown;
+            keyboardHook.KeyUp += KeyboardHook_KeyUp;
+
+            
+
+            void KeyboardHook_KeyDown(VKeys key)
+            {
+                if (!CurrentKeysPressed.Contains(key))
+                {
+                    CurrentKeysPressed.Add(key);
+                    HotkeyKeyDownEvent.Invoke(key);
+                }
+            }
+
+            void KeyboardHook_KeyUp(VKeys key)
+            {
+                CurrentKeysPressed.Remove(key); 
+                HotkeyKeyUpEvent.Invoke(key);
+            }
+
+            keyboardHook.Install();
+
+            HotkeyKeyUpEvent += (k) => { };
+            HotkeyKeyDownEvent += (k) => { };
+#endif
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -141,7 +207,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             VoiceChatWindow = new VoiceChatWindow();
         }
 
-        private void Client_PacketRecievedEvent(NetIncomingMessage message, IPacket packet, Client client)
+        private void Client_PacketRecievedEvent(NetPacketReader message, IPacket packet, Client client)
         {
             if (packet is ServerUserConnectedPacket userConnectedPacket)
             {
@@ -182,22 +248,24 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (packet is ServerVoiceDataPacket voiceDataPacket)
             {
-                if (GetUserById(voiceDataPacket.ID) != null)
+                var user = GetUserById(voiceDataPacket.ID);
+
+                if (user != null)
                 {
-                    AudioChunk chunk = GetUserById(voiceDataPacket.ID).codec.Decompress(voiceDataPacket.VoiceData);
+                    AudioChunk chunk = user.codec.Decompress(voiceDataPacket.VoiceData);
 
                     // Audio has been converted to stereo, now queue it.
                     // We amplify an extra time over all the audio equally to account for distance volume.
                     // Then, we amplify one last time for the input master volume.
-                    byte[] decompressedAudio = chunk.Amplify(OutputVolume).Amplify(GetUserById(voiceDataPacket.ID).ClientVolume).GetDataAsBytes();
+                    byte[] decompressedAudio = chunk.Amplify(OutputVolume).Amplify(user.ClientVolume).GetDataAsBytes();
 
                     Span<byte> span = decompressedAudio;
 
                     // Queue the audio to be played
-                    GetUserById(voiceDataPacket.ID).QueueAudio(span);
+                    user.QueueAudio(span);
 
-                    GetUserById(voiceDataPacket.ID).Pan = voiceDataPacket.Pan;
-                    GetUserById(voiceDataPacket.ID).DistanceVolume = voiceDataPacket.Volume;
+                    user.Pan = voiceDataPacket.Pan;
+                    user.DistanceVolume = voiceDataPacket.Volume;
                 }
             }
 
@@ -263,11 +331,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
 
             // Audio Recorder
-            AudioSpec wantedSettingsMic = new AudioSpec(samplingRate, AudioFormat.Signed16Bit, 1, 0, (ushort)(queueLength / 4), 0, micCallback, 0);
+            AudioSpec wantedSettingsMic = new AudioSpec(samplingRate, AudioFormat.Signed16Bit, 1, 0, (ushort)(queueLength / 2), 0, micCallback, 0);
             RecordingDevice = Audio.Open(inputDevice, true, wantedSettingsMic, out finalSettingsMic, AudioAllowChange.None);
 
             // Speaker output
-            AudioSpec wantedSettingsSpeaker = new AudioSpec(samplingRate, AudioFormat.Signed16Bit, 2, 0, (ushort)((queueLength / 4) * 2), 0, speakerCallback, 0);
+            AudioSpec wantedSettingsSpeaker = new AudioSpec(samplingRate, AudioFormat.Signed16Bit, 2, 0, (ushort)((queueLength / 2) * 2), 0, speakerCallback, 0);
             PlaybackDevice = Audio.Open(outputDevice, false, wantedSettingsSpeaker, out finalSettingsSpeaker, AudioAllowChange.None);
 
 
@@ -279,8 +347,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             RecordingDevice.Unpause();
             PlaybackDevice.Unpause();
         }
-
-        private object deviceSwitchLock = new object();
 
         void speakerCallback(Span<byte> stream, nint userdata)
         {
@@ -354,119 +420,118 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         void micCallback(Span<byte> stream, nint userdata)
         {
-
-                if (RecordingDevice != null && Client.IsConnected())
+            if (RecordingDevice != null && Client.IsConnected())
+            {
+                if (stream.Length > 0)
                 {
-                    if (stream.Length > 0)
+                    // Microphone volume bar
+                    AudioChunk rawChunk = new AudioChunk(stream.ToArray(), samplingRate);
+
+                    rawChunk = rawChunk.Amplify(InputVolume);
+
+                    AudioChunk chunk = new AudioChunk(stream.ToArray(), samplingRate);
+
+                    chunk = chunk.Amplify(InputVolume);
+
+                    var volume = chunk.Volume();
+
+                    if (volume > _residualVoiceVolume)
+                        _residualVoiceVolume = (short)volume;
+
+                    bool isTalking = true;
+                        
+                    // If our total volume is under the voice activity threshold, just set it all to silence.
+                    if (_residualVoiceVolume <= VoiceActivity)
                     {
-                        // Microphone volume bar
-                        AudioChunk rawChunk = new AudioChunk(stream.ToArray(), samplingRate);
-
-                        rawChunk = rawChunk.Amplify(InputVolume);
-
-                        AudioChunk chunk = new AudioChunk(stream.ToArray(), samplingRate);
-
-                        chunk = chunk.Amplify(InputVolume);
-
-                        var volume = chunk.Volume();
-
-                        if (volume > _residualVoiceVolume)
-                            _residualVoiceVolume = (short)volume;
-
-                        bool isTalking = true;
-                        
-                        // If our total volume is under the voice activity threshold, just set it all to silence.
-                        if (_residualVoiceVolume <= VoiceActivity)
+                        for (int i = 0; i < chunk.DataLength; i++)
                         {
-                            for (int i = 0; i < chunk.DataLength; i++)
-                            {
-                                chunk.Data[i] = 0;
-                            }
-
-                            isTalking = false;
+                            chunk.Data[i] = 0;
                         }
 
-                        // Set voice activity variable that controls the animation on our player icon.
-                        foreach (VoiceUser user in Users)
-                        {
-                            if (user.IsLocalClient)
-                            {
-                                user.IsTalking = isTalking;
-                            }
-                        }
-                        
-
-                        byte[] newBytes = chunk.GetDataAsBytes();
-
-                        for (int i = 0; i < stream.Length; i++)
-                        {
-                            stream[i] = newBytes[i];
-                        }
-
-                        Dispatcher.UIThread.InvokeAsync(() =>
-                        {
-                            if (VoiceChatWindow != null && VoiceChatWindow.IsOpen && RecordingDevice.Status == AudioStatus.Playing)
-                            {
-                                VoiceChatWindow.MicDecibalMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * VoiceChatWindow.InputVolumeSlider.Value;
-
-                                if (VoiceChatWindow.AudioSettingsOpen)
-                                {
-                                    VoiceChatWindow.SettingsMicMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * VoiceChatWindow.InputVolumeSlider.Value;
-                                }
-                            }
-                        });
-
-
-                        // Fill the buffer until it's full
-                        if (currentMicQueueOffset + 1 >= queueLength)
-                        {
-                            if (!MicMuted)
-                            {
-                                // Buffer is full, time to do what we need to do with the audio.
-
-                                // First we encode the audio with Opus so it's small enough to send over the network
-                                byte[] compressedAudio = mainCodec.Compress(new AudioChunk(queuedMicrophoneAudio, samplingRate));
-
-                                // Now we send the compressed audio data to the server
-                                ClientVoiceDataPacket voiceDataPacket = new ClientVoiceDataPacket();
-                                voiceDataPacket.VoiceData = compressedAudio;
-                                Client.SendMessage(voiceDataPacket, NetDeliveryMethod.UnreliableSequenced);
-                            }
-
-                            currentMicQueueOffset = 0;
-                        }
-
-                        // Buffer is not full, fill in the data we just got from the microphone into it.
-                        for (int i = 0; i < stream.Length; i++)
-                        {
-                            if (currentMicQueueOffset < queuedMicrophoneAudio.Length)
-                            {
-                                queuedMicrophoneAudio[currentMicQueueOffset] = stream[i];
-                                currentMicQueueOffset++;
-                            }
-                        }
-
-                        double speed = Math.Abs((int)_residualVoiceVolume - ((int)VoiceActivity - 30)) / 25;
-                        _residualVoiceVolume -= (short)Math.Clamp(speed, short.MinValue, short.MaxValue);
+                        isTalking = false;
                     }
-                }
 
-                // We can change audio output here as well because this is on the sdl thread.
-                if (NewOutputDevice != null && PlaybackDevice != null && NewInputDevice == null && RecordingDevice == null)
-                {
-                    string? newDevice = NewOutputDevice;
-                    if (newDevice == "Default")
-                        newDevice = null;
+                    // Set voice activity variable that controls the animation on our player icon.
+                    foreach (VoiceUser user in Users)
+                    {
+                        if (user.IsLocalClient)
+                        {
+                            user.IsTalking = isTalking;
+                        }
+                    }
+                        
 
-                    PlaybackDevice.ClearQueuedAudio();
-                    PlaybackDevice.Pause();
-                    PlaybackDevice.Dispose();
-                    PlaybackDevice = Audio.Open(newDevice, false, finalSettingsSpeaker, out _, AudioAllowChange.None);
-                    PlaybackDevice.Unpause();
+                    byte[] newBytes = chunk.GetDataAsBytes();
 
-                    NewOutputDevice = null;
+                    for (int i = 0; i < stream.Length; i++)
+                    {
+                        stream[i] = newBytes[i];
+                    }
                     
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        if (VoiceChatWindow != null && VoiceChatWindow.IsOpen && RecordingDevice.Status == AudioStatus.Playing)
+                        {
+                            VoiceChatWindow.MicDecibalMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * VoiceChatWindow.InputVolumeSlider.Value;
+
+                            if (VoiceChatWindow.AudioSettingsOpen)
+                            {
+                                VoiceChatWindow.SettingsMicMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * VoiceChatWindow.InputVolumeSlider.Value;
+                            }
+                        }
+                    });
+
+
+                    // Fill the buffer until it's full
+                    if (currentMicQueueOffset + 1 >= queueLength)
+                    {
+                        if (!MicMuted)
+                        {
+                            // Buffer is full, time to do what we need to do with the audio.
+
+                            // First we encode the audio with Opus so it's small enough to send over the network
+                            byte[] compressedAudio = mainCodec.Compress(new AudioChunk(queuedMicrophoneAudio, samplingRate));
+
+                            // Now we send the compressed audio data to the server
+                            ClientVoiceDataPacket voiceDataPacket = new ClientVoiceDataPacket();
+                            voiceDataPacket.VoiceData = compressedAudio;
+                            Client.SendMessage(voiceDataPacket, DeliveryMethod.Unreliable);
+                        }
+
+                        currentMicQueueOffset = 0;
+                    }
+
+                    // Buffer is not full, fill in the data we just got from the microphone into it.
+                    for (int i = 0; i < stream.Length; i++)
+                    {
+                        if (currentMicQueueOffset < queuedMicrophoneAudio.Length)
+                        {
+                            queuedMicrophoneAudio[currentMicQueueOffset] = stream[i];
+                            currentMicQueueOffset++;
+                        }
+                    }
+
+                    double speed = Math.Abs((int)_residualVoiceVolume - ((int)VoiceActivity - 30)) / 25;
+                    _residualVoiceVolume -= (short)Math.Clamp(speed * 4, short.MinValue, short.MaxValue);
                 }
+            }
+
+            // We can change audio output here as well because this is on the sdl thread.
+            if (NewOutputDevice != null && PlaybackDevice != null && NewInputDevice == null && RecordingDevice == null)
+            {
+                string? newDevice = NewOutputDevice;
+                if (newDevice == "Default")
+                    newDevice = null;
+
+                PlaybackDevice.ClearQueuedAudio();
+                PlaybackDevice.Pause();
+                PlaybackDevice.Dispose();
+                PlaybackDevice = Audio.Open(newDevice, false, finalSettingsSpeaker, out _, AudioAllowChange.None);
+                PlaybackDevice.Unpause();
+
+                NewOutputDevice = null;
+                    
+            }
             
         }
 

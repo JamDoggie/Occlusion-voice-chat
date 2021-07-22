@@ -4,7 +4,7 @@ using DotNetty.Common.Utilities;
 using DotNetty.Transport.Bootstrapping;
 using DotNetty.Transport.Channels;
 using DotNetty.Transport.Channels.Sockets;
-using Lidgren.Network;
+using LiteNetLib;
 using OcclusionServerLib.MCNetworking;
 using OcclusionServerLib.structs;
 using OcclusionShared.NetworkingShared;
@@ -34,9 +34,9 @@ namespace OcclusionServerLib
 
                 var serverVerificationPacket = packet as MCServerVerificationPacket;
 
-                NetConnection connection;
+                NetPeer connection;
 
-                NetConnection dummyCon;
+                NetPeer dummyCon;
                 Server.codesBeingVerified.TryGetValue(serverVerificationPacket.Code, out dummyCon);
 
                 if (dummyCon != null)
@@ -55,12 +55,12 @@ namespace OcclusionServerLib
                             ServerUserConnectedPacket userConnectedPacket = new ServerUserConnectedPacket();
                             userConnectedPacket.idsToAdd.Add(new KeyValuePair<int, string>(serverVerificationPacket.Code, serverVerificationPacket.UUID));
 
-                            server.SendMessage(userConnectedPacket, user.Connection, NetDeliveryMethod.ReliableOrdered);
+                            server.SendMessage(userConnectedPacket, user.Connection, DeliveryMethod.ReliableOrdered);
                         }
                     }
                     else
                     {
-                        server.SendMessage(new ServerValidationRejected(), connection, NetDeliveryMethod.ReliableOrdered);
+                        server.SendMessage(new ServerValidationRejected(), connection, DeliveryMethod.ReliableOrdered);
                     }
                 }
             }
@@ -96,9 +96,9 @@ namespace OcclusionServerLib
                     server.BroadcastMessage(new ServerUserLeftPacket()
                     {
                         UUID = playerLeave.UUID
-                    }, NetDeliveryMethod.ReliableOrdered);
+                    }, DeliveryMethod.ReliableOrdered);
 
-                    server.SendMessage(new ServerDisconnectPacket() { DisconnectMessage = "disconnected from the minecraft server." }, user.Connection, NetDeliveryMethod.ReliableOrdered);
+                    server.SendMessage(new ServerDisconnectPacket() { DisconnectMessage = "disconnected from the minecraft server." }, user.Connection, DeliveryMethod.ReliableOrdered);
 
                     server.Users.Remove(user);
                 }

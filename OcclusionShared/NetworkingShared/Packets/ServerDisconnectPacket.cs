@@ -1,4 +1,5 @@
-﻿using Lidgren.Network;
+﻿using LiteNetLib;
+using LiteNetLib.Utils;
 using Occlusion.NetworkingShared.Packets;
 using System;
 using System.Collections.Generic;
@@ -15,16 +16,16 @@ namespace OcclusionShared.NetworkingShared.Packets
             Identifier = "ServerDisconnectPacket";
         }
 
-        public override void ToMessage(NetOutgoingMessage message)
+        public override void ToMessage(NetDataWriter message)
         {
             base.ToMessage(message);
-            message.Write(DisconnectMessage);
+            message.Put(DisconnectMessage);
         }
 
-        public override void FromMessage(NetIncomingMessage message)
+        public override void FromMessage(NetPacketReader message)
         {
             base.FromMessage(message);
-            DisconnectMessage = message.ReadString();
+            DisconnectMessage = message.GetString();
         }
     }
 }

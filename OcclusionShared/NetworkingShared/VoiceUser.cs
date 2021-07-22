@@ -9,7 +9,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Lidgren.Network;
+using LiteNetLib;
+using LiteNetLib.Utils;
 #if CLIENT
 using Avalonia.Threading;
 using Occlusion_voice_chat.Opus;
@@ -34,7 +35,7 @@ namespace OcclusionShared.NetworkingShared
 #endregion
 
 #if SERVER
-        public NetConnection Connection { get; set; }
+        public NetPeer Connection { get; set; }
 
         public bool IsVerified { get; set; } = false;
 

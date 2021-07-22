@@ -6,6 +6,8 @@ namespace OcclusionServerLib.JSON
 {
     public class ServerSettings
     {
+        public int ServerPort { get; set; } = 9755;
+
         public string GameIP { get; set; } = "";
 
         public string GamePort { get; set; } = "";

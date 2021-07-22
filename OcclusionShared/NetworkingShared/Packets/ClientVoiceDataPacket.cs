@@ -1,4 +1,5 @@
-﻿using Lidgren.Network;
+﻿using LiteNetLib;
+using LiteNetLib.Utils;
 using Occlusion.NetworkingShared.Packets;
 using PestControlShared.NetworkingShared.Packets.Attributes;
 using System;
@@ -17,28 +18,18 @@ namespace OcclusionShared.NetworkingShared.Packets
             Identifier = "ClientVoiceDataPacket";
         }
 
-        public override void FromMessage(NetIncomingMessage message)
+        public override void FromMessage(NetPacketReader message)
         {
             base.FromMessage(message);
 
-            int dataLength = message.ReadInt32();
-            VoiceData = new byte[dataLength];
-            for (int i = 0; i < dataLength; i++)
-            {
-                VoiceData[i] = message.ReadByte();
-            }
+            VoiceData = message.GetBytesWithLength();
         }
 
-        public override void ToMessage(NetOutgoingMessage message)
+        public override void ToMessage(NetDataWriter message)
         {
             base.ToMessage(message);
 
-            message.Write(VoiceData.Length);
-
-            for (int i = 0; i < VoiceData.Length; i++)
-            {
-                message.Write(VoiceData[i]);
-            }
+            message.PutBytesWithLength(VoiceData);
         }
     }
 }

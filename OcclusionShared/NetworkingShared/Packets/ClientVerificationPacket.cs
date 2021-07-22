@@ -1,4 +1,5 @@
-﻿using Lidgren.Network;
+﻿using LiteNetLib;
+using LiteNetLib.Utils;
 using Occlusion.NetworkingShared.Packets;
 using PestControlShared.NetworkingShared.Packets.Attributes;
 using System;
@@ -17,16 +18,16 @@ namespace OcclusionShared.NetworkingShared.Packets
             Identifier = "ClientVerificationPacket";
         }
 
-        public override void FromMessage(NetIncomingMessage message)
+        public override void FromMessage(NetPacketReader message)
         {
             base.FromMessage(message);
-            VerificationCode = message.ReadInt32();
+            VerificationCode = message.GetInt();
         }
 
-        public override void ToMessage(NetOutgoingMessage message)
+        public override void ToMessage(NetDataWriter message)
         {
             base.ToMessage(message);
-            message.Write(VerificationCode);
+            message.Put(VerificationCode);
         }
     }
 }

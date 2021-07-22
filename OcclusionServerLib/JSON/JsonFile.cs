@@ -40,6 +40,7 @@ namespace OcclusionDedicatedServer.json
             if (!File.Exists(Path))
             {
                 Obj = obj;
+                Update();
             }
             else
             {
@@ -61,8 +62,8 @@ namespace OcclusionDedicatedServer.json
 
         public void ReloadFromFile()
         {
-            lock(lockObj)
-            {
+            lock (lockObj)
+            { 
                 Obj = JsonConvert.DeserializeObject<T>(File.ReadAllText(Path), new JsonSerializerSettings());
             }
         }

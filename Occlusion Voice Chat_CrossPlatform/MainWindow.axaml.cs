@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
-using Lidgren.Network;
+using LiteNetLib.Utils;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.DTO;
 using MessageBox.Avalonia.Enums;
@@ -78,7 +79,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                     IpTextbox.IsEnabled = value;
                     PortTextbox.IsEnabled = value;
                     CodeTextBox.IsEnabled = value;
-                    ConnectButton.IsEnabled = value;
+                    ConnectButton.IsEnabled = ShouldConnectBeEnabled();
                 }
                 else
                 {
@@ -97,6 +98,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             mainWindow = this;
 
             InitializeComponent();
+
+#if WINDOWS
+            uint attr = 19;
+            int val = 1;
+            int i = App.DwmSetWindowAttribute(PlatformImpl.Handle.Handle, attr, ref val, sizeof(int));
+#endif
         }
         
         private void InitializeComponent()
@@ -124,6 +131,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             IpTextbox.PropertyChanged += IpTextboxOnPropertyChanged;
             PortTextbox.PropertyChanged += PortTextboxOnPropertyChanged;
 
+            CodeTextBox.PropertyChanged += CodeTextBoxOnPropertyChanged;
+            
             Closing += MainWindow_Closing;
             Closed += MainWindow_Closed;
 
@@ -142,6 +151,19 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             SettingsActive = false;
         }
 
+        private void CodeTextBoxOnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+        {
+            if (e.Property == TextBox.TextProperty)
+            {
+                ConnectButton.IsEnabled = ShouldConnectBeEnabled();
+            }
+        }
+
+        public bool ShouldConnectBeEnabled()
+        {
+            return int.TryParse(CodeTextBox.Text, out _);
+        }
+        
         public async void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             if (App.Client.IsConnected())
@@ -320,7 +342,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             return "New Server " + serverIter;
         }
         
-        private void Client_PacketRecievedEvent(NetIncomingMessage message, IPacket packet, Client client)
+        private void Client_PacketRecievedEvent(NetDataReader message, IPacket packet, Client client)
         {
             if (packet is ServerValidationRejected)
             {
@@ -358,5 +380,25 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             if (GenericMessageGroup.IsVisible)
                 GenericMessageGroup.IsVisible = false;
         }
+    }
+
+    public enum DWMWINDOWATTRIBUTE : uint
+    {
+        NCRenderingEnabled = 1,
+        NCRenderingPolicy,
+        TransitionsForceDisabled,
+        AllowNCPaint,
+        CaptionButtonBounds,
+        NonClientRtlLayout,
+        ForceIconicRepresentation,
+        Flip3DPolicy,
+        ExtendedFrameBounds,
+        HasIconicBitmap,
+        DisallowPeek,
+        ExcludedFromPeek,
+        Cloak,
+        Cloaked,
+        FreezeRepresentation,
+        DarkMode = 19
     }
 }

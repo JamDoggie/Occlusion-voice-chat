@@ -1,4 +1,5 @@
-﻿using Lidgren.Network;
+﻿using LiteNetLib;
+using LiteNetLib.Utils;
 using NBrigadier;
 using NBrigadier.Builder;
 using NBrigadier.Exceptions;
@@ -51,8 +52,10 @@ namespace OcclusionDedicatedServer
                         ServerDisconnectPacket disconnectPacket = new ServerDisconnectPacket();
                         disconnectPacket.DisconnectMessage = "Server stopped.";
 
-                        Server.SendMessage(disconnectPacket, user.Connection, NetDeliveryMethod.ReliableOrdered);
+                        Server.SendMessage(disconnectPacket, user.Connection, DeliveryMethod.ReliableOrdered);
                     }
+
+                    Server.InternalServer.Stop();
 
                     IsRunning = false;
 
@@ -89,23 +92,23 @@ namespace OcclusionDedicatedServer
             
         }
 
-        private static void Server_PacketRecievedEvent(NetIncomingMessage message, IPacket packet, Server server)
+        private static void Server_PacketRecievedEvent(NetDataReader message, IPacket packet, Server server, NetPeer peer)
         {
             if (packet is ClientVoiceDataPacket)
             {
                 var incomingVoice = packet as ClientVoiceDataPacket;
                 
-                if (server.GetUserByConnection(message.SenderConnection) != null && server.GetUserByConnection(message.SenderConnection).IsVerified)
+                if (server.GetUserByConnection(peer) != null && server.GetUserByConnection(peer).IsVerified)
                 {
                     foreach (VoiceUser user in server.Users)
                     {
-                        if (server.GetUserByConnection(message.SenderConnection) != null && 
+                        if (server.GetUserByConnection(peer) != null && 
                             user.IsVerified &&
-                            user.id != server.GetUserByConnection(message.SenderConnection).id &&
+                            user.id != server.GetUserByConnection(peer).id &&
                             user.Location != null &&
-                            server.GetUserByConnection(message.SenderConnection).Location != null)
+                            server.GetUserByConnection(peer).Location != null)
                         {
-                            VoiceUser otherUser = server.GetUserByConnection(message.SenderConnection);
+                            VoiceUser otherUser = server.GetUserByConnection(peer);
                             PlayerLocation otherUserLocation = otherUser.Location.Value;
                             PlayerLocation userLocation = user.Location.Value;
 
@@ -117,7 +120,7 @@ namespace OcclusionDedicatedServer
                                 ServerVoiceDataPacket voicePacket = new ServerVoiceDataPacket();
                                 voicePacket.VoiceData = incomingVoice.VoiceData;
 
-                                voicePacket.ID = server.GetUserByConnection(message.SenderConnection).verificationCode;
+                                voicePacket.ID = server.GetUserByConnection(peer).verificationCode;
 
                                 float maxHearingDistance = Server.SettingsFile.Obj.HearingDistance;
 
@@ -151,10 +154,10 @@ namespace OcclusionDedicatedServer
                                     voicePacket.Pan = 0;
                                 }
 
-                                // We send as unreliable sequenced because this is where UDP really shines for VoIP.
+                                // We send as unreliable because this is where UDP really shines for VoIP.
                                 // Since we're sending lots of data over the network and it's not really a huge deal if we drop one packet,
                                 // it's better to allow some packets to drop instead of making sure they all arrive at the cost of performance and delay.
-                                server.SendMessage(voicePacket, user.Connection, NetDeliveryMethod.UnreliableSequenced);
+                                server.SendMessage(voicePacket, user.Connection, DeliveryMethod.Unreliable);
                             }
                         }
                     }

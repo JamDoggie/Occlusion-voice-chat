@@ -1,4 +1,5 @@
-﻿using Lidgren.Network;
+﻿using LiteNetLib;
+using LiteNetLib.Utils;
 using Newtonsoft.Json;
 using Occlusion.NetworkingShared;
 using Occlusion.NetworkingShared.Packets;
@@ -24,21 +25,20 @@ namespace OcclusionServerLib
     public class Server
     {
         #region fields
-        public int Port { get; set; } = 9755;
 
-        public NetServer LidgrenServer { get; set; }
+        public EventBasedNetListener EventListener { get; set; } = new EventBasedNetListener();
 
-        public int MaxPlayers { get; set; } = 5;
+        public NetManager InternalServer { get; set; }
 
         public ConcurrentList<VoiceUser> Users { get; set; } = new ConcurrentList<VoiceUser>();
 
         private int userIdIter = 0;
 
         // NOTE: THIS IS STATIC FOR THREAD SAFETY
-        // Don't ask me why this works this way, but it does.
+        // Don't ask me why this works this way, but according to stackoverflow it does.
         public static System.Timers.Timer intervalTimer = new System.Timers.Timer();
 
-        public static ConcurrentDictionary<int, NetConnection> codesBeingVerified = new ConcurrentDictionary<int, NetConnection>();
+        public static ConcurrentDictionary<int, NetPeer> codesBeingVerified = new ConcurrentDictionary<int, NetPeer>();
 
         public GameClient GameClient;
 
@@ -52,17 +52,19 @@ namespace OcclusionServerLib
         #endregion
 
         #region events
-        public delegate void PacketRecieved(NetIncomingMessage message, IPacket packet, Server server);
+        public delegate void PacketRecieved(NetPacketReader message, IPacket packet, Server server, NetPeer peer);
         public event PacketRecieved PacketRecievedEvent;
 
-        private void InternalPacketRecieved(NetIncomingMessage message, IPacket packet, Server server)
+        private NetDataWriter writer = new NetDataWriter();
+
+        private void InternalPacketRecieved(NetPacketReader message, IPacket packet, Server server, NetPeer peer)
         {
             // Player Verification
             if (packet is ClientVerificationPacket)
             {
                 var verificationPacket = packet as ClientVerificationPacket;
 
-                codesBeingVerified[verificationPacket.VerificationCode] = message.SenderConnection;
+                codesBeingVerified[verificationPacket.VerificationCode] = peer;
 
                 GameClient.SendMessage(new MCClientVerificationPacket() { Code = verificationPacket.VerificationCode });
             }
@@ -72,34 +74,86 @@ namespace OcclusionServerLib
         public Server()
         {
             GameClient = new GameClient(this);
+            SettingsFile.Update();
+            InternalServer = new NetManager(EventListener);
         }
 
         public void Start(SynchronizationContext context = null)
         {
-            var config = new NetPeerConfiguration(NetworkingUtil.ConfigurationName);
-            config.Port = Port;
-            config.MaximumConnections = MaxPlayers;
-            config.DisableMessageType(NetIncomingMessageType.DebugMessage);
-            config.DisableMessageType(NetIncomingMessageType.VerboseDebugMessage);
-            config.DisableMessageType(NetIncomingMessageType.WarningMessage);
-            config.DisableMessageType(NetIncomingMessageType.Receipt);
-            config.AutoFlushSendQueue = false;
+            InternalServer = new NetManager(EventListener);
+            InternalServer.Start(SettingsFile.Obj.ServerPort);
 
-            LidgrenServer = new NetServer(config);
-            LidgrenServer.Start();
-
-            if (LidgrenServer.Status == NetPeerStatus.Running)
+            if (InternalServer.IsRunning)
             {
-                ServerLogger.Log("Server is now running on port " + config.Port);
+                ServerLogger.Log("Server is now running on port " + InternalServer.LocalPort);
             }
             else
             {
                 ServerLogger.Log("Failure! Server not running, Something has gone wrong. Check your firewall to make sure it is not blocking any vital connections.");
             }
 
-            LidgrenServer.RegisterReceivedCallback(new SendOrPostCallback(MessageLoop), context);
-
             PacketRecievedEvent += InternalPacketRecieved;
+
+            EventListener.NetworkReceiveEvent += (peer, reader, delivery) => 
+            {
+                int internalid = reader.GetInt();
+
+                foreach (KeyValuePair<string, Type> pair in PacketManager.PacketIds)
+                {
+                    if (PacketManager.GetPacketInternalId(pair.Key) == internalid &&
+                        pair.Value.GetInterfaces().Contains(typeof(IPacket)))
+                    {
+                        IPacket dummyPacket = Activator.CreateInstance(pair.Value) as IPacket;
+                        dummyPacket.FromMessage(reader);
+
+                        PacketRecievedEvent.Invoke(reader, dummyPacket, this, peer);
+                    }
+                }
+            };
+
+            EventListener.ConnectionRequestEvent += (request) => 
+            {
+                var netPeer = request.Accept();
+
+                ServerLogger.Log($"{netPeer.EndPoint.Address} has connected.");
+
+                Users.Add(new VoiceUser()
+                {
+                    Connection = netPeer,
+                    id = userIdIter
+                });
+
+                // Send packet to client that tells it we've properly connected as well as tells the client about the server's settings.
+                ServerConnectedPacket serverConnectedPacket = new ServerConnectedPacket();
+                serverConnectedPacket.EnableVoiceIconMeterOnClients = SettingsFile.Obj.EnableVoiceIconMeterOnClients;
+                SendMessage(serverConnectedPacket, netPeer, DeliveryMethod.ReliableOrdered);
+
+                // Send full list of users to the user that just connected
+                ServerUserConnectedPacket userConnectedPacket = new ServerUserConnectedPacket();
+                userConnectedPacket.idsToAdd = new List<KeyValuePair<int, string>>();
+                foreach (VoiceUser user in Users)
+                {
+                    if (user.IsVerified && user != GetUserByConnection(netPeer))
+                        userConnectedPacket.idsToAdd.Add(new KeyValuePair<int, string>(user.verificationCode, user.MCUUID));
+                }
+
+                SendMessage(userConnectedPacket, netPeer, DeliveryMethod.ReliableOrdered);
+
+
+                userIdIter++;
+            };
+
+            EventListener.PeerDisconnectedEvent += (peer, info) =>
+            {
+                if (GetUserByConnection(peer) != null)
+                {
+                    ServerUserLeftPacket userLeftPacket = new ServerUserLeftPacket();
+                    userLeftPacket.UUID = GetUserByConnection(peer).MCUUID;
+                    BroadcastMessage(userLeftPacket, DeliveryMethod.ReliableOrdered);
+
+                    Users.Remove(GetUserByConnection(peer));
+                }
+            };
 
             intervalTimer.Interval = 1000d / 60d;
             intervalTimer.Start();
@@ -109,13 +163,11 @@ namespace OcclusionServerLib
             // Game client
             Thread gameClientThread = new Thread(async () =>
             {
-                
-
                 int port = -1;
 
                 int.TryParse(SettingsFile.Obj.GamePort, out port);
 
-                if (SettingsFile.Obj.GameIP != "" && port != -1)
+                if (SettingsFile.Obj.GameIP != string.Empty && port != -1)
                 {
                     await GameClient.Connect(SettingsFile.Obj.GameIP, port);
                 }
@@ -126,6 +178,11 @@ namespace OcclusionServerLib
             });
 
             gameClientThread.Start();
+
+            while (InternalServer.IsRunning)
+            {
+                InternalServer.PollEvents();
+            }
         }
 
         private DateTime deltaTime = DateTime.Now;
@@ -137,90 +194,6 @@ namespace OcclusionServerLib
             DateTime newTime = DateTime.Now;
             TimeSpan timeSpan = newTime - deltaTime;
             deltaTime = DateTime.Now;
-        }
-
-        private void MessageLoop(object peer)
-        {
-            NetIncomingMessage message;
-            while ((message = LidgrenServer.ReadMessage()) != null)
-            {
-                switch (message.MessageType)
-                {
-                    case NetIncomingMessageType.Data:
-
-                        int internalid = message.ReadInt32();
-
-                        foreach (KeyValuePair<string, Type> pair in PacketManager.PacketIds)
-                        {
-                            if (PacketManager.GetPacketInternalId(pair.Key) == internalid &&
-                                pair.Value.GetInterfaces().Contains(typeof(IPacket)))
-                            {
-                                IPacket dummyPacket = Activator.CreateInstance(pair.Value) as IPacket;
-                                dummyPacket.FromMessage(message);
-
-                                PacketRecievedEvent.Invoke(message, dummyPacket, this);
-                            }
-                        }
-
-                        break;
-
-                    case NetIncomingMessageType.ErrorMessage:
-                        ServerLogger.Log(message.ReadString());
-                        break;
-
-                    case NetIncomingMessageType.StatusChanged:
-                        ServerLogger.Log(message.SenderConnection.Status.ToString());
-
-                        if (message.SenderConnection.Status == NetConnectionStatus.Connected)
-                        {
-                            ServerLogger.Log($"{message.SenderConnection.Peer.Configuration.LocalAddress} has connected.");
-
-                            Users.Add(new VoiceUser()
-                            {
-                                Connection = message.SenderConnection,
-                                id = userIdIter
-                            });
-
-                            // Send packet to client that tells it we've properly connected as well as tells the client about the server's settings.
-                            ServerConnectedPacket serverConnectedPacket = new ServerConnectedPacket();
-                            serverConnectedPacket.EnableVoiceIconMeterOnClients = SettingsFile.Obj.EnableVoiceIconMeterOnClients;
-                            SendMessage(serverConnectedPacket, message.SenderConnection, NetDeliveryMethod.ReliableOrdered);
-
-                            // Send full list of users to the user that just connected
-                            ServerUserConnectedPacket userConnectedPacket = new ServerUserConnectedPacket();
-                            userConnectedPacket.idsToAdd = new List<KeyValuePair<int, string>>();
-                            foreach (VoiceUser user in Users)
-                            {
-                                if (user.IsVerified && user != GetUserByConnection(message.SenderConnection))
-                                    userConnectedPacket.idsToAdd.Add(new KeyValuePair<int, string>(user.verificationCode, user.MCUUID));
-                            }
-
-                            SendMessage(userConnectedPacket, message.SenderConnection, NetDeliveryMethod.ReliableOrdered);
-
-
-                            userIdIter++;
-                        }
-
-                        // Clear everything we need to when a user disconnects
-                        if (message.SenderConnection.Status == NetConnectionStatus.Disconnected)
-                        {
-                            if (GetUserByConnection(message.SenderConnection) != null)
-                            {
-                                ServerUserLeftPacket userLeftPacket = new ServerUserLeftPacket();
-                                userLeftPacket.UUID = GetUserByConnection(message.SenderConnection).MCUUID;
-                                BroadcastMessage(userLeftPacket, NetDeliveryMethod.ReliableOrdered);
-
-                                Users.Remove(GetUserByConnection(message.SenderConnection));
-                            }
-                        }
-                        break;
-
-                    default:
-                        ServerLogger.Log("Unhandled message type: " + message.MessageType);
-                        break;
-                }
-                LidgrenServer.Recycle(message);
-            }
         }
 
         public VoiceUser GetUserById(int id)
@@ -245,7 +218,7 @@ namespace OcclusionServerLib
             return null;
         }
 
-        public VoiceUser GetUserByConnection(NetConnection connection)
+        public VoiceUser GetUserByConnection(NetPeer connection)
         {
             foreach(VoiceUser user in Users)
             {
@@ -256,26 +229,18 @@ namespace OcclusionServerLib
             return null;
         }
 
-        public void SendMessage(IPacket packet, NetConnection peer, NetDeliveryMethod method)
+        public void SendMessage(IPacket packet, NetPeer peer, DeliveryMethod method)
         {
-            NetOutgoingMessage message = LidgrenServer.CreateMessage();
-            packet.ToMessage(message);
-
-            LidgrenServer.SendMessage(message, peer, method);
-
-            LidgrenServer.FlushSendQueue();
+            writer.Reset();
+            packet.ToMessage(writer);
+            peer.Send(writer, method);
         }
 
-        public void BroadcastMessage(IPacket packet, NetDeliveryMethod method)
+        public void BroadcastMessage(IPacket packet, DeliveryMethod method)
         {
-            foreach (NetConnection peer in LidgrenServer.Connections)
-            {
-                NetOutgoingMessage message = LidgrenServer.CreateMessage();
-                packet.ToMessage(message);
-                LidgrenServer.SendMessage(message, peer, method);
-
-                LidgrenServer.FlushSendQueue();
-            }
+            writer.Reset();
+            packet.ToMessage(writer);
+            InternalServer.SendToAll(writer, method);
         }
     }
 }

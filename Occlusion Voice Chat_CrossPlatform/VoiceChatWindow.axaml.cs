@@ -73,6 +73,17 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         {
             InitializeComponent();
             DataContext = ViewModel;
+
+            Opened += VoiceChatWindow_Opened1;
+        }
+
+        private void VoiceChatWindow_Opened1(object sender, EventArgs e)
+        {
+#if WINDOWS
+            uint attr = 19;
+            int val = 1;
+            int i = App.DwmSetWindowAttribute(PlatformImpl.Handle.Handle, attr, ref val, sizeof(int));
+#endif
         }
 
         private void InitializeComponent()
@@ -145,6 +156,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             this.FindControl<Button>("SettingsOkButton").Click += Settings_Ok_Click;
 
             OpenAudioSettings();
+
+            
         }
 
         public bool ForceClose { get; set; } = false;
@@ -315,8 +328,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         {
             _playerIcons.Remove(icon);
             PlayerIconsPanel.Children.Remove(icon);
-
-            Console.WriteLine("user removed");
         }
 
         public void CloseAudioSettings()

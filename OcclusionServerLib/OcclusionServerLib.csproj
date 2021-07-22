@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Platforms>AnyCPU;x86</Platforms>
+    <Configurations>Debug;Release;Debug Win;Release Win</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -17,14 +18,24 @@
     <DefineConstants>TRACE;SERVER</DefineConstants>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win|AnyCPU'">
+    <DefineConstants>TRACE;SERVER</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|AnyCPU'">
+    <DefineConstants>TRACE;SERVER</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="DotNetty.Codecs" Version="0.6.0" />
     <PackageReference Include="DotNetty.Common" Version="0.6.0" />
     <PackageReference Include="DotNetty.Transport" Version="0.6.0" />
-    <PackageReference Include="Lidgren.Network" Version="1.0.2" />
+    <PackageReference Include="LiteNetLib" Version="0.9.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <Import Project="..\OcclusionShared\OcclusionShared.projitems" Label="Shared" />
+
+  <Import Project="..\OcclusionVersionControl\OcclusionVersionControl.projitems" Label="Shared" />
 
 </Project>

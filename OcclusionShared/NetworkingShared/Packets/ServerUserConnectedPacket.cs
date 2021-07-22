@@ -1,4 +1,5 @@
-﻿using Lidgren.Network;
+﻿using LiteNetLib;
+using LiteNetLib.Utils;
 using Occlusion.NetworkingShared.Packets;
 using PestControlShared.NetworkingShared.Packets.Attributes;
 using System;
@@ -17,30 +18,30 @@ namespace OcclusionShared.NetworkingShared.Packets
             Identifier = "ServerUserConnectedPacket";
         }
 
-        public override void FromMessage(NetIncomingMessage message)
+        public override void FromMessage(NetPacketReader message)
         {
             base.FromMessage(message);
 
-            int count = message.ReadInt32();
+            int count = message.GetInt();
 
             for(int i = 0; i < count; i++)
             {
-                int id = message.ReadInt32();
-                string uuid = message.ReadString();
+                int id = message.GetInt();
+                string uuid = message.GetString();
                 idsToAdd.Add(new KeyValuePair<int, string>(id, uuid));
             }
         }
 
-        public override void ToMessage(NetOutgoingMessage message)
+        public override void ToMessage(NetDataWriter message)
         {
             base.ToMessage(message);
 
-            message.Write(idsToAdd.Count);
+            message.Put(idsToAdd.Count);
 
             foreach(KeyValuePair<int, string> pair in idsToAdd)
             {
-                message.Write(pair.Key);
-                message.Write(pair.Value);
+                message.Put(pair.Key);
+                message.Put(pair.Value);
             }
         }
     }

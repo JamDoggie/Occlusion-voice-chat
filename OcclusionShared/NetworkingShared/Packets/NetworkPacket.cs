@@ -1,4 +1,5 @@
-﻿using Lidgren.Network;
+﻿using LiteNetLib;
+using LiteNetLib.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,14 +10,14 @@ namespace Occlusion.NetworkingShared.Packets
     {
         public string Identifier { get; set; }
 
-        public virtual void FromMessage(NetIncomingMessage message)
+        public virtual void FromMessage(NetPacketReader message)
         {
             
         }
 
-        public virtual void ToMessage(NetOutgoingMessage message)
+        public virtual void ToMessage(NetDataWriter message)
         {
-            message.Write(PacketManager.GetPacketInternalId(Identifier));
+            message.Put(PacketManager.GetPacketInternalId(Identifier));
         }
     }
 }

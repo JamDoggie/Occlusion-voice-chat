@@ -1,14 +1,17 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Threading;
-using Lidgren.Network;
+using LiteNetLib;
+using LiteNetLib.Utils;
 using Occlusion.NetworkingShared;
 using Occlusion_Voice_Chat_CrossPlatform;
 using OcclusionShared.NetworkingShared.Packets;
+using OcclusionVersionControl;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -16,7 +19,9 @@ namespace Occlusion_voice_chat.Networking
 {
     public class Client
     {
-        public NetClient LidgrenClient { get; set; }
+        public EventBasedNetListener EventListener { get; set; } = new EventBasedNetListener();
+
+        public NetManager InternalClient { get; set; }
 
         public float UpdateRateMS { get; set; } = 16;
 
@@ -27,20 +32,38 @@ namespace Occlusion_voice_chat.Networking
         public int verificationCode { get; set; } = -1;
 
         #region Events
-        public delegate void PacketRecieved(NetIncomingMessage message, IPacket packet, Client client);
+        public delegate void PacketRecieved(NetPacketReader message, IPacket packet, Client client);
         public event PacketRecieved PacketRecievedEvent;
 
 
-        private void InternalPacketRecieved(NetIncomingMessage message, IPacket packet, Client client)
+        private NetDataWriter writer = new NetDataWriter();
+
+        private void InternalPacketRecieved(NetPacketReader message, IPacket packet, Client client)
         {
             if (packet is ServerConnectedPacket connectedPacket)
             {
-                var clientVerification = new ClientVerificationPacket();
-                clientVerification.VerificationCode = verificationCode;
+                if (connectedPacket.OcclusionVersion == OcclusionVersion.VersionNumber)
+                {
+                    var clientVerification = new ClientVerificationPacket();
+                    clientVerification.VerificationCode = verificationCode;
 
-                App.EnableVoiceIconMeterOnClients = connectedPacket.EnableVoiceIconMeterOnClients;
+                    App.EnableVoiceIconMeterOnClients = connectedPacket.EnableVoiceIconMeterOnClients;
 
-                SendMessage(clientVerification, NetDeliveryMethod.ReliableOrdered);
+                    SendMessage(clientVerification, DeliveryMethod.ReliableOrdered);
+                }
+                else
+                {
+                    if (connectedPacket.OcclusionVersion > OcclusionVersion.VersionNumber)
+                    {
+                        // Server is more up to date than the client.
+                        DisconnectClient("server is on a newer version than your client. Please update Occlusion if you would like to connect to this server.");
+                    }
+                    else if(connectedPacket.OcclusionVersion < OcclusionVersion.VersionNumber)
+                    {
+                        // Client is more up to date than the server.
+                        DisconnectClient("server is out of date. Please contact the server owner to update the server.");
+                    }
+                }
             }
 
             if (packet is ServerValidationRejected)
@@ -61,38 +84,128 @@ namespace Occlusion_voice_chat.Networking
             PacketManager.CollectPacketTypes();
 
             PacketRecievedEvent += InternalPacketRecieved;
+
+            InternalClient = new NetManager(EventListener);
+
+
+            // Handle data packets.
+            EventListener.NetworkReceiveEvent += (fromPeer, dataReader, deliveryMethod) =>
+            {
+                int internalid = dataReader.GetInt();
+
+                foreach (KeyValuePair<string, Type> pair in PacketManager.PacketIds)
+                {
+                    if (PacketManager.GetPacketInternalId(pair.Key) == internalid)
+                    {
+                        var dummyPacket = Activator.CreateInstance(pair.Value) as IPacket;
+
+                        dummyPacket.FromMessage(dataReader);
+
+                        PacketRecievedEvent.Invoke(dataReader, dummyPacket, this);
+                    }
+                }
+
+                dataReader.Recycle();
+            };
+
+            // Remove the loading text when we're connected.
+            EventListener.PeerConnectedEvent += (peer) =>
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (MainWindow.mainWindow != null)
+                    {
+                        MainWindow.mainWindow.ConnectionStatusText.Text = string.Empty;
+                        MainWindow.mainWindow.ConnectingLoadingBar.IsVisible = false;
+                    }
+                });
+            };
+
+            // Tell the user why they got disconnected if we need to, and close the voice chat window.
+            EventListener.PeerDisconnectedEvent += (peer, info) =>
+            {
+                string reason = info.Reason.ToString();
+                string errorMessage = "";
+                if (string.IsNullOrEmpty(reason))
+                {
+                    errorMessage = "Disconnected";
+                }
+                else
+                {
+                    errorMessage = $"Disconnected, Reason: {reason}";
+                }
+
+                Console.WriteLine(errorMessage);
+
+
+                // Now we update the UI to reflect we were disconnected.
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+                    {
+                        App.VoiceChatWindow.ForceClose = true;
+                        App.VoiceChatWindow.Close();
+                        App.VoiceChatWindow = new VoiceChatWindow();
+                    }
+
+                    if (MainWindow.mainWindow != null)
+                    {
+                        MainWindow.mainWindow.ShowErrorMessage(errorMessage);
+                        MainWindow.mainWindow.ConnectionStatusText.Text = "Server connection lost or failed.";
+                        MainWindow.mainWindow.ConnectingLoadingBar.IsVisible = false;
+                    }
+                });
+
+                Running = false;
+            };
+
+            EventListener.NetworkLatencyUpdateEvent += (peer, latency) => 
+            {
+                Dispatcher.UIThread.InvokeAsync(() =>
+                {
+                    if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+                    {
+                        var tip = App.VoiceChatWindow.FindControl<TextBlock>("InfoToolTipText");
+                        tip.Text = $"Ping: {latency}ms";
+                    }
+                });
+            };
         }
 
         public void Connect(string ip, int serverport, int verificationCode)
         {
-            var config = new NetPeerConfiguration(NetworkingUtil.ConfigurationName);
-            config.AutoFlushSendQueue = true;
-            config.SetMessageTypeEnabled(NetIncomingMessageType.ConnectionApproval, true);
-            config.SetMessageTypeEnabled(NetIncomingMessageType.Error, true);
-            config.SetMessageTypeEnabled(NetIncomingMessageType.ErrorMessage, true);
-            config.SetMessageTypeEnabled(NetIncomingMessageType.ConnectionLatencyUpdated, true);
+            InternalClient.Start();
 
-            LidgrenClient = new NetClient(config);
+            InternalClient.Connect(ip, serverport, "OcclusionVoiceClient");
 
-            LidgrenClient.Start();
-
-            LidgrenClient.Connect(ip, serverport);
+            // Start connecting animation.
+            Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                if (MainWindow.mainWindow != null)
+                {
+                    MainWindow.mainWindow.ConnectingLoadingBar.IsVisible = true;
+                    MainWindow.mainWindow.ConnectionStatusText.Text = "Connecting...";
+                }
+            });
 
             this.verificationCode = verificationCode;
 
             Running = true;
 
+            
+
             while (Running)
             {
-                DoMessageLoop();
+                InternalClient.PollEvents();
+                Thread.Sleep(1);
             }
         }
 
-        public void DoMessageLoop()
+        /*public void DoMessageLoop()
         {
             // Message loop, this is where we intercept packets.
             NetIncomingMessage message;
-            while ((message = LidgrenClient.ReadMessage()) != null)
+            while ((message = InternalClient.ReadMessage()) != null)
             {
 
                 switch (message.MessageType)
@@ -208,7 +321,7 @@ namespace Occlusion_voice_chat.Networking
                         break;
 
                     case NetIncomingMessageType.ConnectionLatencyUpdated:
-                        int latency = (int)message.ReadFloat(); 
+                        float latency = message.ReadFloat();
 
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
@@ -216,8 +329,6 @@ namespace Occlusion_voice_chat.Networking
                             {
                                 var tip = App.VoiceChatWindow.FindControl<TextBlock>("InfoToolTipText");
                                 tip.Text = $"Ping: {latency}ms";
-                                
-                                
                             }
                         });
                         
@@ -230,11 +341,11 @@ namespace Occlusion_voice_chat.Networking
                         break;
                 }
             }
-        }
+        }*/
 
         public void DisconnectClient(string reason, bool showReasonMessageBox = true)
         {
-            LidgrenClient.Disconnect(reason);
+            InternalClient.DisconnectAll(); 
             Running = false;
             ConnectionVerified = false;
 
@@ -268,18 +379,18 @@ namespace Occlusion_voice_chat.Networking
         {
             lock(_isConnectedLock)
             {
-                if (LidgrenClient == null)
+                if (InternalClient == null)
                     return false;
 
-                return LidgrenClient.ConnectionStatus == NetConnectionStatus.Connected;
+                return InternalClient.ConnectedPeersCount > 0;
             }
         }
 
-        public void SendMessage(IPacket packet, NetDeliveryMethod method)
+        public void SendMessage(IPacket packet, DeliveryMethod method)
         {
-            NetOutgoingMessage message = LidgrenClient.CreateMessage();
-            packet.ToMessage(message);
-            LidgrenClient.SendMessage(message, method);
+            writer.Reset();
+            packet.ToMessage(writer);
+            InternalClient.SendToAll(writer, method);
         }
     }
 }

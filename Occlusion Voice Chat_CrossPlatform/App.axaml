@@ -4,6 +4,10 @@
     <Application.Styles>
       <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
       <StyleInclude Source="avares://Occlusion Voice Chat_CrossPlatform/DefaultTheme.xaml"></StyleInclude>
+    
+    <Style Selector="ScrollBar:vertical /template/ Thumb#thumb">
+        <Setter Property="Background" Value="#4f4f5e"></Setter>
+      </Style>  
     </Application.Styles>
   
 </Application>
