@@ -25,8 +25,32 @@ jobs:
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '5.0.x'
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
+    
+      - name: Clone in the installer to a folder.
+        uses: actions/checkout@v2
+        with:
+          repository: 'JamDoggie/CrossPlatformInstallerBase'
+          path: 'occlusioninstallerclone/'
+    
+      - name: Publish Occlusion to a folder.
         run: 
-          echo $GITHUB_WORKSPACE
-          dotnet publish "$GITHUB_WORKSPACE\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release Win" -r win-x64 --self-contained true -output "testfolder\"
+          dotnet publish "$GITHUB_WORKSPACE\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -c "Release Win" -r win-x64 --self-contained true -output "occlusionwinrelease\"
+
+      - name: Zip the published binaries.
+        uses: papeloto/action-zip@v1
+        with:
+          files: occlusionwinrelease/ Occlusion Voice Chat_CrossPlatform.exe
+          recursive: false
+          dest: programfiles.zip
+          
+      - name: Copy the published binaries into the installer.
+        uses: canastro/copy-file-action@master
+        with:
+          source: "programfiles.zip"
+          target: "occlusioninstallerclone/CrossPlatformInstallerBase/installerfiles/"
+          
+      - name: Testing artifact saving
+        uses: actions/upload-artifact@v2
+        with:
+          name: installer-artifact
+          path: occlusioninstallerclone/
