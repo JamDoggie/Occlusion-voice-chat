@@ -61,7 +61,6 @@ jobs:
           type: 'zip'
           filename: 'installerartifact.zip'
           path: 'installerpublish/'
-          directory: 'installerpublish/'
         
       - name: And upload an artifact.
         uses: actions/upload-artifact@v2
