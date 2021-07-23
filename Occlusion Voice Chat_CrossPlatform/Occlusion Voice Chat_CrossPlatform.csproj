@@ -290,10 +290,6 @@
     </None>
   </ItemGroup>
   
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="dotnet publish &quot;$(SolutionDir)OcclusionAutoUpdater\OcclusionAutoUpdater.csproj&quot; -c &quot;$(ConfigurationName)&quot; -r win-x64 --self-contained true -o &quot;$(TargetDir)&quot;" />
-  </Target>
-  
   <ItemGroup>
     <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libFLAC-8.dll" />
   </ItemGroup>
