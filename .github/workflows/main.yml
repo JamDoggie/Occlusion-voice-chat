@@ -40,12 +40,18 @@ jobs:
         run:
           dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\"
 
+      #- name: Zip the published binaries.
+      #  uses: papeloto/action-zip@v1
+      #  with:
+      #    files: occlusionwinrelease/
+      #    recursive: false
+      #    dest: programfiles.zip
       - name: Zip the published binaries.
-        uses: papeloto/action-zip@v1
+        uses: thedoctor0/zip-release@master
         with:
-          files: occlusionwinrelease/
-          recursive: false
-          dest: programfiles.zip
+          type: 'zip'
+          filename: 'programfiles.zip'
+          path: 'installerpublish/**'
           
       - name: Copy the published binaries into the installer.
         run:
