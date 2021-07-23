@@ -31,17 +31,7 @@ jobs:
         with:
           repository: 'JamDoggie/CrossPlatformInstallerBase'
           path: 'occlusioninstallerclone/'
-    
-      - name: Debug artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: installer-artifact
-          path: ${{ github.workspace }}
-    
-      - name: Restore the packages for occlusion first.
-        run:
-          dotnet restore "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj"
-    
+
       - name: Publish Occlusion to a folder.
         run: 
           dotnet publish "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\"
@@ -63,4 +53,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: installer-artifact
-          path: occlusioninstallerclone/
+          path: occlusioninstallerclone/CrossPlatformInstallerBase/installerfiles/programfiles.zip
