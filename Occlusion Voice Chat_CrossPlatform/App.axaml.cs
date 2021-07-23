@@ -192,7 +192,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             HotkeyKeyUpEvent += (k) => { };
             HotkeyKeyDownEvent += (k) => { };
-#endif
+
+
             // Auto updater
             string autoUpdaterPath = "OcclusionAutoUpdater.exe";
 
@@ -204,6 +205,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
                 autoUpdater.Start();
             }
+#endif
         }
 
         public override void OnFrameworkInitializationCompleted()

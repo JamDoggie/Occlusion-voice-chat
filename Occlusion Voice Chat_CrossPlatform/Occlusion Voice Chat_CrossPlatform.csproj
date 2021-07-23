@@ -299,7 +299,7 @@
   </ItemGroup>
   
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="REM dotnet publish &quot;$(SolutionDir)OcclusionAutoUpdater\OcclusionAutoUpdater.csproj&quot; -c &quot;$(ConfigurationName)&quot; -r win-x64 --self-contained true -o &quot;$(TargetDir)&quot;" />
+    <Exec Command="dotnet publish &quot;$(SolutionDir)OcclusionAutoUpdater\OcclusionAutoUpdater.csproj&quot; -c &quot;$(ConfigurationName)&quot; -r win-x64 --self-contained true -o &quot;$(TargetDir)&quot;" />
   </Target>
   
   <ItemGroup>
