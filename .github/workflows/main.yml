@@ -29,4 +29,4 @@ jobs:
       - name: Run a one-line script
         run: 
           echo $GITHUB_WORKSPACE
-          dotnet publish "$GITHUB_WORKSPACE\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release Win" -r win-x64 --self-contained true -o "testfolder\"
+          dotnet publish "$GITHUB_WORKSPACE\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release Win" -r win-x64 --self-contained true -output "testfolder\"
