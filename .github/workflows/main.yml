@@ -36,6 +36,10 @@ jobs:
         run: 
           dotnet publish "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\"
 
+      - name: Publish the auto updater into the published occlusion directory.
+        run:
+          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\"
+
       - name: Zip the published binaries.
         uses: papeloto/action-zip@v1
         with:
@@ -47,8 +51,19 @@ jobs:
         run:
           copy "${{ github.workspace }}/programfiles.zip" "${{ github.workspace }}/occlusioninstallerclone/CrossPlatformInstallerBase/installerfiles/"
           
-      - name: Testing artifact saving
+      - name: Finally, publish the installer
+        run: 
+          dotnet publish "${{ github.workspace }}\occlusioninstallerclone\CrossPlatformInstallerBase\CrossPlatformInstallerBase.csproj" -c "Release" -r win-x64 --self-contained true --output "installerpublish\"
+          
+      - name: Zip up the installer
+        uses: papeloto/action-zip@v1
+        with:
+          files: installerpublish/
+          recursive: false
+          dest: installerartifact.zip
+        
+      - name: And upload an artifact.
         uses: actions/upload-artifact@v2
         with:
-          name: installer-artifact
-          path: occlusioninstallerclone/CrossPlatformInstallerBase/installerfiles/programfiles.zip
+          name: occlusion-win64-installer-artifact
+          path: installerartifact.zip
