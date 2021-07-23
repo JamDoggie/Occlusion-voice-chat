@@ -51,7 +51,7 @@ jobs:
         with:
           type: 'zip'
           filename: 'programfiles.zip'
-          path: 'installerpublish/**'
+          path: '${{ github.workspace }}\occlusionwinrelease\*'
           
       - name: Copy the published binaries into the installer.
         run:
