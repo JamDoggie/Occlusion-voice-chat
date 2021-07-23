@@ -32,9 +32,15 @@ jobs:
           repository: 'JamDoggie/CrossPlatformInstallerBase'
           path: 'occlusioninstallerclone/'
     
+      - name: Debug artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: installer-artifact
+          path: ${{ github.workspace }}
+    
       - name: Publish Occlusion to a folder.
         run: 
-          dotnet publish "$GITHUB_WORKSPACE\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\"
+          dotnet publish "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\"
 
       - name: Zip the published binaries.
         uses: papeloto/action-zip@v1
