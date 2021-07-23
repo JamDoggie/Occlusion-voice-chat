@@ -52,14 +52,6 @@
     <AvaloniaResource Include="DefaultTheme.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Concentus">
-      <HintPath>..\..\..\..\Documents\concentus_netstandard\Concentus\bin\Debug\netstandard2.0\Concentus.dll</HintPath>
-    </Reference>
-    <Reference Include="GlobalLowLevelHooks">
-      <HintPath>..\..\..\..\Documents\GlobalLowLevelHooks.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
     <AvaloniaResource Update="resources\occlusion_mic_icon_muted.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
@@ -500,6 +492,15 @@
   
   <ItemGroup>
     <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.zlib.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Reference Include="Concentus">
+      <HintPath>..\Concentus.dll</HintPath>
+    </Reference>
+    <Reference Include="GlobalLowLevelHooks">
+      <HintPath>..\GlobalLowLevelHooks.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   
