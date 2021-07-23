@@ -56,11 +56,12 @@ jobs:
           dotnet publish "${{ github.workspace }}\occlusioninstallerclone\CrossPlatformInstallerBase\CrossPlatformInstallerBase.csproj" -c "Release" -r win-x64 --self-contained true --output "installerpublish\"
           
       - name: Zip up the installer
-        uses: papeloto/action-zip@v1
+        uses: thedoctor0/zip-release@master
         with:
-          files: installerpublish/*
-          recursive: false
-          dest: installerartifact.zip
+          type: 'zip'
+          filename: 'installerartifact.zip'
+          path: 'installerpublish/'
+          directory: 'installerpublish/'
         
       - name: And upload an artifact.
         uses: actions/upload-artifact@v2
