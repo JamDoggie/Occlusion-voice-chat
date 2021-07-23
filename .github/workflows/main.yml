@@ -39,15 +39,13 @@ jobs:
       - name: Zip the published binaries.
         uses: papeloto/action-zip@v1
         with:
-          files: occlusionwinrelease/ Occlusion Voice Chat_CrossPlatform.exe
+          files: occlusionwinrelease/
           recursive: false
           dest: programfiles.zip
           
       - name: Copy the published binaries into the installer.
-        uses: canastro/copy-file-action@master
-        with:
-          source: "programfiles.zip"
-          target: "occlusioninstallerclone/CrossPlatformInstallerBase/installerfiles/"
+        run:
+          copy "${{ github.workspace }}/programfiles.zip" "${{ github.workspace }}/occlusioninstallerclone/CrossPlatformInstallerBase/installerfiles/"
           
       - name: Testing artifact saving
         uses: actions/upload-artifact@v2
