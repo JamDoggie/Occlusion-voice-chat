@@ -20,7 +20,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OcclusionAutoUpdater", "Occ
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "OcclusionVersionControl", "OcclusionVersionControl\OcclusionVersionControl.shproj", "{875D4A31-028B-45B3-A533-3144DCD6097E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OcclusionClientUnitTests", "OcclusionClientUnitTests\OcclusionClientUnitTests.csproj", "{07610040-42AE-4763-BE4E-A415545566A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OcclusionClientUnitTests", "OcclusionClientUnitTests\OcclusionClientUnitTests.csproj", "{07610040-42AE-4763-BE4E-A415545566A3}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -187,8 +187,7 @@ Global
 		{4A55BE62-41D8-4B8F-B9D0-85C22CC5B150}.Debug Win|Any CPU.Build.0 = Debug|Any CPU
 		{4A55BE62-41D8-4B8F-B9D0-85C22CC5B150}.Debug Win|osx-x64.ActiveCfg = Debug|Any CPU
 		{4A55BE62-41D8-4B8F-B9D0-85C22CC5B150}.Debug Win|osx-x64.Build.0 = Debug|Any CPU
-		{4A55BE62-41D8-4B8F-B9D0-85C22CC5B150}.Debug Win|x64.ActiveCfg = Debug|Any CPU
-		{4A55BE62-41D8-4B8F-B9D0-85C22CC5B150}.Debug Win|x64.Build.0 = Debug|Any CPU
+		{4A55BE62-41D8-4B8F-B9D0-85C22CC5B150}.Debug Win|x64.ActiveCfg = Release Win|Any CPU
 		{4A55BE62-41D8-4B8F-B9D0-85C22CC5B150}.Debug Win|x86.ActiveCfg = Debug|Any CPU
 		{4A55BE62-41D8-4B8F-B9D0-85C22CC5B150}.Debug Win|x86.Build.0 = Debug|Any CPU
 		{4A55BE62-41D8-4B8F-B9D0-85C22CC5B150}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

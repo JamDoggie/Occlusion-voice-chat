@@ -20,5 +20,16 @@
       <StyleInclude Source="avares://Avalonia.Themes.Fluent/Controls/ToggleSwitch.xaml"/>
       <StyleInclude Source="avares://OcclusionAutoUpdater/DefaultTheme.xaml"></StyleInclude>
 
+      <Style Selector="TextBox /template/ Border">
+        <Setter Property="CornerRadius" Value="5" />
+      </Style>
+
+      <Style Selector="Button /template/ ContentPresenter">
+        <Setter Property="CornerRadius" Value="5" />
+      </Style>
+
+      <Style Selector="ProgressBar /template/ Border">
+        <Setter Property="CornerRadius" Value="5" />
+      </Style>
     </Application.Styles>
 </Application>

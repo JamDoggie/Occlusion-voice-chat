@@ -4,8 +4,19 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ApplicationIcon>Occlusion_icon.ico</ApplicationIcon>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishTrimmed>true</PublishTrimmed>
+    <Configurations>Debug;Release;Debug Win;Release Win</Configurations>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants></DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|AnyCPU'">
+    <DefineConstants>WINDOWS</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win|AnyCPU'">
     <DefineConstants>WINDOWS</DefineConstants>
   </PropertyGroup>
   <ItemGroup>

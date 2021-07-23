@@ -3,8 +3,8 @@
     <RuntimeIdentifiers>osx-x64</RuntimeIdentifiers>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <!--<PublishSingleFile>true</PublishSingleFile>-->
     <Nullable>enable</Nullable>
+    <PublishTrimmed>true</PublishTrimmed>
     <Platforms>AnyCPU;x64</Platforms>
     <Configurations>Debug;Release;Debug Win;Release Win</Configurations>
   </PropertyGroup>
@@ -79,6 +79,7 @@
     <UseAppHost>true</UseAppHost>
     <ApplicationIcon>Occlusion_icon.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -112,9 +113,18 @@
     <None Update="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libFLAC-8.dll">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+    <None Update="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libFLAC-8.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libFLAC-8.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   
   <ItemGroup>
+    <None Update="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libfreetype-6.dll">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
     <None Update="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libfreetype-6.dll">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
@@ -286,6 +296,210 @@
     <None Update="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\zlib1.dll">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="REM dotnet publish &quot;$(SolutionDir)OcclusionAutoUpdater\OcclusionAutoUpdater.csproj&quot; -c &quot;$(ConfigurationName)&quot; -r win-x64 --self-contained true -o &quot;$(TargetDir)&quot;" />
+  </Target>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libFLAC-8.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libfreetype-6.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libjpeg-9.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libmodplug-1.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libmpg123-0.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libogg-0.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libopus-0.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libopusfile-0.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libpng16-16.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libtiff-5.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libvorbis-0.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libvorbisfile-3.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libwebp-7.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.FLAC.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.freetype.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.jpeg.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.modplug.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.mpg123.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.ogg-vorbis.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.opus.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.opusfile.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.png.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.tiff.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.webp.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.zlib.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libFLAC-8.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libfreetype-6.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libjpeg-9.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libmodplug-1.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libmpg123-0.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libogg-0.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libopus-0.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libopusfile-0.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libpng16-16.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libtiff-5.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libvorbis-0.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libvorbisfile-3.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libwebp-7.dll" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.FLAC.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.freetype.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.jpeg.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.modplug.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.mpg123.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.ogg-vorbis.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.opus.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.opusfile.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.png.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.tiff.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.webp.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\LICENSE.zlib.txt" />
   </ItemGroup>
 
   

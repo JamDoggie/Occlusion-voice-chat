@@ -3,20 +3,49 @@
         xmlns:vm="using:OcclusionAutoUpdater.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" Width="450" Height="200" 
-        MinWidth="450" MaxWidth="450" MinHeight="200" MaxHeight="200"
+        mc:Ignorable="d" Width="450" Height="150" 
+        MinWidth="450" MaxWidth="450" MinHeight="150" MaxHeight="150"
         x:Class="OcclusionAutoUpdater.Views.MainWindow"
         Icon="/Assets/Occlusion_icon.ico"
-        Title="OcclusionAutoUpdater" Background="#32323b">
+        Title="Occlusion Auto Updater" Background="#32323b">
 
-    <Design.DataContext>
+  <Window.Resources>
+    <PageSlide x:Key="PageSlider" Duration="0:0:0.5" Orientation="Horizontal">
+      <PageSlide.SlideInEasing>
+        <CubicEaseOut></CubicEaseOut>
+      </PageSlide.SlideInEasing>
+      <PageSlide.SlideOutEasing>
+        <CubicEaseOut></CubicEaseOut>
+      </PageSlide.SlideOutEasing>
+    </PageSlide>
+  </Window.Resources>
+
+  <Design.DataContext>
         <vm:MainWindowViewModel/>
     </Design.DataContext>
 
   <Grid>
-    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="0 30 0 0">
-      <TextBlock HorizontalAlignment="Center" FontWeight="SemiBold" FontSize="21">There is an update for Occlusion available.</TextBlock>
-      <TextBlock HorizontalAlignment="Center" FontSize="13" Margin="0 10 0 0">Would you like to download it now?</TextBlock>
-    </StackPanel>
+    <Grid Name="MainPage">
+      <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="0 30 0 0">
+        <TextBlock HorizontalAlignment="Center" FontWeight="SemiBold" FontSize="21">There is an update for Occlusion available.</TextBlock>
+        <TextBlock HorizontalAlignment="Center" FontSize="13" Margin="0 10 0 0">Would you like to download it now?</TextBlock>
+      </StackPanel>
+
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0 10 0 10">
+        <Button Name="RemindButton" Cursor="Hand" Padding="10 6 10 6" Margin="0 0 5 0">Remind me later</Button>
+        <Button Name="UpdateButton" Cursor="Hand" Padding="10 6 10 6">Update</Button>
+      </StackPanel>
+    </Grid>
+
+    <Grid Name="DownloadPage" IsVisible="False">
+      <StackPanel VerticalAlignment="Center" HorizontalAlignment="Stretch" Orientation="Vertical">
+        <TextBlock HorizontalAlignment="Center" TextAlignment="Center" FontSize="13" Margin="0 10 0 0">Downloading update. This shouldn't take long.</TextBlock>
+        <Grid Margin="30 10 30 0" Height="25">
+          <ProgressBar Name="DownloadBar" Minimum="0" Maximum="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+          <TextBlock Name="ProgressText" Margin="10 0 0 0" VerticalAlignment="Center">0%</TextBlock>
+        </Grid>
+        
+      </StackPanel>
+    </Grid>
   </Grid>
 </Window>
