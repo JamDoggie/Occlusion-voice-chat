@@ -58,7 +58,7 @@ jobs:
       - name: Zip up the installer
         uses: papeloto/action-zip@v1
         with:
-          files: installerpublish/
+          files: installerpublish/*
           recursive: false
           dest: installerartifact.zip
         
