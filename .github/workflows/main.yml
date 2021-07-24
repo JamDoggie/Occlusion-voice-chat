@@ -34,7 +34,7 @@ jobs:
 
       - name: Copy published .app to a folder.
         run:
-          cp -R "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform\bin\Release/net5.0/osx-x64/publish/Occlusion Voice Chat.app/" "${{ github.workspace }}"
+          cp -R "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform\bin\Release/net5.0/osx-x64/publish/Occlusion Voice Chat.app" "${{ github.workspace }}"
 
       - uses: actions/upload-artifact@v2
         with:
