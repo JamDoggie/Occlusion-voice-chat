@@ -34,7 +34,7 @@ jobs:
 
       - name: Move published .app to a folder.
         run:
-          mv "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\bin\Release\net5.0\osx-x64\publish\Occlusion Voice Chat.app\" "${{ github.workspace }}\occlusionmacrelease\Occlusion Voice Chat.app\"
+          mv "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\bin\Release\net5.0\osx-x64\publish\Occlusion Voice Chat.app\" "${{ github.workspace }}\occlusionmacrelease\"
 
       - uses: actions/upload-artifact@v2
         with:
