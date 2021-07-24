@@ -36,6 +36,12 @@ jobs:
         run:
           mv "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\bin\Release\net5.0\osx-x64\publish\Occlusion Voice Chat.app\" "${{ github.workspace }}\occlusionmacrelease\"
 
+      - name: copy file
+        uses: canastro/copy-file-action@master
+        with:
+          source: '${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\bin\Release\net5.0\osx-x64\publish\Occlusion Voice Chat.app\'
+          target: '${{ github.workspace }}\occlusionmacrelease\'
+
       - uses: actions/upload-artifact@v2
         with:
           name: occlusion-win64-installer-artifact
