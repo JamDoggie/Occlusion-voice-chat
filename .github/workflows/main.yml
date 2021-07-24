@@ -40,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: test-artifact
-
+          path: "${{ github.workspace }}"
       
 
   build-win:
