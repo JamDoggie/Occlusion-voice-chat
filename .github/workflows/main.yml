@@ -32,11 +32,7 @@ jobs:
         run: 
           dotnet msbuild "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -t:BundleApp -p:UseAppHost=true -p:RuntimeIdentifier=osx-x64 -property:Configuration=Release
 
-      - name: Move published .app to a folder.
-        run:
-          mv "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\bin\Release\net5.0\osx-x64\publish\Occlusion Voice Chat.app\" "${{ github.workspace }}\occlusionmacrelease\"
-
-      - name: copy file
+      - name: Copy published .app to a folder.
         uses: canastro/copy-file-action@master
         with:
           source: '${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\bin\Release\net5.0\osx-x64\publish\Occlusion Voice Chat.app\'
