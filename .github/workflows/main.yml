@@ -27,12 +27,18 @@ jobs:
       - name: Publish Occlusion to a folder.
         run: 
           dotnet restore "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -r osx-x64
-          dotnet msbuild -t:BundleApp -p:UseAppHost=true -p:RuntimeIdentifier=osx-x64 -property:Configuration=Release /p:OutputPath="${{ github.workspace }}\occlusionmacrelease\"
+          dotnet msbuild -t:BundleApp -p:UseAppHost=true -p:RuntimeIdentifier=osx-x64 -property:Configuration=Release
 
-      - name: Test artifact.
+      - name: Move published .app to a folder.
+        run:
+          mv "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\bin\Release\net5.0\osx-x64\publish\Occlusion Voice Chat.app" "${{ github.workspace }}\occlusionmacrelease\Occlusion Voice Chat.app"
+          
+      - name: Test Artifact
         uses: actions/upload-artifact@v2
         with:
           name: test-artifact
+
+      
 
   build-win:
     # Windows Server 2019
