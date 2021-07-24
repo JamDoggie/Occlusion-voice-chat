@@ -24,10 +24,13 @@ jobs:
         with:
           dotnet-version: '5.0.x'
 
-      - name: Publish Occlusion to a folder.
+      - name: Restore Occlusions libraries
         run: 
           dotnet restore "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -r osx-x64
-          dotnet msbuild -t:BundleApp -p:UseAppHost=true -p:RuntimeIdentifier=osx-x64 -property:Configuration=Release
+
+      - name: Publish Occlusion to a folder.
+        run: 
+          dotnet msbuild "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -t:BundleApp -p:UseAppHost=true -p:RuntimeIdentifier=osx-x64 -property:Configuration=Release
 
       - name: Move published .app to a folder.
         run:
