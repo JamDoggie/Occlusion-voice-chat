@@ -11,10 +11,30 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+
+  build-mac:
+    # Mac OS 10.15 Catalina
+    runs-on: macos-10.15
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+
+      - name: Publish Occlusion to a folder.
+        run: 
+          dotnet restore "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -r osx-x64
+          dotnet msbuild -t:BundleApp -p:UseAppHost=true -p:RuntimeIdentifier=osx-x64 -property:Configuration=Release /p:OutputPath="${{ github.workspace }}\occlusionmacrelease\"
+
+      - name: Test artifact.
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-artifact
+
+  build-win:
     # Windows Server 2019
     runs-on: windows-2019
 
