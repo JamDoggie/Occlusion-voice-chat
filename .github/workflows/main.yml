@@ -32,6 +32,10 @@ jobs:
         run: 
           dotnet msbuild "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -t:BundleApp -p:UseAppHost=true -p:RuntimeIdentifier=osx-x64 -property:Configuration=Release
 
+      - name: Create publish folder.
+        run:
+          mkdir "${{ github.workspace }}/occlusionmacbuild/"
+
       - name: Copy published .app to a folder.
         run:
           cp -R "${{ github.workspace }}/occlusionmacbuild/bin/Release/net5.0/osx-x64/publish/Occlusion Voice Chat.app" "${{ github.workspace }}/occlusionmacbuild/"
