@@ -38,7 +38,7 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: occlusion-win64-installer-artifact
+          name: macos-test-artifact
           path: ${{ github.workspace }}
 
   build-win:
