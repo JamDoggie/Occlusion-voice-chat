@@ -42,7 +42,7 @@ jobs:
 
       - name: Copy Libraries.
         run:
-          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.dylib" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.dylib"
+          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.dylib" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.dylib";
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.a" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.a"
           
       - name: Make the pkg
