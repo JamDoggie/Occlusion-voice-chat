@@ -12,6 +12,43 @@ on:
   workflow_dispatch:
 
 jobs:
+  #
+  build-linux:
+    runs-on: ubuntu-20.04
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+    
+      - name: Restore Occlusions libraries
+        run: 
+          dotnet restore "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -r linux-x64
+          
+      - name: Publish Occlusion to a folder
+        run: 
+          dotnet publish "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -c "Release" -r linux-x64 --self-contained true --output "occlusionlinuxrelease/"
+
+      - name: Copy Libraries
+        run:
+          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/SDL2.so" "${{ github.workspace }}/occlusionlinuxrelease/SDL2.so";
+          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/SDL2.a" "${{ github.workspace }}/occlusionlinuxrelease/SDL2.a"
+          
+      - name: Zip the published binaries.
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'tar'
+          filename: 'occlusion-linux-debian-x64.tar.gz'
+          path: '${{ github.workspace }}\occlusionlinuxrelease\*'
+          
+      - name: And upload an artifact.
+        uses: actions/upload-artifact@v2
+        with:
+          name: occlusion-linux-debian-x64-artifact
+          path: occlusion-linux-debian-x64.tar.gz
+
 
   build-mac:
     # Mac OS 10.15 Catalina
@@ -42,7 +79,7 @@ jobs:
 
       - name: Copy Libraries.
         run:
-          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.dylib" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.dylib"
+          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.dylib" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.dylib";
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.a" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.a"
           
       - name: Make the pkg
