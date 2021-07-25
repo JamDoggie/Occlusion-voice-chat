@@ -41,7 +41,7 @@ jobs:
         with:
           type: 'tar'
           filename: 'occlusion-linux-debian-x64.tar.gz'
-          path: '${{ github.workspace }}\occlusionlinuxrelease\*'
+          path: '${{ github.workspace }}/occlusionlinuxrelease/'
           
       - name: And upload an artifact.
         uses: actions/upload-artifact@v2
