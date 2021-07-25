@@ -12,11 +12,11 @@
     <CFBundleName>Occlusion Voice Chat_CrossPlatform</CFBundleName> <!-- Also defines .app file name -->
     <CFBundleDisplayName>Occlusion Voice Chat</CFBundleDisplayName>
     <CFBundleIdentifier>com.occlusion</CFBundleIdentifier>
-    <CFBundleVersion>1</CFBundleVersion>
+    <CFBundleVersion>2</CFBundleVersion>
     <CFBundlePackageType>APPL</CFBundlePackageType>
     <CFBundleIconFile>Occlusion Voice Chat_CrossPlatform.icns</CFBundleIconFile>
     <CFBundleExecutable>Occlusion Voice Chat_CrossPlatform</CFBundleExecutable>
-	  <CFBundleShortVersionString>1.0.0</CFBundleShortVersionString>
+	  <CFBundleShortVersionString>2.0.0</CFBundleShortVersionString>
     <NSPrincipalClass>NSApplication</NSPrincipalClass>
     <NSHighResolutionCapable>true</NSHighResolutionCapable>
   </PropertyGroup>
