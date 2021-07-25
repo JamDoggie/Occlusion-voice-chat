@@ -148,7 +148,7 @@ jobs:
           
       - name: Rename the installer.
         run:
-          cd "{{ github.workspace }}/installerpublish/" && ren "CrossPlatformInstallerBase.exe" "occlusion-voice-chat-installer-x64.exe"
+          cd "installerpublish/" && ren "CrossPlatformInstallerBase.exe" "occlusion-voice-chat-installer-x64.exe"
           
       - name: Zip up the installer
         uses: thedoctor0/zip-release@master
