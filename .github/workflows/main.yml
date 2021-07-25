@@ -146,6 +146,10 @@ jobs:
         run: 
           dotnet publish "${{ github.workspace }}\occlusioninstallerclone\CrossPlatformInstallerBase\CrossPlatformInstallerBase.csproj" -c "Release" -r win-x64 --self-contained true --output "installerpublish\"
           
+      - name: Rename the installer.
+        run:
+          cd "{{ github.workspace }}/installerpublish/" && ren "CrossPlatformInstallerBase.exe" "occlusion-voice-chat-installer-x64.exe"
+          
       - name: Zip up the installer
         uses: thedoctor0/zip-release@master
         with:
