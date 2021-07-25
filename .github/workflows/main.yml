@@ -40,10 +40,27 @@ jobs:
         run:
           cp -R "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/bin/Release/net5.0/osx-x64/publish/Occlusion Voice Chat.app" "${{ github.workspace }}/occlusionmacbuild/"
 
-      - uses: actions/upload-artifact@v2
+      - name: Copy Libraries.
+        run:
+          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.dylib" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.dylib"
+          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.a" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.a"
+          
+      - name: Make the pkg
+        run:
+          pkgbuild --component "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app" "${{ github.workspace }}/occlusion-osx-x64-installer.pkg"
+          
+      - name: Zip the published pkg so we dont lose any UNIX permissions.
+        uses: thedoctor0/zip-release@master
         with:
-          name: macos-test-artifact
-          path: ${{ github.workspace }}
+          type: 'tar'
+          filename: 'installerartifact.tar.gz'
+          path: '${{ github.workspace }}/occlusion-osx-x64-installer.pkg'
+        
+      - name: And upload an artifact.
+        uses: actions/upload-artifact@v2
+        with:
+          name: occlusion-mac64-installer-artifact
+          path: installerartifact.tar.gz
 
   build-win:
     # Windows Server 2019
