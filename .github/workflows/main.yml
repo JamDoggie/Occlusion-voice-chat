@@ -11,10 +11,41 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+
+  build-mac:
+    # Mac OS 10.15 Catalina
+    runs-on: macos-10.15
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+
+      - name: Restore Occlusions libraries
+        run: 
+          dotnet restore "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -r osx-x64
+
+      - name: Publish Occlusion to a folder.
+        run: 
+          dotnet msbuild "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -t:BundleApp -p:UseAppHost=true -p:RuntimeIdentifier=osx-x64 -property:Configuration=Release
+
+      - name: Create publish folder.
+        run:
+          mkdir "${{ github.workspace }}/occlusionmacbuild/"
+
+      - name: Copy published .app to a folder.
+        run:
+          cp -R "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/bin/Release/net5.0/osx-x64/publish/Occlusion Voice Chat.app" "${{ github.workspace }}/occlusionmacbuild/"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: macos-test-artifact
+          path: ${{ github.workspace }}
+
+  build-win:
     # Windows Server 2019
     runs-on: windows-2019
 
@@ -31,36 +62,45 @@ jobs:
         with:
           repository: 'JamDoggie/CrossPlatformInstallerBase'
           path: 'occlusioninstallerclone/'
-    
-      - name: Debug artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: installer-artifact
-          path: ${{ github.workspace }}
-    
-      - name: Restore the packages for occlusion first.
-        run:
-          dotnet restore "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj"
-    
+
       - name: Publish Occlusion to a folder.
         run: 
           dotnet publish "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\"
 
+      - name: Publish the auto updater into the published occlusion directory.
+        run:
+          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\"
+
+      #- name: Zip the published binaries.
+      #  uses: papeloto/action-zip@v1
+      #  with:
+      #    files: occlusionwinrelease/
+      #    recursive: false
+      #    dest: programfiles.zip
       - name: Zip the published binaries.
-        uses: papeloto/action-zip@v1
+        uses: thedoctor0/zip-release@master
         with:
-          files: occlusionwinrelease/ Occlusion Voice Chat_CrossPlatform.exe
-          recursive: false
-          dest: programfiles.zip
+          type: 'zip'
+          filename: 'programfiles.zip'
+          path: '${{ github.workspace }}\occlusionwinrelease\*'
           
       - name: Copy the published binaries into the installer.
-        uses: canastro/copy-file-action@master
-        with:
-          source: "programfiles.zip"
-          target: "occlusioninstallerclone/CrossPlatformInstallerBase/installerfiles/"
+        run:
+          copy "${{ github.workspace }}/programfiles.zip" "${{ github.workspace }}/occlusioninstallerclone/CrossPlatformInstallerBase/installerfiles/"
           
-      - name: Testing artifact saving
+      - name: Finally, publish the installer
+        run: 
+          dotnet publish "${{ github.workspace }}\occlusioninstallerclone\CrossPlatformInstallerBase\CrossPlatformInstallerBase.csproj" -c "Release" -r win-x64 --self-contained true --output "installerpublish\"
+          
+      - name: Zip up the installer
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'installerartifact.zip'
+          path: 'installerpublish/'
+        
+      - name: And upload an artifact.
         uses: actions/upload-artifact@v2
         with:
-          name: installer-artifact
-          path: occlusioninstallerclone/
+          name: occlusion-win64-installer-artifact
+          path: installerartifact.zip
