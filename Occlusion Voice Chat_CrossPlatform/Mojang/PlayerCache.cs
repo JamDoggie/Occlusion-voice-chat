@@ -113,7 +113,7 @@ namespace Occlusion_voice_chat.Mojang
                 else
                 {
                     // Not already cached, add to cache
-                    var username = MojangAPI.GetPlayerProfile(uuid).name;
+                    string? username = MojangAPI.GetPlayerProfile(uuid)?.name;
 
                     if (username != null)
                         CachePlayer(uuid);

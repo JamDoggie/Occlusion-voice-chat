@@ -20,6 +20,7 @@ using Occlusion_voice_chat.Opus;
 #if CLIENT_CROSSPLATFORM
 using Avalonia;
 using Occlusion_Voice_Chat_CrossPlatform;
+using System.Runtime.CompilerServices;
 #endif
 
 namespace OcclusionShared.NetworkingShared
@@ -69,7 +70,7 @@ namespace OcclusionShared.NetworkingShared
         public OpusCodec codec { get; set; }
 
         private byte[] _micQueue;
-        public byte[] MicQueue { get; set; }
+        public byte[] MicQueue;
 
         public float ClientVolume { get; set; } = 1.0f;
 
@@ -110,7 +111,11 @@ namespace OcclusionShared.NetworkingShared
         private float _currentdist = 1f;
         public float DistanceVolume
         {
-            get => _currentdist;
+            get
+            {
+                return _currentdist;
+            }
+
             set
             {
                 _distTarget = value;
@@ -217,7 +222,9 @@ namespace OcclusionShared.NetworkingShared
         private short[] stereoMicShorts;
         private short[] destinationShorts = null;
         private byte[] destBytes = null;
-
+        private short[] queuedShorts = null;
+        
+        
         public void MixMicIntoSpanAndCutQueue(ref Span<byte> destination)
         {
             lock (_lockObj)
@@ -257,8 +264,8 @@ namespace OcclusionShared.NetworkingShared
                     // First time initializations
                     if (destinationShorts == null)
                     {
-                        
                         destinationShorts = new short[destination.Length / sizeof(short)]; // sizeof(short) = 2
+                        queuedShorts = new short[destinationShorts.Length];
                     }
 
                     if (destBytes == null)
@@ -314,8 +321,6 @@ namespace OcclusionShared.NetworkingShared
                     }
 
                     // Voice activity
-                    short[] queuedShorts = new short[destinationShorts.Length];
-
                     for(int i = 0; i < queuedShorts.Length; i++)
                     {
                         queuedShorts[i] = stereoMicShorts[i];

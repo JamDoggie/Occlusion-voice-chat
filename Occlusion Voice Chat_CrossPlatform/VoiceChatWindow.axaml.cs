@@ -258,7 +258,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             string skinURL = PlayerCache.GetCachedPlayerSkinURL(uuid);
             string playerName = PlayerCache.GetCachedPlayerUsername(uuid);
 
-            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
+            if (skinURL == null)
+                skinURL = "http://assets.mojang.com/SkinTemplates/4px_reference.png";
+
+            if (playerName == null)
+                playerName = "Unknown Player";
 
             WebClient webClient = new WebClient();
             byte[] imageBytes = webClient.DownloadData(skinURL);

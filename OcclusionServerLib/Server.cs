@@ -57,12 +57,39 @@ namespace OcclusionServerLib
 
         private NetDataWriter writer = new NetDataWriter();
 
+
+        private Random random = new Random();
         private void InternalPacketRecieved(NetPacketReader message, IPacket packet, Server server, NetPeer peer)
         {
             // Player Verification
             if (packet is ClientVerificationPacket)
             {
                 var verificationPacket = packet as ClientVerificationPacket;
+
+#if DEVMODE
+                // DEVMODE:
+                //  This code is for testing purposes and will only compile with the DEVMODE compiler word.
+                //  This is so I can easily open a ton of occlusion clients and connect to a server without needing
+                //  to be in minecraft or have a bunch of minecraft alt accounts.
+
+                var voiceUser = server.GetUserByConnection(peer);
+                voiceUser.verificationCode = random.Next(0,100000);
+                voiceUser.MCUUID = Guid.NewGuid().ToString();
+                voiceUser.IsVerified = true;
+                voiceUser.Location = new structs.PlayerLocation(0, 0, 0, 0, 0, "devworld", false);
+
+                // Send this now verified user to everyone connected
+                foreach (VoiceUser user in server.Users)
+                {
+                    ServerUserConnectedPacket userConnectedPacket = new ServerUserConnectedPacket();
+                    userConnectedPacket.idsToAdd.Add(new KeyValuePair<int, string>(voiceUser.verificationCode, voiceUser.MCUUID));
+
+                    server.SendMessage(userConnectedPacket, user.Connection, DeliveryMethod.ReliableOrdered);
+                }
+
+                return; // Prevent normal behavior if this compiles.
+#endif
+
 
                 codesBeingVerified[verificationPacket.VerificationCode] = peer;
 

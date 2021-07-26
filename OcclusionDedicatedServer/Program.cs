@@ -104,7 +104,9 @@ namespace OcclusionDedicatedServer
                     {
                         if (server.GetUserByConnection(peer) != null && 
                             user.IsVerified &&
-                            user.id != server.GetUserByConnection(peer).id &&
+#if !LOOPBACK  
+                            user.id != server.GetUserByConnection(peer).id && 
+ #endif
                             user.Location != null &&
                             server.GetUserByConnection(peer).Location != null)
                         {

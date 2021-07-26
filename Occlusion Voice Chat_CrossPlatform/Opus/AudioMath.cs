@@ -230,7 +230,14 @@ namespace Occlusion_voice_chat.Opus
         /// <returns></returns>
         public static short AmplifyShort(short sh, float amount)
         {
-            return (short)Math.Clamp(sh * amount, short.MinValue, short.MaxValue);
+            return ClampShort(sh * amount, short.MinValue, short.MaxValue);
+        }
+
+        private static short ClampShort(float f, short min, short max)
+        {
+            if (f < min) return min;
+            if (f > max) return max;
+            return (short)f;
         }
     }
 }
