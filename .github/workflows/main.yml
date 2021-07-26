@@ -41,7 +41,7 @@ jobs:
         with:
           type: 'tar'
           filename: 'occlusion-linux-debian-x64.tar.gz'
-          path: '${{ github.workspace }}\occlusionlinuxrelease\*'
+          path: '${{ github.workspace }}/occlusionlinuxrelease/'
           
       - name: And upload an artifact.
         uses: actions/upload-artifact@v2
@@ -145,6 +145,10 @@ jobs:
       - name: Finally, publish the installer
         run: 
           dotnet publish "${{ github.workspace }}\occlusioninstallerclone\CrossPlatformInstallerBase\CrossPlatformInstallerBase.csproj" -c "Release" -r win-x64 --self-contained true --output "installerpublish\"
+          
+      - name: Rename the installer.
+        run:
+          cd "installerpublish/" && ren "CrossPlatformInstallerBase.exe" "occlusion-voice-chat-installer-x64.exe"
           
       - name: Zip up the installer
         uses: thedoctor0/zip-release@master
