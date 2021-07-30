@@ -23,7 +23,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|AnyCPU'">
-    <DefineConstants>TRACE;SERVER, LOOPBACK, DEVMODE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

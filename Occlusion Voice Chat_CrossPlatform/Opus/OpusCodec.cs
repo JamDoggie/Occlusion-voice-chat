@@ -13,7 +13,7 @@ namespace Occlusion_voice_chat.Opus
     public class OpusCodec : ICodec
     {
         private int _bitrate = 64;
-        private int _complexity = 5;
+        private int _complexity = 1;
         private double _frameSize = 20;
         private int _packetLoss = 0;
         private bool _vbr = false;
@@ -24,14 +24,24 @@ namespace Occlusion_voice_chat.Opus
 
         private OpusEncoder _encoder;
         private OpusDecoder _decoder;
-        private Stopwatch _timer = new Stopwatch();
 
         private byte[] scratchBuffer = new byte[10000];
+
+        public int Bitrate
+        {
+            get => _bitrate;
+            
+            set
+            {
+                _encoder.Bitrate = (value * 1024);
+                _bitrate = value;
+            }
+        }
 
         public OpusCodec()
         {
             _encoder = OpusEncoder.Create(App.samplingRate, 1, OpusApplication.VOIP);
-
+            
             SetBitrate(_bitrate);
             SetComplexity(_complexity);
             SetVBRMode(_vbr, _cvbr);
@@ -113,12 +123,9 @@ namespace Occlusion_voice_chat.Opus
 
             if (_incomingSamples.Available() >= frameSize)
             {
-                _timer.Reset();
-                _timer.Start();
                 short[] nextFrameData = _incomingSamples.Read(frameSize);
                 int thisPacketSize = _encoder.Encode(nextFrameData, 0, frameSize, scratchBuffer, outCursor, scratchBuffer.Length);
                 outCursor += thisPacketSize;
-                _timer.Stop();
             }
 
             byte[] finalOutput = new byte[outCursor];
@@ -136,18 +143,12 @@ namespace Occlusion_voice_chat.Opus
             if (!lostPacket)
             {
                 // Normal decoding
-                _timer.Reset();
-                _timer.Start();
                 int thisFrameSize = _decoder.Decode(inputPacket, 0, inputPacket.Length, outputBuffer, 0, frameSize, false);
-                _timer.Stop();
             }
             else
             {
                 // packet loss path
-                _timer.Reset();
-                _timer.Start();
                 int thisFrameSize = _decoder.Decode(null, 0, 0, outputBuffer, 0, frameSize, true);
-                _timer.Stop();
             }
 
             short[] finalOutput = new short[frameSize];

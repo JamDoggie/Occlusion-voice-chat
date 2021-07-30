@@ -12,6 +12,7 @@ using OcclusionShared.NetworkingShared.Packets;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -85,6 +86,54 @@ namespace OcclusionServerLib
                         break;
                     }
                 }
+
+                foreach(VoiceUser user in server.Users)
+                {
+                    if (user.Location != null)
+                    {
+                        int newBitrate = 64;
+
+                        // First, we figure out how many players are within hearing range of this user (including this user)
+                        int usersInRange = 1; // Start with one and skip calculations for the player we're testing the range on.
+                        foreach(VoiceUser userWithin in server.Users)
+                        {
+                            if (userWithin.Location != null && userWithin != user)
+                            {
+                                Vector3 userPos = new Vector3(user.Location.Value.PosX, user.Location.Value.PosY, user.Location.Value.PosZ);
+                                Vector3 userWithinPos = new Vector3(userWithin.Location.Value.PosX, userWithin.Location.Value.PosY, userWithin.Location.Value.PosZ);
+
+                                if (Vector3.Distance(userPos, userWithinPos) <= server.SettingsFile.Obj.HearingDistance)
+                                {
+                                    usersInRange++;
+                                }
+                            }
+                        }
+
+                        // If there are at least 5 people in hearing range of this player, lower their bitrate.
+                        if (usersInRange >= 5)
+                        {
+                            // Per user after five, lower the bitrate by one.
+                            int overFlow = usersInRange - 5;
+
+                            newBitrate = 32;
+
+                            newBitrate -= overFlow;
+
+                            if (newBitrate < 24)
+                                newBitrate = 24; // Clamp the lowest possible bitrate to 24 Kbps (from testing anything too much lower than this sounds ultra-cellphone quality)
+                        }
+
+                        if (newBitrate != user.CurrentBitrate)
+                        {
+                            ServerBitrateChangePacket bitratePacket = new ServerBitrateChangePacket();
+                            bitratePacket.NewBitrate = newBitrate;
+
+                            server.SendMessage(bitratePacket, user.Connection, DeliveryMethod.ReliableOrdered);
+
+                            user.CurrentBitrate = newBitrate;
+                        }
+                    }
+                }
             }
 
             if (packet is MCServerPlayerLeave playerLeave)
@@ -123,8 +172,6 @@ namespace OcclusionServerLib
             this.server = server;
         }
 
-        
-
         public async Task Connect(string ip, int serverport)
         {
             if (ip == "localhost")
@@ -133,7 +180,7 @@ namespace OcclusionServerLib
             var eventLoopGroup = new MultithreadEventLoopGroup();
 
             handler = new GameClientHandler(this);
-
+            
             Bootstrap clientBootstrap = new Bootstrap();
             clientBootstrap.
                 Group(eventLoopGroup)
@@ -142,7 +189,7 @@ namespace OcclusionServerLib
                 .Handler(new ActionChannelInitializer<TcpSocketChannel>(channel =>
                 {
                     var pipeline = channel.Pipeline;
-
+                    
                     pipeline.AddLast(new LengthFieldBasedFrameDecoder(100000000, 0, 4, 0, 4));
                     pipeline.AddLast(new LengthFieldPrepender(4));
                     

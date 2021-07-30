@@ -61,7 +61,7 @@ namespace OcclusionShared.NetworkingShared
             } 
         }
 
-
+        public int CurrentBitrate { get; set; } = 64; // Kbps
 
 
 #endif

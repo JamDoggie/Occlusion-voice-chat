@@ -1,36 +1,31 @@
 ﻿using LiteNetLib;
 using LiteNetLib.Utils;
 using Occlusion.NetworkingShared.Packets;
-using OcclusionShared.NetworkingShared.Packets.Attributes;
-using PestControlShared.NetworkingShared.Packets.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace OcclusionShared.NetworkingShared.Packets
 {
-    [PacketId(2), PooledPacket]
-    public class ClientVoiceDataPacket : NetworkPacket
+    public class ServerBitrateChangePacket : NetworkPacket
     {
-        public byte[] VoiceData { get; set; }
+        public int NewBitrate { get; set; } = 64; // Kbps
 
-        public ClientVoiceDataPacket()
+        public ServerBitrateChangePacket()
         {
-            Identifier = "ClientVoiceDataPacket";
+            Identifier = "ServerBitrateChangePacket";
         }
 
         public override void FromMessage(NetPacketReader message)
         {
             base.FromMessage(message);
-
-            VoiceData = message.GetBytesWithLength();
+            NewBitrate = message.GetInt();
         }
 
         public override void ToMessage(NetDataWriter message)
         {
             base.ToMessage(message);
-
-            message.PutBytesWithLength(VoiceData);
+            message.Put(NewBitrate);
         }
     }
 }

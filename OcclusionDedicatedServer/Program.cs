@@ -73,7 +73,35 @@ namespace OcclusionDedicatedServer
                     return 1;
                 }));
 
-            while(IsRunning)
+            /*cmdDispatcher.Register(
+                LiteralArgumentBuilder<CommandContext>.Literal("reconnectgame")
+                .Executes((c) =>
+                {
+                    Server.GameClient.Disconnect();
+
+                    Thread gameClientThread = new Thread(async () =>
+                    {
+                        int port = -1;
+
+                        int.TryParse(Server.SettingsFile.Obj.GamePort, out port);
+
+                        if (Server.SettingsFile.Obj.GameIP != string.Empty && port != -1)
+                        {
+                            await Server.GameClient.Connect(Server.SettingsFile.Obj.GameIP, port);
+                            Server.GameClientLogger.Log("Game client reconnected.");
+                        }
+                        else
+                        {
+                            Server.GameClientLogger.Log("Could not start game client, invalid IP or port! Did you set the IP and port in the settings.json file?");
+                        }
+                    });
+                    
+                    
+
+                    return 1;
+                }));*/
+
+            while (IsRunning)
             {
                 string userInput = Console.ReadLine();
 

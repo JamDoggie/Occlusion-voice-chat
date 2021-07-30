@@ -222,6 +222,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         private void Client_PacketRecievedEvent(NetPacketReader message, IPacket packet, Client client)
         {
+            if (packet is ServerBitrateChangePacket bitratePacket)
+            {
+                mainCodec.Bitrate = bitratePacket.NewBitrate;
+            }
+
             if (packet is ServerUserConnectedPacket userConnectedPacket)
             {
                 foreach (KeyValuePair<int, string> id in userConnectedPacket.idsToAdd)
@@ -244,6 +249,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
                         voiceUser.codec.SetFrameSize(20);
                         voiceUser.codec.SetApplication(Concentus.Enums.OpusApplication.VOIP);
+                        
 
                         Users.Add(voiceUser);
 
@@ -355,6 +361,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             queuedMicrophoneAudio = new byte[queueLength];
 
             mainCodec.SetApplication(Concentus.Enums.OpusApplication.VOIP);
+            mainCodec.SetVBRMode(true, true);
             mainCodec.SetFrameSize(20);
 
             RecordingDevice.Unpause();

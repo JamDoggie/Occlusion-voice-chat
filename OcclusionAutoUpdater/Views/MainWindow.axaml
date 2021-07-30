@@ -28,7 +28,7 @@
     <Grid Name="MainPage">
       <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="0 30 0 0">
         <TextBlock HorizontalAlignment="Center" FontWeight="SemiBold" FontSize="21">There is an update for Occlusion available.</TextBlock>
-        <TextBlock HorizontalAlignment="Center" FontSize="13" Margin="0 10 0 0">Would you like to download it now?</TextBlock>
+        <TextBlock HorizontalAlignment="Center" FontSize="13" TextWrapping="Wrap" TextAlignment="Center" Margin="20 10 20 0">Would you like to download it now? You will be required to use the new version if you wish to connect to up to date servers.</TextBlock>
       </StackPanel>
 
       <StackPanel Orientation="Horizontal" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0 10 0 10">

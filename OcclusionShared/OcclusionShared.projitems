@@ -13,9 +13,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\NetworkingUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\PacketManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\Attributes\PacketIdAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\Attributes\PooledPacketAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ClientVerificationPacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ClientVoiceDataPacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\NetworkPacket.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ServerBitrateChangePacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ServerConnectedPacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ServerDisconnectPacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ServerUserConnectedPacket.cs" />

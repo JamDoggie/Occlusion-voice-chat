@@ -130,10 +130,20 @@ namespace OcclusionServerLib
                     if (PacketManager.GetPacketInternalId(pair.Key) == internalid &&
                         pair.Value.GetInterfaces().Contains(typeof(IPacket)))
                     {
-                        IPacket dummyPacket = Activator.CreateInstance(pair.Value) as IPacket;
-                        dummyPacket.FromMessage(reader);
+                        if (PacketManager.PooledPackets.TryGetValue(pair.Key, out IPacket pooledPacket))
+                        {
+                            // Use a pre-pooled packet object for this packet type.
+                            pooledPacket.FromMessage(reader);
 
-                        PacketRecievedEvent.Invoke(reader, dummyPacket, this, peer);
+                            PacketRecievedEvent.Invoke(reader, pooledPacket, this, peer);
+                        }
+                        else
+                        {
+                            IPacket dummyPacket = Activator.CreateInstance(pair.Value) as IPacket;
+                            dummyPacket.FromMessage(reader);
+
+                            PacketRecievedEvent.Invoke(reader, dummyPacket, this, peer);
+                        }
                     }
                 }
             };

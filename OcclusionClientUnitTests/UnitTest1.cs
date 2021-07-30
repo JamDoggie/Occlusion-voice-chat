@@ -9,6 +9,7 @@ namespace OcclusionClientUnitTests
         [TestMethod]
         public void TestMethod1()
         {
+            
         }
     }
 }

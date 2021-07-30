@@ -1,10 +1,11 @@
 ﻿using LiteNetLib;
 using LiteNetLib.Utils;
+using OcclusionShared.NetworkingShared.Packets.Attributes;
 using PestControlShared.NetworkingShared.Packets.Attributes;
 
 namespace Occlusion.NetworkingShared.Packets
 {
-    [PacketId(1)]
+    [PacketId(1), PooledPacket]
     public class ServerVoiceDataPacket : NetworkPacket
     {
         public byte[] VoiceData { get; set; }
@@ -38,7 +39,6 @@ namespace Occlusion.NetworkingShared.Packets
             base.ToMessage(message);
 
             message.PutBytesWithLength(VoiceData);
-
 
             message.Put(Volume);
 

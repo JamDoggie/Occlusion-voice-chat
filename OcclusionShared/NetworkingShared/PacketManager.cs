@@ -1,4 +1,5 @@
-﻿using PestControlShared.NetworkingShared.Packets.Attributes;
+﻿using OcclusionShared.NetworkingShared.Packets.Attributes;
+using PestControlShared.NetworkingShared.Packets.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,6 +13,8 @@ namespace Occlusion.NetworkingShared
     {
         public static Dictionary<string, Type> PacketIds { get; set; } = new Dictionary<string, Type>();
 
+        public static Dictionary<string, IPacket> PooledPackets { get; set; } = new Dictionary<string, IPacket>();
+ 
         /// <summary>
         /// These are the internal ids used when sending these packets over the network. The point of sending an int instead of a string is mainly optimization, so we're not sending 
         /// too many bytes over the network.
@@ -62,6 +65,16 @@ namespace Occlusion.NetworkingShared
 
                                     Trace.WriteLine($"PACKET TYPE REGISTERED: {packetObj.Identifier} ID: {((PacketIdAttribute)attrib).id}");
                                     Console.WriteLine($"PACKET TYPE REGISTERED: {packetObj.Identifier} ID: {((PacketIdAttribute)attrib).id}");
+                                }
+                            }
+
+                            if (attrib is PooledPacketAttribute)
+                            {
+                                object dummyObj = Activator.CreateInstance(t);
+
+                                if (dummyObj is IPacket packetObj)
+                                {
+                                    PooledPackets[packetObj.Identifier] = packetObj;
                                 }
                             }
                         }

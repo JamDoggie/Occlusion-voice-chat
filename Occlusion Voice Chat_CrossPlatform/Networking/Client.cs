@@ -97,11 +97,20 @@ namespace Occlusion_voice_chat.Networking
                 {
                     if (PacketManager.GetPacketInternalId(pair.Key) == internalid)
                     {
-                        var dummyPacket = Activator.CreateInstance(pair.Value) as IPacket;
+                        if (PacketManager.PooledPackets.TryGetValue(pair.Key, out IPacket pooledPacket))
+                        {
+                            // Use a pre-pooled packet object for this packet type.
+                            pooledPacket.FromMessage(dataReader);
 
-                        dummyPacket.FromMessage(dataReader);
+                            PacketRecievedEvent.Invoke(dataReader, pooledPacket, this);
+                        }
+                        else
+                        {
+                            IPacket dummyPacket = Activator.CreateInstance(pair.Value) as IPacket;
+                            dummyPacket.FromMessage(dataReader);
 
-                        PacketRecievedEvent.Invoke(dataReader, dummyPacket, this);
+                            PacketRecievedEvent.Invoke(dataReader, dummyPacket, this);
+                        }
                     }
                 }
 
