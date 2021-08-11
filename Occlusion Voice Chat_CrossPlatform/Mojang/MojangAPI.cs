@@ -44,7 +44,7 @@ namespace Occlusion_voice_chat.Mojang
             APIErrorJson error = JsonConvert.DeserializeObject<APIErrorJson>(json);
 
             if (error != null && error.error != null && error.errorMessage != null)
-                throw new MojangAPIException($"The MojangAPI sent back an error message. \nReturned error type: {error.error}, Returned error message: {error.errorMessage}");
+                throw new MojangAPIException($"The Mojang API sent back an error message. \nReturned error type: {error.error}, Returned error message: {error.errorMessage}");
         }
 
         private static string HttpGet(string uri)

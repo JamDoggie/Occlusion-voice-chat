@@ -146,6 +146,8 @@ namespace OcclusionServerLib
                         }
                     }
                 }
+
+                reader.Recycle();
             };
 
             EventListener.ConnectionRequestEvent += (request) => 
@@ -219,6 +221,7 @@ namespace OcclusionServerLib
             while (InternalServer.IsRunning)
             {
                 InternalServer.PollEvents();
+                Thread.Sleep(1);
             }
         }
 
@@ -271,6 +274,7 @@ namespace OcclusionServerLib
             writer.Reset();
             packet.ToMessage(writer);
             peer.Send(writer, method);
+            
         }
 
         public void BroadcastMessage(IPacket packet, DeliveryMethod method)

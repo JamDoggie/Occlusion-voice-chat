@@ -22,8 +22,9 @@ namespace OcclusionShared.NetworkingShared.Packets
         public override void FromMessage(NetPacketReader message)
         {
             base.FromMessage(message);
-
-            VoiceData = message.GetBytesWithLength();
+            
+            if (!message.IsNull && message.AvailableBytes > 0 && !message.EndOfData)
+                VoiceData = message.GetBytesWithLength();
         }
 
         public override void ToMessage(NetDataWriter message)

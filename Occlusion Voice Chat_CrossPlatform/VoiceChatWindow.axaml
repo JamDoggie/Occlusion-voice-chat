@@ -29,7 +29,7 @@
 
   
   
-  <Grid>
+  <Grid Margin="0 0 0 0">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"></RowDefinition>
       <RowDefinition/>
@@ -49,20 +49,24 @@
     </ScrollViewer>
 
 
-    <StackPanel Grid.Row="2" Background="#282830" Orientation="Horizontal">
-      <Button Name="MuteButton" BorderBrush="Transparent" Margin="5 0 0 0" Width="40" Height="40" Background="Transparent" Cursor="Hand" >
-        <Image Name="MuteMicIcon" Width="40" Height="40" MinWidth="40" MinHeight="40" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding CurrentMicIcon, Converter={StaticResource variableImage}}"></Image>
-      </Button>
+    <Grid Grid.Row="2">
+      
+      <StackPanel Background="#282830" Orientation="Horizontal">
+        <Button Name="MuteButton" BorderBrush="Transparent" Margin="5 0 0 0" Width="40" Height="40" Background="Transparent" Cursor="Hand" >
+          <Image Name="MuteMicIcon" Width="40" Height="40" MinWidth="40" MinHeight="40" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding CurrentMicIcon, Converter={StaticResource variableImage}}"></Image>
+        </Button>
 
 
-      <ProgressBar x:Name="MicDecibalMeter" Margin="5 0 0 0" MinWidth="8" MinHeight="40" Width="4" Height="40" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
+        <ProgressBar x:Name="MicDecibalMeter" Margin="5 0 0 0" MinWidth="8" MinHeight="40" Width="4" Height="40" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
 
-      <Button Name="DeafenButton" BorderBrush="Transparent" Margin="10 0 0 0" Width="40" Height="40" Background="Transparent" Cursor="Hand">
-        <Image Width="40" Height="40" MinWidth="40" MinHeight="40" Stretch="Fill" Name="DeafenIcon" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding CurrentDeafenIcon, Converter={StaticResource variableImage}}"></Image>
-      </Button>
+        <Button Name="DeafenButton" BorderBrush="Transparent" Margin="10 0 0 0" Width="40" Height="40" Background="Transparent" Cursor="Hand">
+          <Image Width="40" Height="40" MinWidth="40" MinHeight="40" Stretch="Fill" Name="DeafenIcon" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding CurrentDeafenIcon, Converter={StaticResource variableImage}}"></Image>
+        </Button>
 
-      <ProgressBar x:Name="SpeakerDecibalMeter" Margin="5 0 0 0" MinWidth="8" MinHeight="40" Width="4" Height="40" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
-    </StackPanel>
+        <ProgressBar x:Name="SpeakerDecibalMeter" Margin="5 0 0 0" MinWidth="8" MinHeight="40" Width="4" Height="40" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
+      </StackPanel>
+    </Grid>
+
 
 
     <Button x:Name="InfoButton" BorderBrush="Transparent" Width="40" Height="40" Grid.Row="2" Background="Transparent" HorizontalAlignment="Right" Margin="0 0 55 0" Cursor="Hand">

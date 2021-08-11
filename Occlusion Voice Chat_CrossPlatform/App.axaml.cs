@@ -224,7 +224,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         {
             if (packet is ServerBitrateChangePacket bitratePacket)
             {
-                mainCodec.Bitrate = bitratePacket.NewBitrate;
+                mainCodec.SetBitrate(bitratePacket.NewBitrate);
             }
 
             if (packet is ServerUserConnectedPacket userConnectedPacket)
@@ -248,7 +248,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                         voiceUser.InitializeArrays();
 
                         voiceUser.codec.SetFrameSize(20);
-                        voiceUser.codec.SetApplication(Concentus.Enums.OpusApplication.VOIP);
                         
 
                         Users.Add(voiceUser);
@@ -285,6 +284,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
                     user.Pan = voiceDataPacket.Pan;
                     user.DistanceVolume = voiceDataPacket.Volume;
+                    user.Azimuth = voiceDataPacket.HRTFAzimuth;
+                    user.Elevation = voiceDataPacket.HRTFElevation;
                 }
             }
 
@@ -360,7 +361,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             queuedMicrophoneAudio = new byte[queueLength];
 
-            mainCodec.SetApplication(Concentus.Enums.OpusApplication.VOIP);
             mainCodec.SetVBRMode(true, true);
             mainCodec.SetFrameSize(20);
 
@@ -440,6 +440,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         void micCallback(Span<byte> stream, nint userdata)
         {
+
             if (RecordingDevice != null && Client.IsConnected())
             {
                 if (stream.Length > 0)
@@ -515,7 +516,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                             // Now we send the compressed audio data to the server
                             ClientVoiceDataPacket voiceDataPacket = new ClientVoiceDataPacket();
                             voiceDataPacket.VoiceData = compressedAudio;
-                            Client.SendMessage(voiceDataPacket, DeliveryMethod.Unreliable);
+
+                            if (compressedAudio != null && compressedAudio.Length > 0)
+                                Client.SendMessage(voiceDataPacket, DeliveryMethod.Unreliable);
                         }
 
                         currentMicQueueOffset = 0;

@@ -15,7 +15,7 @@ namespace Occlusion_voice_chat.Opus
         void SetApplication(OpusApplication application);
         void SetFrameSize(double frameSize);
         void SetVBRMode(bool vbr, bool constrained);
-        byte[] Compress(AudioChunk input);
+        byte[] Compress(AudioChunk? input);
         AudioChunk Decompress(byte[] input);
     }
 }

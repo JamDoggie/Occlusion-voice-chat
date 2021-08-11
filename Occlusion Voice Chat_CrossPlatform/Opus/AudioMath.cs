@@ -233,11 +233,74 @@ namespace Occlusion_voice_chat.Opus
             return ClampShort(sh * amount, short.MinValue, short.MaxValue);
         }
 
-        private static short ClampShort(float f, short min, short max)
+        public static short ClampShort(float f, short min, short max)
         {
             if (f < min) return min;
             if (f > max) return max;
             return (short)f;
+        }
+
+        public static short ClampShort(short s, short min, short max)
+        {
+            if (s < min) return min;
+            if (s > max) return max;
+            return s;
+        }
+
+        public static void CopyBytesToShorts(short[] shorts, byte[] bytes)
+        {
+            for (int c = 0; c < shorts.Length; c++)
+            {
+                shorts[c] = (short)(((int)bytes[(c * 2)]) << 0);
+                shorts[c] += (short)(((int)bytes[(c * 2) + 1]) << 8);
+            }
+        }
+
+        public static void CopyBytesToShorts(short[] shorts, Span<byte> bytes)
+        {
+            for (int c = 0; c < shorts.Length; c++)
+            {
+                shorts[c] = (short)(((int)bytes[(c * 2)]) << 0);
+                shorts[c] += (short)(((int)bytes[(c * 2) + 1]) << 8);
+            }
+        }
+
+        public static void CopyShortsToBytes(byte[] bytes, short[] shorts)
+        {
+            for (int c = 0; c < shorts.Length; c++)
+            {
+                bytes[c * 2] = (byte)(shorts[c] & 0xFF);
+                bytes[c * 2 + 1] = (byte)((shorts[c] >> 8) & 0xFF);
+            }
+        }
+
+        public static void CopyShortsToBytes(Span<byte> bytes, short[] shorts)
+        {
+            for (int c = 0; c < shorts.Length; c++)
+            {
+                bytes[c * 2] = (byte)(shorts[c] & 0xFF);
+                bytes[c * 2 + 1] = (byte)((shorts[c] >> 8) & 0xFF);
+            }
+        }
+
+        public static double ClampShortToDouble(short sh)
+        {
+            return (double)sh / 32768;
+        }
+
+        public static float ClampShortToFloat(short sh)
+        {
+            return (float)sh / 32768;
+        }
+
+        public static short ExpandDoubleToShort(double d)
+        {
+            return (short)Math.Clamp(d * 32768, short.MinValue, short.MaxValue);
+        }
+
+        public static short ExpandFloatToShort(float f)
+        {
+            return (short)Math.Clamp(f * 32768, short.MinValue, short.MaxValue);
         }
     }
 }

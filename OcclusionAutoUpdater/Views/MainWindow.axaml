@@ -7,7 +7,8 @@
         MinWidth="450" MaxWidth="450" MinHeight="150" MaxHeight="150"
         x:Class="OcclusionAutoUpdater.Views.MainWindow"
         Icon="/Assets/Occlusion_icon.ico"
-        Title="Occlusion Auto Updater" Background="#32323b">
+        Title="Occlusion Auto Updater" TransparencyLevelHint="AcrylicBlur"
+        Background="#B33f3f4a" ExtendClientAreaToDecorationsHint="True">
 
   <Window.Resources>
     <PageSlide x:Key="PageSlider" Duration="0:0:0.5" Orientation="Horizontal">

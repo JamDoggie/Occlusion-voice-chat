@@ -7,7 +7,8 @@
         xmlns:svg="clr-namespace:Avalonia.Svg;assembly=Avalonia.Svg"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Occlusion_Voice_Chat_CrossPlatform.MainWindow"
-        Title="Occlusion Voice Chat" Background="#32323b" 
+        Title="Occlusion Voice Chat"
+        Background="#32323b" ExtendClientAreaToDecorationsHint="True"
         Height="450" Width="800" Icon="resources/Occlusion_icon.ico"
         MaxWidth="800" MaxHeight="450" MinWidth="600" MinHeight="350">
   <Window.Styles>
@@ -34,7 +35,7 @@
       <ColumnDefinition Width="*"></ColumnDefinition>
       <ColumnDefinition Width="*"></ColumnDefinition>
     </Grid.ColumnDefinitions>
-    
+
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
       <Button Classes="opacityfadebutton" Cursor="Hand" Name="AddServerButton" Background="Transparent"  Width="40" Height="40">
         

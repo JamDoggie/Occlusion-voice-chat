@@ -14,6 +14,10 @@ namespace Occlusion.NetworkingShared.Packets
 
         public float Pan { get; set; }
 
+        public float HRTFAzimuth { get; set; }
+
+        public float HRTFElevation { get; set; }
+
         public int ID { get; set; } = -1;
 
         public ServerVoiceDataPacket()
@@ -31,6 +35,8 @@ namespace Occlusion.NetworkingShared.Packets
 
             Pan = message.GetFloat();
 
+            HRTFAzimuth = message.GetFloat();
+
             ID = message.GetInt();
         }
 
@@ -43,6 +49,8 @@ namespace Occlusion.NetworkingShared.Packets
             message.Put(Volume);
 
             message.Put(Pan);
+
+            message.Put(HRTFAzimuth);
 
             message.Put(ID);
         }

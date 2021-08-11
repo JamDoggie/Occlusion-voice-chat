@@ -123,6 +123,9 @@ namespace OcclusionServerLib
                                 newBitrate = 24; // Clamp the lowest possible bitrate to 24 Kbps (from testing anything too much lower than this sounds ultra-cellphone quality)
                         }
 
+                        newBitrate = 24;
+
+
                         if (newBitrate != user.CurrentBitrate)
                         {
                             ServerBitrateChangePacket bitratePacket = new ServerBitrateChangePacket();

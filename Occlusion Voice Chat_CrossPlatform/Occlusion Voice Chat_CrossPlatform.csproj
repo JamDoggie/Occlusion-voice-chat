@@ -60,6 +60,9 @@
     <None Update="Occlusion Voice Chat_CrossPlatform.icns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="opus.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="SDL2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -95,10 +98,12 @@
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|AnyCPU'">
     <DefineConstants>CLIENT, CLIENT_CROSSPLATFORM, WINDOWS</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|x64'">
     <DefineConstants>CLIENT, CLIENT_CROSSPLATFORM, WINDOWS</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   
   <ItemGroup>
@@ -497,6 +502,13 @@
     <Reference Include="GlobalLowLevelHooks">
       <HintPath>..\GlobalLowLevelHooks.dll</HintPath>
     </Reference>
+    <Reference Include="NWaves">
+      <HintPath>NWaves.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Folder Include="winlibs\" />
   </ItemGroup>
 
   
