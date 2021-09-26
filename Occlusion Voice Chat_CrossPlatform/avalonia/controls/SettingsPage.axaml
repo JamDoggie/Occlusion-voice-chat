@@ -1,0 +1,73 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:occ="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Occlusion_Voice_Chat_CrossPlatform.avalonia.controls.SettingsPage">
+  <Grid Opacity="1" Background="#77282830" Name="AudioSettingsGroup" Grid.RowSpan="3" IsVisible="False">
+
+    <Grid.Transitions>
+      <Transitions>
+        <DoubleTransition Property="Opacity" Duration="0:0:0.2">
+          <DoubleTransition.Easing>
+            <CubicEaseOut/>
+          </DoubleTransition.Easing>
+        </DoubleTransition>
+      </Transitions>
+    </Grid.Transitions>
+
+
+    <Border CornerRadius="10" Background="#3f3f4a" VerticalAlignment="Stretch" Width="500" Height="420" HorizontalAlignment="Stretch"/>
+    <Grid HorizontalAlignment="Stretch" Name="MainSettingsGrid" VerticalAlignment="Stretch" Width="500" Height="400"  Opacity="1">
+
+      <TextBlock HorizontalAlignment="Center" Name="AudioSettingsHeader" Padding="5" FontSize="15" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Please look over your audio settings. You can always access these from the settings cog on the bottom right.</TextBlock>
+
+      <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Center" Height="300" VerticalScrollBarVisibility="Auto">
+        <StackPanel Orientation="Vertical" Margin="0 5 0 0">
+          <StackPanel Orientation="Vertical" Margin="0 0 0 0" HorizontalAlignment="Center">
+            <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center">Input Device (Microphone)</TextBlock>
+            <ComboBox Background="#454552" Name="InputDeviceDropdown" Width="250" Height="30"/>
+          </StackPanel>
+          <StackPanel Orientation="Vertical" Margin="0 20 0 0" HorizontalAlignment="Center">
+            <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center">Output Device (Speakers/Headphones)</TextBlock>
+            <ComboBox Background="#454552" Foreground="#BDC3C7" Name="OutputDeviceDropdown" Width="250" Height="30" SelectedIndex="0"/>
+          </StackPanel>
+
+          <StackPanel Orientation="Vertical" Margin="0 15 0 0" HorizontalAlignment="Center">
+            <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center">Input Volume</TextBlock>
+            <StackPanel Orientation="Horizontal">
+              <Slider x:Name="InputVolumeSlider" Width="250" Height="30" Minimum="0.0" Maximum="2.0" Value="1"></Slider>
+              <TextBlock x:Name="InputVolumeTextbox" Foreground="#BDC3C7" Width="30">100%</TextBlock>
+            </StackPanel>
+            <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center" FontStyle="Italic">Voice Activity</TextBlock>
+            <Grid>
+              <ProgressBar Name="SettingsMicMeter" Margin="0 5 0 0" Minimum="0" Maximum="3000" Value="1000" VerticalAlignment="Center" Height="15" Width="200" Foreground="#7f2edb" Background="#31313b" BorderBrush="#454552"></ProgressBar>
+              <ProgressBar Name="VoiceActivityBar" Margin="0 5 0 0" Cursor="Hand" Minimum="0" Maximum="3000" Value="0" VerticalAlignment="Center" Height="15" Width="200" Foreground="#44FF4E4E" Background="Transparent" BorderBrush="#454552"></ProgressBar>
+            </Grid>
+
+          </StackPanel>
+
+          <StackPanel Orientation="Vertical" Margin="0 25 0 0" HorizontalAlignment="Center">
+            <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center">Output Volume</TextBlock>
+            <StackPanel Orientation="Horizontal">
+              <Slider x:Name="OutputVolumeSlider" Width="250" Height="30" Minimum="0.0" Maximum="2.0" Value="1"></Slider>
+              <TextBlock x:Name="OutputVolumeTextbox" Foreground="#BDC3C7" Width="30">100%</TextBlock>
+            </StackPanel>
+            <ProgressBar Name="SettingsSpeakerMeter" Margin="0 5 0 0 " Minimum="0" Maximum="3000" Value="0" VerticalAlignment="Center" Height="7" MinHeight="7" Width="200 " Foreground="#7f2edb" Background="#31313b" BorderBrush="#454552">
+              <ProgressBar.Transitions>
+                <Transitions>
+                  <DoubleTransition Property="(occ:ProgressBarAnimationExtensions.Value)" Duration="0:0:0.1">
+                  </DoubleTransition>
+                </Transitions>
+              </ProgressBar.Transitions>
+            </ProgressBar>
+          </StackPanel>
+
+
+        </StackPanel>
+      </ScrollViewer>
+      <Button Name="SettingsOkButton" Cursor="Hand" VerticalAlignment="Bottom" Margin="5" BorderBrush="#454552" Width="100" Height="40" Foreground="#BDC3C7" Background="#4f4f5e">Looks good!</Button>
+    </Grid>
+  </Grid>
+</UserControl>
