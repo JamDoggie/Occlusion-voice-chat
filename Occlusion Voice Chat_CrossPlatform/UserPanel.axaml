@@ -2,8 +2,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:oxy="using:OxyPlot.Avalonia"
              mc:Ignorable="d" d:DesignWidth="350" d:DesignHeight="200"
-             x:Class="Occlusion_Voice_Chat_CrossPlatform.UserPanel" Background="#3f3f4a" Opacity="0" IsVisible="False">
+             x:Class="Occlusion_Voice_Chat_CrossPlatform.UserPanel" Opacity="0" IsVisible="False" ClipToBounds="False">
   <UserControl.Transitions>
     <Transitions>
       <DoubleTransition Property="Opacity" Duration="0:0:0.3">
@@ -13,17 +14,32 @@
       </DoubleTransition>
     </Transitions>
   </UserControl.Transitions>
-  <Grid>
-    <StackPanel Orientation="Vertical" Margin="0 10 0 0">
-      <TextBlock x:Name="UserNameText" Foreground="#BDC3C7" FontSize="30" FontWeight="Medium" FontFamily="Calibri" HorizontalAlignment="Center">User Name</TextBlock>
-      <TextBox x:Name="UUIDText" Background="Transparent" BorderThickness="0" IsReadOnly="True" Foreground="#999fa3" FontSize="12" FontWeight="Medium" FontFamily="Calibri" HorizontalAlignment="Center">UUID</TextBox>
+  <Border Background="#3f3f4a" CornerRadius="15" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Grid ClipToBounds="False">
+      <Border Background="#3b3b47" BorderBrush="#31313b" BorderThickness="0 0 0 1" CornerRadius="15 15 0 0" VerticalAlignment="Top" HorizontalAlignment="Stretch" Height="80">
+        
+      </Border>
+      <StackPanel Orientation="Vertical" Margin="0 10 0 0">
+        <TextBlock x:Name="UserNameText" Foreground="#BDC3C7" FontSize="30" Height="35" FontWeight="Medium" FontFamily="Calibri" HorizontalAlignment="Center">User Name</TextBlock>
+        <TextBox x:Name="UUIDText" Background="Transparent" BorderThickness="0" IsReadOnly="True" Foreground="#999fa3" FontSize="12" FontWeight="Medium" FontFamily="Calibri" HorizontalAlignment="Center">UUID</TextBox>
 
-      <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center" Margin="0 45 0 0">User Volume</TextBlock>
-      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-        <Slider Width="200" Name="VolumeSlider" Minimum="0" Maximum="2" Value="1" Margin="0 5 0 0"></Slider>
-        <TextBlock x:Name="VolumeText" VerticalAlignment="Center" Width="30" Foreground="#BDC3C7">100%</TextBlock>
+        <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center" Margin="0 45 0 0">User Volume</TextBlock>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+          <Slider Width="200" Name="VolumeSlider" Minimum="0" Maximum="2" Value="1" Margin="0 5 0 0"></Slider>
+          <TextBlock x:Name="VolumeText" VerticalAlignment="Center" Width="30" Foreground="#BDC3C7">100%</TextBlock>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" ClipToBounds="False" Margin="0 60 0 0">
+          <oxy:PlotView Name="LeftPlot" IsVisible="False" Model="{Binding PlotModelLeft}" ClipToBounds="False" HorizontalAlignment="Left" Width="256" Height="256"/>
+          <oxy:PlotView Name="RightPlot" IsVisible="False" Model="{Binding PlotModelRight}" ClipToBounds="False" HorizontalAlignment="Left" Width="256" Margin="20 0 0 0" Height="256"/>
+        </StackPanel>
+
       </StackPanel>
 
-    </StackPanel>
-  </Grid>
+
+
+
+    </Grid>
+  </Border>
+  
 </UserControl>

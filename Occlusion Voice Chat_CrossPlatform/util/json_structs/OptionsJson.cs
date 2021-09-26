@@ -23,5 +23,9 @@ namespace Occlusion_voice_chat.util.json_structs
 
         public Dictionary<string, ServerSelection> ServerSelections { get; set; } =
             new Dictionary<string, ServerSelection>();
+
+        public bool UseHRTF { get; set; } = true;
+
+        public string CurrentHRTFSet { get; set; } = "MIT-48000.mhr";
     }
 }

@@ -4,6 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="clr-namespace:Occlusion_Voice_Chat_CrossPlatform"
         xmlns:ext="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia.converters"
+        
         xmlns:occ="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia"
         xmlns:controls1="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia.controls"
         mc:Ignorable="d"
@@ -33,15 +34,9 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"></RowDefinition>
       <RowDefinition/>
-      <RowDefinition Height="50"></RowDefinition>
+      <RowDefinition Height="88"></RowDefinition>
     </Grid.RowDefinitions>
-
-    <Menu Background="#282830">
-      <MenuItem Width="50" Background="#3f3f4a" Header="_Server" Foreground="#BDC3C7" FontWeight="Normal">
-        <MenuItem Name="DisconnectMenuButton" Background="#3f3f4a" Header="_Disconnect" Foreground="#BDC3C7" FontWeight="Normal"/>
-      </MenuItem>
-    </Menu>
-
+    
     <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
       <WrapPanel Name="PlayerIconsPanel">
 
@@ -49,120 +44,170 @@
     </ScrollViewer>
 
 
-    <Grid Grid.Row="2">
-      
-      <StackPanel Background="#282830" Orientation="Horizontal">
-        <Button Name="MuteButton" BorderBrush="Transparent" Margin="5 0 0 0" Width="40" Height="40" Background="Transparent" Cursor="Hand" >
-          <Image Name="MuteMicIcon" Width="40" Height="40" MinWidth="40" MinHeight="40" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding CurrentMicIcon, Converter={StaticResource variableImage}}"></Image>
+    <Grid Grid.Row="2" Name="BottomBar">
+
+      <Grid.RenderTransform>
+        <TranslateTransform Y="100">
+          <TranslateTransform.Transitions>
+            <Transitions>
+              <DoubleTransition Property="Y" Duration="0:0:0.2">
+                <DoubleTransition.Easing>
+                  <CubicEaseInOut/>
+                </DoubleTransition.Easing>
+              </DoubleTransition>
+            </Transitions>
+          </TranslateTransform.Transitions>
+        </TranslateTransform>
+      </Grid.RenderTransform>
+
+      <Border CornerRadius="20" BorderBrush="#31313b" BorderThickness="2" Background="#282830" Margin="15"/>
+      <StackPanel Orientation="Horizontal" Margin="20 15 15 15">
+        <Button Name="MuteButton" BorderBrush="Transparent" Margin="5 0 0 0" Width="40" Height="40" Background="Transparent" Cursor="Hand" ClipToBounds="False">
+          <Button.Styles>
+            <Style Selector="Button:pressed /template/ ContentPresenter">
+              <Setter Property="Background" Value="Transparent"/>
+            </Style>
+          </Button.Styles>
+          
+          <Grid>
+            <Image Width="40" Height="40">
+              <Image.Source>
+                <SvgImage Source="/resources/occlusion_mic.svg"/>
+              </Image.Source>
+            </Image>
+
+            <Image Name="MicMutedImg" Width="40" Height="40" Opacity="0">
+              <Image.Source>
+                <SvgImage Source="/resources/occlusion_mic_muted.svg"/>
+              </Image.Source>
+
+              <Image.Transitions>
+                <Transitions>
+                  <DoubleTransition Property="Opacity" Duration="0:0:0.3">
+                    <DoubleTransition.Easing>
+                      <CubicEaseInOut/>
+                    </DoubleTransition.Easing>
+                  </DoubleTransition>
+                </Transitions>
+              </Image.Transitions>
+            </Image>
+
+  
+            <Border Name="MuteIconSlash" VerticalAlignment="Center" Height="7" Width="0" ClipToBounds="False" HorizontalAlignment="Center" CornerRadius="3" Background="#a33a33">
+              <Border.RenderTransform>
+                <RotateTransform Angle="45"></RotateTransform>
+              </Border.RenderTransform>
+
+              <Border.Transitions>
+                <Transitions>
+                  <DoubleTransition Property="Width" Duration="0:0:0.2">
+                    <DoubleTransition.Easing>
+                      <CubicEaseInOut/>
+                    </DoubleTransition.Easing>
+                  </DoubleTransition>
+                </Transitions>
+              </Border.Transitions>
+            </Border>
+
+          </Grid>
+          
         </Button>
 
 
         <ProgressBar x:Name="MicDecibalMeter" Margin="5 0 0 0" MinWidth="8" MinHeight="40" Width="4" Height="40" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
 
         <Button Name="DeafenButton" BorderBrush="Transparent" Margin="10 0 0 0" Width="40" Height="40" Background="Transparent" Cursor="Hand">
-          <Image Width="40" Height="40" MinWidth="40" MinHeight="40" Stretch="Fill" Name="DeafenIcon" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding CurrentDeafenIcon, Converter={StaticResource variableImage}}"></Image>
+          <Button.Styles>
+            <Style Selector="Button:pressed /template/ ContentPresenter">
+              <Setter Property="Background" Value="Transparent"/>
+            </Style>
+          </Button.Styles>
+
+          <Grid>
+            <Image Width="40" Height="40" MinWidth="40" MinHeight="40" Stretch="Fill" Name="DeafenIcon" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <Image.Source>
+              <SvgImage Source="/resources/occlusion_deafen.svg"/>
+            </Image.Source>
+          </Image>
+
+          <Image Name="DeafenedImg" Width="40" Height="40" Opacity="0">
+            <Image.Source>
+              <SvgImage Source="/resources/occlusion_undeafen.svg"/>
+            </Image.Source>
+
+            <Image.Transitions>
+              <Transitions>
+                <DoubleTransition Property="Opacity" Duration="0:0:0.3">
+                  <DoubleTransition.Easing>
+                    <CubicEaseInOut/>
+                  </DoubleTransition.Easing>
+                </DoubleTransition>
+              </Transitions>
+            </Image.Transitions>
+          </Image>
+
+            <Border Name="DeafenIconSlash" VerticalAlignment="Center" Height="7" Width="0"  ClipToBounds="False" HorizontalAlignment="Center" CornerRadius="3" Background="#a33a33">
+              <Border.RenderTransform>
+                <RotateTransform Angle="45"></RotateTransform>
+              </Border.RenderTransform>
+
+              <Border.Transitions>
+                <Transitions>
+                  <DoubleTransition Property="Width" Duration="0:0:0.2">
+                    <DoubleTransition.Easing>
+                      <CubicEaseInOut/>
+                    </DoubleTransition.Easing>
+                  </DoubleTransition>
+                </Transitions>
+              </Border.Transitions>
+            </Border>
+          </Grid>
+          
         </Button>
 
-        <ProgressBar x:Name="SpeakerDecibalMeter" Margin="5 0 0 0" MinWidth="8" MinHeight="40" Width="4" Height="40" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
+        <ProgressBar x:Name="SpeakerDecibalMeter" Margin="8 0 0 0" MinWidth="8" MinHeight="40" Width="4" Height="40" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
+      </StackPanel>
+      
+      <StackPanel HorizontalAlignment="Right" VerticalAlignment="Stretch" Orientation="Horizontal" Margin="0 0 28 0">
+        <Button x:Name="InfoButton" BorderBrush="Transparent" Width="40" Height="40" Grid.Row="2" Background="Transparent" HorizontalAlignment="Right" Margin="0 0 10 0" Cursor="Hand">
+          <ToolTip.Tip>
+            <TextBlock Name="InfoToolTipText">Ping: ?ms</TextBlock>
+          </ToolTip.Tip>
+          <Image Width="40" Height="40" MinWidth="40" MinHeight="40" Stretch="Fill" Source="resources/info_icon.png"></Image>
+        </Button>
+
+        <Button Name="SettingsButton" Classes="settingsCog" BorderBrush="Transparent" Opacity="1.0" Width="40" Height="40" Grid.Row="2" Background="Transparent" HorizontalAlignment="Right" Margin="0 0 0 0" Cursor="Hand">
+          <Image Name="SettingsImage" Classes="cogImage" Width="40" Height="40" MinWidth="40" MinHeight="40" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0" Stretch="Fill" Source="resources/settings_cog.png">
+            <Image.RenderTransform>
+              <RotateTransform Angle="0">
+                <RotateTransform.Transitions>
+                  <Transitions>
+                    <DoubleTransition Property="Angle" Duration="0:0:0.3">
+                      <DoubleTransition.Easing>
+                        <CubicEaseOut/>
+                      </DoubleTransition.Easing>
+                    </DoubleTransition>
+                  </Transitions>
+                </RotateTransform.Transitions>
+              </RotateTransform>
+            </Image.RenderTransform>
+          </Image>
+        </Button>
       </StackPanel>
     </Grid>
 
 
-
-    <Button x:Name="InfoButton" BorderBrush="Transparent" Width="40" Height="40" Grid.Row="2" Background="Transparent" HorizontalAlignment="Right" Margin="0 0 55 0" Cursor="Hand">
-      <ToolTip.Tip>
-        <TextBlock Name="InfoToolTipText">Ping: ?ms</TextBlock>
-      </ToolTip.Tip>
-      <Image Width="40" Height="40" MinWidth="40" MinHeight="40" Stretch="Fill" Source="resources/info_icon.png"></Image>
-    </Button>
-
-    <Button Name="SettingsButton" Classes="settingsCog" BorderBrush="Transparent" Opacity="1.0" Width="40" Height="40" Grid.Row="2" Background="Transparent" HorizontalAlignment="Right" Margin="0 0 5 0" Cursor="Hand">
-      <Image Name="SettingsImage" Classes="cogImage" Width="40" Height="40" MinWidth="40" MinHeight="40" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0" Stretch="Fill" Source="resources/settings_cog.png">
-        <Image.RenderTransform>
-          <RotateTransform Angle="0">
-            <RotateTransform.Transitions>
-              <Transitions>
-                <DoubleTransition Property="Angle" Duration="0:0:0.3">
-                  <DoubleTransition.Easing>
-                    <CubicEaseOut/>
-                  </DoubleTransition.Easing>
-                </DoubleTransition>
-              </Transitions>
-            </RotateTransform.Transitions>
-          </RotateTransform>
-        </Image.RenderTransform>
-      </Image>
-    </Button>
+    <controls1:SettingsPage x:Name="SettingsPage" Grid.RowSpan="3">
+      
+    </controls1:SettingsPage>
+    
 
     <Canvas x:Name="UserPanelCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
       <controls:UserPanel x:Name="UserControlPanel" Width="350" IsVisible="False" Height="200">
       </controls:UserPanel>
     </Canvas>
 
-    <Grid Opacity="1" Background="#77282830" Name="AudioSettingsGroup" Grid.RowSpan="3" IsVisible="False">
-
-      <Grid.Transitions>
-        <Transitions>
-          <DoubleTransition Property="Opacity" Duration="0:0:0.2">
-            <DoubleTransition.Easing>
-              <CubicEaseOut/>
-            </DoubleTransition.Easing>
-          </DoubleTransition>
-        </Transitions>
-      </Grid.Transitions>
-
-      
-       <Grid HorizontalAlignment="Stretch" Name="MainSettingsGrid" VerticalAlignment="Stretch" Width="500" Height="400" Background="#3f3f4a" Opacity="1">
-         
-         <TextBlock HorizontalAlignment="Center" Name="AudioSettingsHeader" Padding="5" FontSize="15" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Please look over your audio settings. You can always access these from the settings cog on the bottom right.</TextBlock>
-
-          <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Center" Height="300" VerticalScrollBarVisibility="Auto">
-            <StackPanel Orientation="Vertical" Margin="0 5 0 0">
-              <StackPanel Orientation="Vertical" Margin="0 0 0 0" HorizontalAlignment="Center">
-                <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center">Input Device (Microphone)</TextBlock>
-                <ComboBox Background="#454552" Name="InputDeviceDropdown" Width="250" Height="30"/>
-              </StackPanel>
-              <StackPanel Orientation="Vertical" Margin="0 20 0 0" HorizontalAlignment="Center">
-                <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center">Output Device (Speakers/Headphones)</TextBlock>
-                <ComboBox Background="#454552" Foreground="#BDC3C7" Name="OutputDeviceDropdown" Width="250" Height="30" SelectedIndex="0"/>
-              </StackPanel>
-
-              <StackPanel Orientation="Vertical" Margin="0 15 0 0" HorizontalAlignment="Center">
-                <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center">Input Volume</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                  <Slider x:Name="InputVolumeSlider" Width="250" Height="30" Minimum="0.0" Maximum="2.0" Value="1"></Slider>
-                  <TextBlock x:Name="InputVolumeTextbox" Foreground="#BDC3C7" Width="30">100%</TextBlock>
-                </StackPanel>
-                <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center" FontStyle="Italic">Voice Activity</TextBlock>
-                <Grid>
-                  <ProgressBar Name="SettingsMicMeter" Margin="0 5 0 0" Minimum="0" Maximum="3000" Value="1000" VerticalAlignment="Center" Height="15" Width="200" Foreground="#7f2edb" Background="#31313b" BorderBrush="#454552"></ProgressBar>
-                  <ProgressBar Name="VoiceActivityBar" Margin="0 5 0 0" Cursor="Hand" Minimum="0" Maximum="3000" Value="0" VerticalAlignment="Center" Height="15" Width="200" Foreground="#44FF4E4E" Background="Transparent" BorderBrush="#454552"></ProgressBar>
-                </Grid>
-
-              </StackPanel>
-
-              <StackPanel Orientation="Vertical" Margin="0 25 0 0" HorizontalAlignment="Center">
-                <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center">Output Volume</TextBlock>
-                <StackPanel Orientation="Horizontal">
-                  <Slider x:Name="OutputVolumeSlider" Width="250" Height="30" Minimum="0.0" Maximum="2.0" Value="1"></Slider>
-                  <TextBlock x:Name="OutputVolumeTextbox" Foreground="#BDC3C7" Width="30">100%</TextBlock>
-                </StackPanel>
-                <ProgressBar Name="SettingsSpeakerMeter" Margin="0 5 0 0 " Minimum="0" Maximum="3000" Value="0" VerticalAlignment="Center" Height="7" MinHeight="7" Width="200 " Foreground="#7f2edb" Background="#31313b" BorderBrush="#454552">
-                  <ProgressBar.Transitions>
-                    <Transitions>
-                      <DoubleTransition Property="(occ:ProgressBarAnimationExtensions.Value)" Duration="0:0:0.1">
-                      </DoubleTransition>
-                    </Transitions>
-                  </ProgressBar.Transitions>
-                </ProgressBar>
-              </StackPanel>
-              
-              
-            </StackPanel>
-          </ScrollViewer>
-        <Button Name="SettingsOkButton" Cursor="Hand" VerticalAlignment="Bottom" Margin="5" BorderBrush="#454552" Width="100" Height="40" Foreground="#BDC3C7" Background="#454552">Looks good!</Button>
-      </Grid>
-    </Grid>
+    
 
 
   </Grid>

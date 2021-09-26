@@ -25,6 +25,11 @@ namespace OcclusionDedicatedServer
 
         static void Main(string[] args)
         {
+            AppDomain currentDomain = default(AppDomain);
+            currentDomain = AppDomain.CurrentDomain;
+            // Handler for unhandled exceptions.
+            currentDomain.UnhandledException += CurrentDomain_UnhandledException; 
+
             PacketManager.CollectPacketTypes();
 
             Thread serverThread = new Thread(() =>
@@ -90,6 +95,15 @@ namespace OcclusionDedicatedServer
                 
             }
             
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is Exception ex)
+            {
+                string logFile = $"{ex.Message}\n\nSTACK TRACE:\n{ex.StackTrace}";
+                System.IO.File.WriteAllText($"occlusioncrashlog-{string.Format("{0:yyyy-MM-dd_HH-mm-ss-fff}", DateTime.Now)}.txt", logFile);
+            }
         }
 
         private static void Server_PacketRecievedEvent(NetDataReader message, IPacket packet, Server server, NetPeer peer)
@@ -178,8 +192,7 @@ namespace OcclusionDedicatedServer
                                 // We send as unreliable because this is where UDP really shines for VoIP.
                                 // Since we're sending lots of data over the network and it's not really a huge deal if we drop one packet,
                                 // it's better to allow some packets to drop instead of making sure they all arrive at the cost of performance and delay.
-                                server.SendMessage(voicePacket, user.Connection, DeliveryMethod.Unreliable);
-                            }
+                                server.SendMessage(voicePacket, user.Connection, DeliveryMethod.Unreliable);                            }
                         }
                     }
                 }

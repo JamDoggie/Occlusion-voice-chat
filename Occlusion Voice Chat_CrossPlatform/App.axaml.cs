@@ -27,6 +27,8 @@ using System.Reflection;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.IO;
+using Occlusion_Voice_Chat_CrossPlatform.HRTF;
+using Occlusion_Voice_Chat_CrossPlatform.audio;
 
 #if WINDOWS
 using GlobalLowLevelHooks;
@@ -144,15 +146,21 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         public static List<VKeys> CurrentKeysPressed = new List<VKeys>();
 
+        
+
         public static void ClearHotKeys()
         {
             CurrentKeysPressed.Clear();
         }
 #endif
 
+        public static HRTFTestSoundEffect HRTFPreview;
+
         public override void Initialize()
         {
             AvaloniaXamlLoader.Load(this);
+
+            Sounds.LoadSounds();
 
             Console.WriteLine(Assembly.GetEntryAssembly().Location);
 
@@ -166,6 +174,17 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             OutputVolume = Options.Obj.OutputVolume;
             VoiceActivity = Options.Obj.VoiceActivity;
 
+            // HRTF
+            HRTFPreview = new HRTFTestSoundEffect(Sounds.DrumSound);
+
+            if (File.Exists($"HRTF sets/{Options.Obj.CurrentHRTFSet}"))
+            {
+                HRTF.HRTF.CurrentHRTFFile = MHRFile.Parse($"HRTF sets/{Options.Obj.CurrentHRTFSet}");
+            }
+
+            HRTFPreview.Play();
+
+            HRTFPreview.Volume = 1;
 #if WINDOWS
 
             keyboardHook.KeyDown += KeyboardHook_KeyDown;
@@ -206,6 +225,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 autoUpdater.Start();
             }
 #endif
+
+            
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -400,7 +421,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 {
                     VoiceChatWindow.SpeakerDecibalMeter.Value = Math.Clamp(chunk.Volume(), 0, 3000);
 
-                    if (VoiceChatWindow.AudioSettingsOpen)
+                    if (VoiceChatWindow.AudioSettingsOpen && VoiceChatWindow.SettingsSpeakerMeter != null)
                     {
                         ProgressBarAnimationExtensions.SetValue(VoiceChatWindow.SettingsSpeakerMeter, Math.Clamp(chunk.Volume(), 0, 3000));
                     }
@@ -412,10 +433,24 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 for (int i = 0; i < stream.Length; i++)
                     stream[i] = 0;
 
+            // Add on all sounds here (mic muting, deafening, etc.)
+            // We do this last so deafening doesn't mute sounds, for instance.
+            for (int i = Sounds.ActiveSounds.Count - 1; i >= 0; i--)
+            {
+                SoundEffect sound = Sounds.ActiveSounds[i];
 
-
-            // We can change audio input here as well because this is on the sdl thread.
+                if (!sound.IsPlaying)
+                {
+                    Sounds.ActiveSounds.Remove(sound);
+                }
+                else
+                {
+                    sound.MixAudioIntoArray(ref stream);
+                }
+            }
             
+            // We can change audio input here as well because this is on the sdl thread.
+
             if (NewInputDevice != null && RecordingDevice != null)
             {
 

@@ -50,14 +50,32 @@ namespace OcclusionServerLib
                         server.GetUserByConnection(connection).MCUUID = serverVerificationPacket.UUID;
                         server.GetUserByConnection(connection).IsVerified = true;
 
+                        VoiceUser newUser = server.GetUserByConnection(connection);
+
+                        // Check to make sure a verified user with the same uuid isn't connected. If they are, remove the old one.
+                        // It's possible the old client crashed, meaning the server is still trying to ping it. Having two different connections of the same person being monitored
+                        // can cause problems.
+                        for (int i = server.Users.Count - 1; i >= 0; i--)
+                        {
+                            VoiceUser user = server.Users[i];
+
+                            if (user != newUser && user.MCUUID == newUser.MCUUID)
+                            {
+                                user.Connection.Disconnect();
+                                server.Users.Remove(user);
+                            }
+                        }
+
                         // Send this now verified user to everyone connected
-                        foreach(VoiceUser user in server.Users)
+                        foreach (VoiceUser user in server.Users)
                         {
                             ServerUserConnectedPacket userConnectedPacket = new ServerUserConnectedPacket();
                             userConnectedPacket.idsToAdd.Add(new KeyValuePair<int, string>(serverVerificationPacket.Code, serverVerificationPacket.UUID));
 
                             server.SendMessage(userConnectedPacket, user.Connection, DeliveryMethod.ReliableOrdered);
                         }
+
+                        
                     }
                     else
                     {
@@ -193,8 +211,8 @@ namespace OcclusionServerLib
                 {
                     var pipeline = channel.Pipeline;
                     
-                    pipeline.AddLast(new LengthFieldBasedFrameDecoder(100000000, 0, 4, 0, 4));
-                    pipeline.AddLast(new LengthFieldPrepender(4));
+                    pipeline.AddLast(new LengthFieldBasedFrameDecoder(8000000, 0, 3, 0, 3));
+                    pipeline.AddLast(new LengthFieldPrepender(3)); // 3 byte int
                     
                     pipeline.AddLast(new GameClientHandler(this));
                 }));
@@ -257,6 +275,13 @@ namespace OcclusionServerLib
             {
                 Server.ServerLogger.Log(e.Message);
             }
+        }
+
+        public override void ChannelInactive(IChannelHandlerContext context)
+        {
+            base.ChannelInactive(context);
+
+            Server.GameClientLogger.Log("Lost connection to game server.");
         }
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)

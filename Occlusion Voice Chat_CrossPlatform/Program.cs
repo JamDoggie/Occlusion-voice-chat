@@ -16,6 +16,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         // yet and stuff might break.
         public static void Main(string[] args)
         {
+#if WINDOWS && DEBUG
+            Occlusion_voice_chat.ConsoleManager.ShowConsoleWindow();
+#endif
             AppDomain currentDomain = default(AppDomain);
             currentDomain = AppDomain.CurrentDomain;
             // Handler for unhandled exceptions.

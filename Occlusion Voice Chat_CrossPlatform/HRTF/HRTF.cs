@@ -10,6 +10,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform.HRTF
     public static class HRTF
     {
 		/// <summary>
+		/// Current chosen .mhr HRTF file. If none is chosen, the hardcoded MIT Kemar fallback data set will be used instead.
+		/// </summary>
+		public static MHRFile? CurrentHRTFFile { get; set; } = null;
+
+		/// <summary>
 		/// Checks if this library has HRTF filters matching the given settings.
 		/// </summary>
 		/// <param name="azimuth"></param>

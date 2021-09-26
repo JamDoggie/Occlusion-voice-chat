@@ -11,13 +11,13 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
     {
         public short[] AudioData { get; set; }
 
-        public bool IsPlaying { get; private set; } = false;
+        public virtual bool IsPlaying { get; internal set; } = false;
 
         public float Volume { get; set; } = 1.0f;
 
-        private int _queueOffset = 0;
+        internal int _queueOffset = 0;
 
-        private object _queueLock = new object();
+        internal object _queueLock = new object();
 
         public SoundEffect()
         {
@@ -36,7 +36,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
             Volume = volume;
         }
 
-        public void Play()
+        public virtual void Play()
         {
             lock(_queueLock)
             {
@@ -56,7 +56,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
             
         }
 
-        public void MixAudioIntoArray(ref Span<byte> destination)
+        public virtual void MixAudioIntoArray(ref Span<byte> destination)
         {
             lock(_queueLock)
             {

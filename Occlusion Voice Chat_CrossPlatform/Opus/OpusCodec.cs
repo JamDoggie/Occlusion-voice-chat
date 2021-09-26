@@ -56,10 +56,10 @@ namespace Occlusion_voice_chat.Opus
         private const int OPUS_APPLICATION_AUDIO = 2049;
 
         private int _bitrate = 64;
-        private int _complexity = 1;
+        private int _complexity = 2;
         private double _frameSize = 20;
         private int _packetLoss = 0;
-        private int _application = OPUS_APPLICATION_AUDIO;
+        private int _application = OPUS_APPLICATION_VOIP;
         private bool _vbr = false;
         private bool _cvbr = false;
 
@@ -73,7 +73,7 @@ namespace Occlusion_voice_chat.Opus
         public OpusCodec()
         {
             IntPtr error;
-            _encoder = opus_encoder_create(48000, 1, OPUS_APPLICATION_AUDIO, out error);
+            _encoder = opus_encoder_create(48000, 1, OPUS_APPLICATION_VOIP, out error);
             if ((int)error != 0)
             {
                 throw new ApplicationException("Could not initialize Opus encoder");
@@ -84,6 +84,26 @@ namespace Occlusion_voice_chat.Opus
             SetVBRMode(_vbr, _cvbr);
 
             _decoder = opus_decoder_create(48000, 1, out error);
+            if ((int)error != 0)
+            {
+                throw new ApplicationException("Could not initialize Opus decoder");
+            }
+        }
+
+        public OpusCodec(int channels)
+        {
+            IntPtr error;
+            _encoder = opus_encoder_create(48000, channels, OPUS_APPLICATION_VOIP, out error);
+            if ((int)error != 0)
+            {
+                throw new ApplicationException("Could not initialize Opus encoder");
+            }
+
+            SetBitrate(_bitrate);
+            SetComplexity(_complexity);
+            SetVBRMode(_vbr, _cvbr);
+
+            _decoder = opus_decoder_create(48000, channels, out error);
             if ((int)error != 0)
             {
                 throw new ApplicationException("Could not initialize Opus decoder");

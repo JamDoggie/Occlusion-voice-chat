@@ -36,14 +36,23 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.6" />
     <PackageReference Include="Avalonia.Svg" Version="0.10.5.5" />
     <PackageReference Include="GlobalHotkeys" Version="1.0.0.6" />
+    <PackageReference Include="libogg" Version="1.3.0.1" />
     <PackageReference Include="LiteNetLib" Version="0.9.5" />
     <PackageReference Include="MessageBox.Avalonia" Version="1.3.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
     <PackageReference Include="SdlSharp" Version="0.9.3-alpha" />
     <PackageReference Include="Dotnet.Bundle" Version="*" />
    </ItemGroup>
   <ItemGroup>
 	<AvaloniaResource Include="resources\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Remove="resources\occlusion_deafen.opus" />
+    <AvaloniaResource Remove="resources\occlusion_drum_pattern.opus" />
+    <AvaloniaResource Remove="resources\occlusion_mute.opus" />
+    <AvaloniaResource Remove="resources\occlusion_undeafen.opus" />
+    <AvaloniaResource Remove="resources\occlusion_unmute.opus" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="DefaultTheme.xaml" />
@@ -52,11 +61,185 @@
     <AvaloniaResource Include="DefaultTheme.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="Concentus.Oggfile.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\MIT-48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\occlusion_deafen.opus">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\occlusion_drum_pattern.opus">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <AvaloniaResource Update="resources\occlusion_mic_icon_muted.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
+    <None Update="resources\occlusion_mute.opus">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\occlusion_undeafen.opus">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\occlusion_unmute.opus">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <None Update="HRTF sets\CIAIR_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1002_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1003_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1004_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1005_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1006_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1007_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1008_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1009_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1012_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1013_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1014_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1015_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1016_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1017_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1018_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1020_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1021_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1022_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1023_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1025_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1026_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1028_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1029_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1030_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1031_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1032_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1033_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1037_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1038_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1039_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1040_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1041_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1042_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1043_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1044_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1045_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1046_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1047_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1048_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1049_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1050_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1051_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1052_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1053_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1054_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1055_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1056_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1057_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1058_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\irc_1059_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Occlusion Voice Chat_CrossPlatform.icns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -102,7 +285,7 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|x64'">
-    <DefineConstants>CLIENT, CLIENT_CROSSPLATFORM, WINDOWS</DefineConstants>
+    <DefineConstants>DEBUG;CLIENT, CLIENT_CROSSPLATFORM, WINDOWS</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   
@@ -498,6 +681,9 @@
   <ItemGroup>
     <Reference Include="Concentus">
       <HintPath>..\Concentus.dll</HintPath>
+    </Reference>
+    <Reference Include="Concentus.Oggfile">
+      <HintPath>Concentus.Oggfile.dll</HintPath>
     </Reference>
     <Reference Include="GlobalLowLevelHooks">
       <HintPath>..\GlobalLowLevelHooks.dll</HintPath>

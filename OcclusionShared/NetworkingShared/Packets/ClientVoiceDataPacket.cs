@@ -31,7 +31,14 @@ namespace OcclusionShared.NetworkingShared.Packets
         {
             base.ToMessage(message);
 
-            message.PutBytesWithLength(VoiceData);
+            if (VoiceData != null)
+                message.PutBytesWithLength(VoiceData);
+            else
+            {
+                message.Put(2);
+                for (int i = 0; i < 2; i++)
+                    message.Put((byte)0);
+            }
         }
     }
 }

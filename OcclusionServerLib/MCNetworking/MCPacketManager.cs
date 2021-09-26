@@ -12,7 +12,7 @@ namespace OcclusionServerLib.MCNetworking
         public static void RegisterPackets()
         {
             // The manual defining of packet ids is on purpose.
-            // Since we're defining packets between different languages, any automatic packet ID registering is probably not gonna be consistent.
+            // Since we're defining packets between different platforms, any automatic packet ID registering is probably not gonna be consistent.
             RegisterPacket<MCClientVerificationPacket>(0);
             RegisterPacket<MCServerVerificationPacket>(1);
             RegisterPacket<MCServerPlayerLocation>(2);

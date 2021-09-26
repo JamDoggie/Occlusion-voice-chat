@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Occlusion_Voice_Chat_CrossPlatform.util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -293,6 +294,11 @@ namespace Occlusion_voice_chat.Opus
             return (float)sh / 32768;
         }
 
+        public static float ClampInt24ToFloat(Int24 sh)
+        {
+            return (float)sh / 8388608;
+        }
+
         public static short ExpandDoubleToShort(double d)
         {
             return (short)Math.Clamp(d * 32768, short.MinValue, short.MaxValue);
@@ -301,6 +307,11 @@ namespace Occlusion_voice_chat.Opus
         public static short ExpandFloatToShort(float f)
         {
             return (short)Math.Clamp(f * 32768, short.MinValue, short.MaxValue);
+        }
+
+        public static short ExpandFloatToInt24(float f)
+        {
+            return (short)Math.Clamp(f * 8388608, short.MinValue, short.MaxValue);
         }
     }
 }

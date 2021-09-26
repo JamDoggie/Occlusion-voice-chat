@@ -354,7 +354,8 @@ namespace Occlusion_voice_chat.Networking
 
         public void DisconnectClient(string reason, bool showReasonMessageBox = true)
         {
-            InternalClient.DisconnectAll(); 
+            InternalClient.DisconnectAll();
+            InternalClient.Stop();
             Running = false;
             ConnectionVerified = false;
 

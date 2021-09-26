@@ -37,6 +37,8 @@ namespace Occlusion.NetworkingShared.Packets
 
             HRTFAzimuth = message.GetFloat();
 
+            HRTFElevation = message.GetFloat();
+
             ID = message.GetInt();
         }
 
@@ -51,6 +53,8 @@ namespace Occlusion.NetworkingShared.Packets
             message.Put(Pan);
 
             message.Put(HRTFAzimuth);
+
+            message.Put(HRTFElevation);
 
             message.Put(ID);
         }

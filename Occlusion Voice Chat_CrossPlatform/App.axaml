@@ -1,13 +1,132 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="Occlusion_Voice_Chat_CrossPlatform.App">
+             xmlns:system="clr-namespace:System;assembly=netstandard"
+             x:Class="Occlusion_Voice_Chat_CrossPlatform.App"
+             xmlns:controls="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia.controls;assembly=Occlusion Voice Chat_CrossPlatform"
+             xmlns:converters="clr-namespace:Avalonia.Controls.Converters;assembly=Avalonia.Controls">
     <Application.Styles>
       <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
+      <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/BaseDark.xaml" />
+      <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/Base.xaml" />
+      <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/AccentColors.xaml" />
+      <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentControlResourcesDark.xaml" />
+
+      
       <StyleInclude Source="avares://Occlusion Voice Chat_CrossPlatform/DefaultTheme.xaml"></StyleInclude>
-    
-    <Style Selector="ScrollBar:vertical /template/ Thumb#thumb">
+      <StyleInclude Source="avares://Occlusion Voice Chat_CrossPlatform/avalonia/Slider.axaml"></StyleInclude>
+      <StyleInclude Source="resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia"/>
+
+      
+
+      <Style Selector="ScrollBar:vertical /template/ Thumb#thumb">
         <Setter Property="Background" Value="#4f4f5e"></Setter>
-      </Style>  
+      </Style>
+
+      <Style Selector=":is(controls|SmoothScrollViewer)">
+          <Setter Property="Background"
+                  Value="Transparent" />
+          <Setter Property="SmoothScrollDuration" Value="0:0:0.02" />
+          <Setter Property="SmoothScrollEasing" Value="{DynamicResource SmoothScrollEase}"/>
+          <Setter Property="Template">
+            <ControlTemplate>
+              <Grid ColumnDefinitions="*,Auto" RowDefinitions="*,Auto">
+                <controls:SmoothScrollContentPresenter Name="PART_ContentPresenter"
+                                        Background="{TemplateBinding Background}"
+                                        CanHorizontallyScroll="{TemplateBinding CanHorizontallyScroll}"
+                                        CanVerticallyScroll="{TemplateBinding CanVerticallyScroll}"
+                                        Content="{TemplateBinding Content}"
+                                        Extent="{TemplateBinding Extent, Mode=TwoWay}"
+                                        Margin="{TemplateBinding Padding}"
+                                        Offset="{TemplateBinding Offset, Mode=TwoWay}"
+                                        Viewport="{TemplateBinding Viewport, Mode=TwoWay}">
+                  <controls:SmoothScrollContentPresenter.GestureRecognizers>
+                    <ScrollGestureRecognizer
+                      CanHorizontallyScroll="{TemplateBinding CanHorizontallyScroll}"
+                      CanVerticallyScroll="{TemplateBinding CanVerticallyScroll}"
+            />
+                  </controls:SmoothScrollContentPresenter.GestureRecognizers>
+                </controls:SmoothScrollContentPresenter>
+                <ScrollBar Name="horizontalScrollBar"
+                           Orientation="Horizontal"
+                           LargeChange="{Binding LargeChange.Width, RelativeSource={RelativeSource TemplatedParent}}"
+                           SmallChange="{Binding SmallChange.Width, RelativeSource={RelativeSource TemplatedParent}}"
+                           Maximum="{TemplateBinding HorizontalScrollBarMaximum}"
+                           Value="{TemplateBinding HorizontalScrollBarValue, Mode=TwoWay}"
+                           ViewportSize="{TemplateBinding HorizontalScrollBarViewportSize}"
+                           Visibility="{TemplateBinding HorizontalScrollBarVisibility}"
+                           Grid.Row="1"
+                           Focusable="False"/>
+                <ScrollBar Name="verticalScrollBar"
+                           Orientation="Vertical"
+                           LargeChange="{Binding LargeChange.Height, RelativeSource={RelativeSource TemplatedParent}}"
+                           SmallChange="{Binding SmallChange.Height, RelativeSource={RelativeSource TemplatedParent}}"
+                           Maximum="{TemplateBinding VerticalScrollBarMaximum}"
+                           Value="{TemplateBinding VerticalScrollBarValue, Mode=TwoWay}"
+                           ViewportSize="{TemplateBinding VerticalScrollBarViewportSize}"
+                           Visibility="{TemplateBinding VerticalScrollBarVisibility}"
+                           Grid.Column="1"
+                           Focusable="False">
+                  
+                </ScrollBar>
+                <Panel Grid.Row="1" Grid.Column="1" Background="{DynamicResource ThemeControlMidBrush}"/>
+              </Grid>
+            </ControlTemplate>
+          </Setter>
+        </Style>
+
+        <Style Selector=":is(controls|SmoothScrollViewer).menuscroller">
+          <Setter Property="Template">
+            <ControlTemplate>
+              <DockPanel>
+                <RepeatButton DockPanel.Dock="Top"
+                              BorderThickness="0"
+                              Background="Transparent"
+                              Command="{Binding LineUp, RelativeSource={RelativeSource TemplatedParent}}">
+                  <RepeatButton.IsVisible>
+                    <MultiBinding Converter="{x:Static converters:MenuScrollingVisibilityConverter.Instance}"
+                                  ConverterParameter="0">
+                      <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="VerticalScrollBarVisibility"/>
+                      <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Offset.Y"/>
+                      <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Extent.Height"/>
+                      <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Viewport.Height"/>
+                    </MultiBinding>
+                  </RepeatButton.IsVisible>
+                  <Path Data="M 0 4 L 8 4 L 4 0 Z"/>
+                </RepeatButton>
+                <RepeatButton DockPanel.Dock="Bottom"
+                              BorderThickness="0"
+                              Background="Transparent"
+                              Command="{Binding LineDown, RelativeSource={RelativeSource TemplatedParent}}">
+                  <RepeatButton.IsVisible>
+                    <MultiBinding Converter="{x:Static converters:MenuScrollingVisibilityConverter.Instance}"
+                                  ConverterParameter="100">
+                      <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="VerticalScrollBarVisibility"/>
+                      <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Offset.Y"/>
+                      <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Extent.Height"/>
+                      <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="Viewport.Height"/>
+                    </MultiBinding>
+                  </RepeatButton.IsVisible>
+                  <Path Data="M 0 0 L 4 4 L 8 0 Z"/>
+                </RepeatButton>
+                <controls:SmoothScrollContentPresenter Name="PART_ContentPresenter"
+                                        CanHorizontallyScroll="{TemplateBinding CanHorizontallyScroll}"
+                                        CanVerticallyScroll="{TemplateBinding CanVerticallyScroll}"
+                                        Content="{TemplateBinding Content}"
+                                        Extent="{TemplateBinding Extent, Mode=TwoWay}"
+                                        Margin="{TemplateBinding Padding}"
+                                        Offset="{TemplateBinding Offset, Mode=TwoWay}"
+                                        Viewport="{TemplateBinding Viewport, Mode=TwoWay}"/>
+              </DockPanel>
+            </ControlTemplate>
+          </Setter>
+        </Style>
+        <Style Selector=":is(controls|SmoothScrollViewer).menuscroller /template/ RepeatButton > Path">
+          <Setter Property="Fill" Value="{DynamicResource ThemeForegroundLowBrush}" />
+        </Style>
+
+        <Style Selector=":is(controls|SmoothScrollViewer).menuscroller /template/ RepeatButton:pointerover > Path">
+          <Setter Property="Fill" Value="{DynamicResource ThemeAccentBrush}" />
+        </Style>
     </Application.Styles>
   
 </Application>

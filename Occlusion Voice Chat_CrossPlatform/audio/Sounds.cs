@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +15,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
         public static OggSoundFile MicUnmuteSound;
         public static OggSoundFile DeafenSound;
         public static OggSoundFile UndeafenSound;
+
+        public static OggSoundFile DrumSound;
 
 
         private static object _soundLock = new object();
@@ -37,10 +42,16 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
 
         public static void LoadSounds()
         {
-            MicMuteSound = OggSoundFile.LoadSound("resources/occlusion_mute.opus");
-            MicUnmuteSound = OggSoundFile.LoadSound("resources/occlusion_unmute.opus");
-            DeafenSound = OggSoundFile.LoadSound("resources/occlusion_deafen.opus");
-            UndeafenSound = OggSoundFile.LoadSound("resources/occlusion_undeafen.opus");
+            Assembly assembly = Assembly.GetExecutingAssembly();
+
+            Console.WriteLine($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_mute.opus bruh");
+            Debug.WriteLine($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_mute.opus bruh");
+
+            MicMuteSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_mute.opus");
+            MicUnmuteSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_unmute.opus");
+            DeafenSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_deafen.opus");
+            UndeafenSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_undeafen.opus");
+            DrumSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_drum_pattern.opus", 1);
         }
     }
 }

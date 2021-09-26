@@ -13,6 +13,8 @@ using MessageBox.Avalonia;
 using MessageBox.Avalonia.DTO;
 using MessageBox.Avalonia.Enums;
 using Occlusion_voice_chat.Mojang;
+using Occlusion_Voice_Chat_CrossPlatform.audio;
+using Occlusion_Voice_Chat_CrossPlatform.avalonia.controls;
 using Occlusion_Voice_Chat_CrossPlatform.avalonia.view_models;
 using SdlSharp.Sound;
 using System;
@@ -57,6 +59,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public Canvas UserPanelCanvas;
 
         public ProgressBar SettingsSpeakerMeter;
+
+        public Border MuteIconSlash;
+
+        public Border DeafenIconSlash;
+
+        public SettingsPage SettingsPage;
         #endregion
 
         public bool IsOpen { get; set; } = false;
@@ -89,24 +97,28 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-
+            
+            SettingsPage = this.FindControl<SettingsPage>("SettingsPage");
             MicDecibalMeter = this.FindControl<ProgressBar>("MicDecibalMeter");
-            InputVolumeSlider = this.FindControl<Slider>("InputVolumeSlider");
-            SettingsMicMeter = this.FindControl<ProgressBar>("SettingsMicMeter");
-            AudioSettingsGroup = this.FindControl<Grid>("AudioSettingsGroup");
-            InputVolumeTextbox = this.FindControl<TextBlock>("InputVolumeTextbox");
-            OutputVolumeTextbox = this.FindControl<TextBlock>("OutputVolumeTextbox");
-            OutputVolumeSlider = this.FindControl<Slider>("OutputVolumeSlider");
-            InputDeviceDropdown = this.FindControl<ComboBox>("InputDeviceDropdown");
-            OutputDeviceDropdown = this.FindControl<ComboBox>("OutputDeviceDropdown");
+            InputVolumeSlider = SettingsPage.FindControl<Slider>("InputVolumeSlider");
+            SettingsMicMeter = SettingsPage.FindControl<ProgressBar>("SettingsMicMeter");
+            
+            AudioSettingsGroup = SettingsPage.FindControl<Grid>("AudioSettingsGroup");
+            InputVolumeTextbox = SettingsPage.FindControl<TextBlock>("InputVolumeTextbox");
+            OutputVolumeTextbox = SettingsPage.FindControl<TextBlock>("OutputVolumeTextbox");
+            OutputVolumeSlider = SettingsPage.FindControl<Slider>("OutputVolumeSlider");
+            InputDeviceDropdown = SettingsPage.FindControl<ComboBox>("InputDeviceDropdown");
+            OutputDeviceDropdown = SettingsPage.FindControl<ComboBox>("OutputDeviceDropdown");
             PlayerIconsPanel = this.FindControl<WrapPanel>("PlayerIconsPanel");
-            AudioSettingsHeader = this.FindControl<TextBlock>("AudioSettingsHeader");
+            AudioSettingsHeader = SettingsPage.FindControl<TextBlock>("AudioSettingsHeader");
             SpeakerDecibalMeter = this.FindControl<ProgressBar>("SpeakerDecibalMeter");
-            VoiceActivityBar = this.FindControl<ProgressBar>("VoiceActivityBar");
+            VoiceActivityBar = SettingsPage.FindControl<ProgressBar>("VoiceActivityBar");
             UserControlPanel = this.FindControl<UserPanel>("UserControlPanel");
             SettingsButton = this.FindControl<Button>("SettingsButton");
             UserPanelCanvas = this.FindControl<Canvas>("UserPanelCanvas");
-            SettingsSpeakerMeter = this.FindControl<ProgressBar>("SettingsSpeakerMeter");
+            SettingsSpeakerMeter = SettingsPage.FindControl<ProgressBar>("SettingsSpeakerMeter");
+            MuteIconSlash = this.FindControl<Border>("MuteIconSlash");
+            DeafenIconSlash = this.FindControl<Border>("DeafenIconSlash");
 
 
             Closed += Window_Closed;
@@ -115,7 +127,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
 
 
-            AudioSettingsGroup.IsVisible = true;
+            SettingsPage.IsVisible = true;
 
             // Volume controls
             InputVolumeSlider.Value = App.InputVolume;
@@ -125,7 +137,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             OutputVolumeTextbox.Text = (int)(OutputVolumeSlider.Value * 100) + "%";
 
             // Events cuz Avalonia won't let me bind them in XAML no matter what i do.
-            this.FindControl<MenuItem>("DisconnectMenuButton").Click += Menu_Disconnect_Click;
 
             this.FindControl<Button>("MuteButton").Click += Mute_Click_1;
             this.FindControl<Button>("DeafenButton").Click += Deafen_Click;
@@ -133,7 +144,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             this.FindControl<Button>("InfoButton").Click  += InfoButton_Click;
             this.FindControl<Button>("InfoButton").PointerMoved += InfoButton_MouseMove;
 
-            AudioSettingsGroup.PropertyChanged += AudioSettingsGroup_PropertyChanged;
+            SettingsPage.PropertyChanged += AudioSettingsGroup_PropertyChanged;
 
             SettingsButton.Click += Settings_Click;
             SettingsButton.PointerEnter += SettingsButton_PointerEnter;
@@ -153,7 +164,10 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             OutputVolumeSlider.PropertyChanged += OutputVolume_ValueChanged;
 
-            this.FindControl<Button>("SettingsOkButton").Click += Settings_Ok_Click;
+            SettingsPage.FindControl<Button>("SettingsOkButton").Click += Settings_Ok_Click;
+
+            if (SettingsPage.AudioSettingsGroup.RenderTransform is TranslateTransform gridTransform)
+                gridTransform.Y = 1000;
 
             OpenAudioSettings();
 
@@ -192,18 +206,22 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             
             if (e.Property == Grid.OpacityProperty && e.Priority == BindingPriority.Animation)
             {
-                if ((double)e.OldValue != 0 && (double)e.NewValue == 0)
+                if (this.FindControl<Grid>("BottomBar").RenderTransform is TranslateTransform translate)
                 {
-                    AudioSettingsGroup.IsVisible = false;
-                    AudioSettingsHeader.Text = "Audio Settings";
-                }
+                    if ((double)e.OldValue != 0 && (double)e.NewValue == 0)
+                    {
+                        SettingsPage.IsVisible = false;
+                        AudioSettingsHeader.Text = "Settings";
+                        translate.Y = 0;
+                    }
 
-                if ((double)e.OldValue == 0 && (double)e.NewValue != 0)
-                {
-                    AudioSettingsGroup.IsVisible = true;
+                    if ((double)e.OldValue == 0 && (double)e.NewValue != 0)
+                    {
+                        SettingsPage.IsVisible = true;
+                        translate.Y = 100;
+                    }
                 }
             }
-            
         }
 
         private void VoiceChatWindow_Activated(object sender, EventArgs e)
@@ -220,6 +238,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             InputVolumeSlider.Value = App.Options.Obj.InputVolume;
             OutputVolumeSlider.Value = App.Options.Obj.OutputVolume;
+
+            SettingsPage.HRTFSwitch.IsChecked = App.Options.Obj.UseHRTF;
         }
 
         private void SettingsButton_PointerLeave(object sender, PointerEventArgs e)
@@ -234,10 +254,21 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             transform.Angle = -30;
         }
 
+        public void CloseAudioSettings()
+        {
+            AudioSettingsOpen = false;
+            SettingsPage.Opacity = 0;
+            if (SettingsPage.AudioSettingsGroup.RenderTransform is TranslateTransform gridTransform)
+                gridTransform.Y = 1000;
+
+            App.HRTFPreview.Muted = true;
+            SettingsPage.HRTFIconSlash.Width = 35;
+        }
+
         public void OpenAudioSettings()
         {
             AudioSettingsOpen = true;
-            AudioSettingsGroup.Opacity = 1;
+            SettingsPage.Opacity = 1;
 
             
             // Populate combo boxes
@@ -246,7 +277,10 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             // Output Device
             RetrieveOutputDevices();
-            
+
+
+            if (SettingsPage.AudioSettingsGroup.RenderTransform is TranslateTransform gridTransform)
+                gridTransform.Y = 0;
         }
 
         public void AddPlayer(string uuid, int id)
@@ -334,12 +368,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             PlayerIconsPanel.Children.Remove(icon);
         }
 
-        public void CloseAudioSettings()
-        {
-            AudioSettingsOpen = false;
-
-            AudioSettingsGroup.Opacity = 0;
-        }
+        
 
         public void InputVolume_ValueChanged(object sender, AvaloniaPropertyChangedEventArgs e)
         {
@@ -405,29 +434,86 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         public void Mute_Click_1(object sender, RoutedEventArgs e)
         {
-            App.MicMuted = !App.MicMuted;
+            bool wasDeaf = App.Deafened;
+            SetMuted(!App.MicMuted);
 
-            switch (App.MicMuted)
+            if (App.MicMuted)
+            {
+                new SoundEffect(Sounds.MicMuteSound, 0.7f).Play();
+            }
+            else
+            {
+                if (wasDeaf && !App.Deafened)
+                    new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+                else
+                    new SoundEffect(Sounds.MicUnmuteSound, 0.7f).Play();
+            }
+        }
+
+        public void Deafen_Click(object sender, RoutedEventArgs e)
+        {
+            SetDeafened(!App.Deafened);
+
+            if (App.Deafened)
+            {
+                new SoundEffect(Sounds.DeafenSound, 0.7f).Play();
+            }
+            else
+            {
+                new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+            }
+        }
+
+        public void SetMuted(bool muted)
+        {
+            App.MicMuted = muted;
+
+            switch (muted)
             {
                 case true:
-                    ViewModel.CurrentMicIcon = "/resources/occlusion_mic_icon_muted.png";
                     MicDecibalMeter.Foreground = new SolidColorBrush(Color.FromRgb(74, 74, 87));
+
+                    MuteIconSlash.Width = 45;
+                    this.FindControl<Image>("MicMutedImg").Opacity = 1;
                     break;
 
                 case false:
-                    ViewModel.CurrentMicIcon = "/resources/occlusion_mic_icon.png";
                     MicDecibalMeter.Foreground = new SolidColorBrush(Color.FromRgb(127, 46, 219));
+
+                    MuteIconSlash.Width = 0;
+
+                    this.FindControl<Image>("MicMutedImg").Opacity = 0;
 
                     if (App.Deafened)
                     {
-                        App.Deafened = false;
-                        ViewModel.CurrentDeafenIcon = "/resources/speaker_unmuted.png";
-                        SpeakerDecibalMeter.Foreground = new SolidColorBrush(Color.FromRgb(127, 46, 219));
+                        SetDeafened(false);
                     }
                     break;
             }
         }
 
+        public void SetDeafened(bool deaf)
+        {
+            App.Deafened = deaf;
+
+            switch (deaf)
+            {
+                case true:
+                    ViewModel.CurrentDeafenIcon = "/resources/speaker_muted.png";
+                    SpeakerDecibalMeter.Foreground = new SolidColorBrush(Color.FromRgb(74, 74, 87));
+                    this.FindControl<Image>("DeafenedImg").Opacity = 1;
+                    DeafenIconSlash.Width = 45;
+                    SetMuted(true);
+                    break;
+
+                case false:
+                    ViewModel.CurrentDeafenIcon = "/resources/speaker_unmuted.png";
+                    SpeakerDecibalMeter.Foreground = new SolidColorBrush(Color.FromRgb(127, 46, 219));
+                    this.FindControl<Image>("DeafenedImg").Opacity = 0;
+                    DeafenIconSlash.Width = 0;
+                    break;
+            }
+        }
 
         public void Window_MouseDown(object sender, PointerPressedEventArgs e)
         {
@@ -448,31 +534,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             
         }
 
-        public void Deafen_Click(object sender, RoutedEventArgs e)
-        {
-            App.Deafened = !App.Deafened;
-
-            switch (App.Deafened)
-            {
-                case true:
-                    ViewModel.CurrentDeafenIcon = "/resources/speaker_muted.png";
-                    SpeakerDecibalMeter.Foreground = new SolidColorBrush(Color.FromRgb(74, 74, 87));
-                    break;
-
-                case false:
-                    ViewModel.CurrentDeafenIcon = "/resources/speaker_unmuted.png";
-                    SpeakerDecibalMeter.Foreground = new SolidColorBrush(Color.FromRgb(127, 46, 219));
-                    break;
-            }
-
-            if (App.Deafened)
-            {
-                App.MicMuted = true;
-                ViewModel.CurrentMicIcon = "/resources/occlusion_mic_icon_muted.png";
-                MicDecibalMeter.Foreground = new SolidColorBrush(Color.FromRgb(74, 74, 87));
-            }
-
-        }
+        
 
         private bool isVoiceMouseDown = false;
 

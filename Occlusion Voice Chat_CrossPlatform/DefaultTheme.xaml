@@ -45,8 +45,15 @@
         <SolidColorBrush x:Key="ThemeAccentBrush4" Color="{DynamicResource ThemeAccentColor4}"></SolidColorBrush>
         <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource ErrorColor}"></SolidColorBrush>
         <SolidColorBrush x:Key="ErrorLowBrush" Color="{DynamicResource ErrorLowColor}"></SolidColorBrush>
+       <SolidColorBrush x:Key="ToggleSwitchFillOn" Color="{DynamicResource ThemeAccentColor}"></SolidColorBrush>
+       <SolidColorBrush x:Key="ToggleSwitchFillOnPointerOver" Color="{DynamicResource ThemeAccentColor2}"></SolidColorBrush>
+       <SolidColorBrush x:Key="ToggleSwitchFillOnPressed" Color="{DynamicResource ThemeAccentColor3}"></SolidColorBrush>
+       <SolidColorBrush x:Key="ToggleSwitchStrokeOff" Color="{DynamicResource ThemeControlHighColor}"></SolidColorBrush>
 
-        <Thickness x:Key="ThemeBorderThickness">0</Thickness>
+       <QuinticEaseOut x:Key="SmoothScrollEase"/>
+       <BounceEaseIn x:Key="ScrollEase"/>
+
+       <Thickness x:Key="ThemeBorderThickness">0</Thickness>
         <sys:Double x:Key="ThemeDisabledOpacity">0.5</sys:Double>
 
         <sys:Double x:Key="FontSizeSmall">10</sys:Double>

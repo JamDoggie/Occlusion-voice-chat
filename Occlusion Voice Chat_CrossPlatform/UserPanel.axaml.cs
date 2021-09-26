@@ -5,7 +5,9 @@ using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Occlusion_Voice_Chat_CrossPlatform.avalonia.view_models;
 using OcclusionShared.NetworkingShared;
+using OxyPlot.Avalonia;
 
 namespace Occlusion_Voice_Chat_CrossPlatform
 {
@@ -26,6 +28,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public UserPanel()
         {
             InitializeComponent();
+            DataContext = new UserPanelViewModel();
         }
 
         private void InitializeComponent()
@@ -40,6 +43,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             PropertyChanged += UserPanel_PropertyChanged;
 
             VolumeSlider.PropertyChanged += VolumeSlider_ValueChanged;
+
+#if HRTFDEBUG
+            this.FindControl<PlotView>("LeftPlot").IsVisible = true;
+            this.FindControl<PlotView>("RightPlot").IsVisible = true;
+#endif
         }
 
         private void UserPanel_PropertyChanged(object sender, AvaloniaPropertyChangedEventArgs e)
