@@ -75,6 +75,18 @@ namespace Occlusion_voice_chat.Networking
             {
                 DisconnectClient(disconnectPacket.DisconnectMessage, true);
             }
+
+            if (packet is AutoDisconnectPacket autoDisconnect)
+            {
+                Dispatcher.UIThread.InvokeAsync(() => 
+                { 
+                    if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+                    {
+                        App.VoiceChatWindow.AutoDisconnectScreen.IsVisible = autoDisconnect.ShowWarning;
+                        App.VoiceChatWindow.AutoDisconnectSeconds = (int)autoDisconnect.SecondsTillDisconnect;
+                    }
+                });
+            }
         }
         #endregion
 
@@ -143,6 +155,11 @@ namespace Occlusion_voice_chat.Networking
                 {
                     errorMessage = $"Disconnected, Reason: {reason}";
                 }
+                
+                if (info.AdditionalData.RawDataSize > 0)
+                {
+                    errorMessage += $"\n Additional Information: \"{Encoding.UTF8.GetString(info.AdditionalData.GetRemainingBytes())}\"";
+                }
 
                 Console.WriteLine(errorMessage);
 
@@ -154,6 +171,7 @@ namespace Occlusion_voice_chat.Networking
                     {
                         App.VoiceChatWindow.ForceClose = true;
                         App.VoiceChatWindow.Close();
+                        App.VoiceChatWindow.Dispose();
                         App.VoiceChatWindow = new VoiceChatWindow();
                     }
 
@@ -367,6 +385,7 @@ namespace Occlusion_voice_chat.Networking
                 {
                     App.VoiceChatWindow.ForceClose = true; // This bypasses the "are you sure you want to disconnect" message box.
                     App.VoiceChatWindow.Close();
+                    App.VoiceChatWindow.Dispose();
                     App.VoiceChatWindow = new VoiceChatWindow();
                 }
             });

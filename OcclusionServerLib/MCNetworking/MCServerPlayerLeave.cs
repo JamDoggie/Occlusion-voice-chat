@@ -8,7 +8,7 @@ namespace OcclusionServerLib.MCNetworking
 {
     public class MCServerPlayerLeave : MCPacket
     {
-        public int ID { get; set; } = -1;
+        public int Code { get; set; } = -1;
 
         public string UUID { get; set; }
 
@@ -17,7 +17,7 @@ namespace OcclusionServerLib.MCNetworking
             base.FromMessage(buffer);
 
             // Verification ID
-            ID = buffer.ReadIntLE();
+            Code = buffer.ReadIntLE();
 
             // Minecraft UUId
             var uuidLength = buffer.ReadIntLE();

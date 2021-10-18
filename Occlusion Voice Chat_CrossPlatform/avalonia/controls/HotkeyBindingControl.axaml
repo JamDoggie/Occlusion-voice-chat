@@ -3,12 +3,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:svg="clr-namespace:Avalonia.Svg;assembly=Avalonia.Svg"
-             mc:Ignorable="d" Width="250" Height="25"
+             mc:Ignorable="d" Width="300" Height="30"
              x:Class="Occlusion_Voice_Chat_CrossPlatform.avalonia.controls.HotkeyBindingControl">
     
     
         <Grid>
-            <ContentPresenter Name="BindContent" Focusable="True" Cursor="Ibeam" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Background="#454552" Padding="5">
+            <ContentPresenter Name="BindContent" CornerRadius="10" Focusable="True" Cursor="Ibeam" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Background="#454552" Padding="5">
                 <ContentPresenter.Content>
                     <Grid>
                         <TextBlock Name="WatermarkClickText" Foreground="#767687">Click to capture keybind</TextBlock>
@@ -16,7 +16,7 @@
                     </Grid>
                 </ContentPresenter.Content>
             </ContentPresenter>
-            <Button Name="HotkeyClearButton" Cursor="Hand" Background="Transparent" Classes="xbutton" HorizontalAlignment="Right" Padding="6 7 6 6">
+            <Button Name="HotkeyClearButton" Cursor="Hand" Background="Transparent" Classes="xbutton" HorizontalAlignment="Right" Padding="6 7 6 6" Margin="0 0 5 0" Height="25">
                 <Button.Transitions>
                     <Transitions>
                         <DoubleTransition Property="Opacity" Duration="0:0:0.2">
@@ -40,7 +40,7 @@
                     </Image.Source>
                 </Image>
             </Button>
-            <Border Name="FocusBorder" Opacity="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#CC7F2EDB">
+            <Border Name="FocusBorder" CornerRadius="10" Opacity="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="#CC7F2EDB">
                 <Border.Styles>
                     <Style Selector="Border">
                         <Style.Animations>

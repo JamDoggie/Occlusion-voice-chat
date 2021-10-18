@@ -15,9 +15,13 @@ namespace Occlusion_voice_chat.util.json_structs
 
         public float InputVolume { get; set; } = 1;
 
+        public float SoundEffectVolume { get; set; } = 1;
+
         public float OutputVolume { get; set; } = 1;
 
         public float VoiceActivity { get; set; } = 500;
+
+        public bool UseVoiceActivity { get; set; } = true;
 
         public Dictionary<string, float> UserVolumes { get; set; } = new Dictionary<string, float>();
 
@@ -27,5 +31,15 @@ namespace Occlusion_voice_chat.util.json_structs
         public bool UseHRTF { get; set; } = true;
 
         public string CurrentHRTFSet { get; set; } = "MIT-48000.mhr";
+
+        public List<string> PushTalkBind { get; set; } = new();
+
+        public List<string> PushMuteBind { get; set; } = new();
+
+        public List<string> PushDeafenBind { get; set; } = new();
+
+        public List<string> ToggleMuteBind { get; set; } = new();
+
+        public List<string> ToggleDeafenBind { get; set; } = new();
     }
 }

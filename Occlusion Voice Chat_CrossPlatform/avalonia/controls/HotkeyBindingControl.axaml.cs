@@ -23,6 +23,17 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 
         public List<VKeys> Hotkey = new List<VKeys>();
 
+        #region events
+        public delegate void HotkeyPressedDelegate();
+        public event HotkeyPressedDelegate HotkeyPressed;
+
+        public delegate void HotkeyReleasedDelegate();
+        public event HotkeyReleasedDelegate HotkeyReleased;
+
+        public delegate void HotkeyChangedDelegate(List<VKeys> newHotkey);
+        public event HotkeyChangedDelegate HotkeyChanged;
+        #endregion
+
         public HotkeyBindingControl()
         {
             InitializeComponent();
@@ -59,32 +70,80 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             AvaloniaXamlLoader.Load(this);
 #if WINDOWS
             App.HotkeyKeyDownEvent += App_HotkeyKeyDownEvent;
+            App.HotkeyKeyUpEvent += App_HotkeyKeyUpEvent;
 #endif
         }
+
 
         private void HotkeyClearButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
 #if WINDOWS
-            App.ClearHotKeys();
+            //App.ClearHotKeys();
             Hotkey.Clear();
             UpdateContent();
 #endif
             
         }
 
+        private bool isPressed = false;
+
         private void App_HotkeyKeyDownEvent(VKeys key)
         {
 #if WINDOWS
-            if (BindContent.IsFocused)
-            {
-                Hotkey.Clear();
-                foreach(VKeys k in App.CurrentKeysPressed)
+            if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+                if (BindContent.IsFocused && BindContent.IsPointerOver)
                 {
-                    Hotkey.Add(k);
-                }
+                    Hotkey.Clear();
+                    foreach(VKeys k in App.CurrentKeysPressed)
+                    {
+                        Hotkey.Add(k);
+                    }
 
-                UpdateContent();
-            }
+                    UpdateContent();
+                }
+                else
+                {
+                    if (Hotkey.Count > 0 && HotkeyPressed != null && Hotkey.Contains(key))
+                    {
+                        // Pass along the hotkey
+                        
+
+                        if (App.CurrentKeysPressed.Count < Hotkey.Count)
+                            return;
+
+                        int matchingKeys = 0;
+
+                        foreach(VKeys k in App.CurrentKeysPressed)
+                        {
+                            if (Hotkey.Contains(k))
+                                matchingKeys++;
+                        }
+
+                        if (matchingKeys == Hotkey.Count)
+                        {
+                            HotkeyPressed();
+
+                            isPressed = true;
+                        }
+                    }
+                }
+#endif
+        }
+
+        private void App_HotkeyKeyUpEvent(VKeys key)
+        {
+#if WINDOWS
+            if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+                if (!BindContent.IsFocused || !BindContent.IsPointerOver)
+                {
+                    if (Hotkey.Count > 0 && HotkeyReleased != null && isPressed && Hotkey.Contains(key))
+                    {
+                        // Pass along the hotkey
+                        HotkeyReleased();
+
+                        isPressed = false;
+                    }
+                }
 #endif
         }
 
@@ -97,7 +156,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
                 return;
             }
 
-            WatermarkClickText.IsVisible = false;
+            WatermarkClickText.IsVisible = true;
         }
 #endif
 
@@ -114,6 +173,14 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 
                 ContentText.Text = ContentText.Text + Hotkey[i];
             }
+
+            List<VKeys> newHotkey = new List<VKeys>();
+
+            foreach (VKeys key in Hotkey)
+                newHotkey.Add(key);
+
+            if (HotkeyChanged != null)
+                HotkeyChanged(newHotkey);
 
 #if WINDOWS
             UpdateWatermark();

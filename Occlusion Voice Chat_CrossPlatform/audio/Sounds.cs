@@ -16,7 +16,10 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
         public static OggSoundFile DeafenSound;
         public static OggSoundFile UndeafenSound;
 
-        public static OggSoundFile DrumSound;
+        public static OggSoundFile PushMuteSound;
+        public static OggSoundFile PushUnmuteSound;
+
+        public static OggSoundFile WavesSound;
 
 
         private static object _soundLock = new object();
@@ -51,7 +54,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
             MicUnmuteSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_unmute.opus");
             DeafenSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_deafen.opus");
             UndeafenSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_undeafen.opus");
-            DrumSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_drum_pattern.opus", 1);
+
+            PushMuteSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_pushmute.opus");
+            PushUnmuteSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_pushunmute.opus");
+
+            WavesSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/waves_sample.opus", 1); 
         }
     }
 }

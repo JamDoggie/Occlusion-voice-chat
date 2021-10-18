@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Timers;
+using static GlobalLowLevelHooks.KeyboardHook;
 
 namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 {
@@ -39,6 +40,25 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 
         public Avalonia.Controls.Slider ElevationSlider { get; set; }
 
+        public Avalonia.Controls.Slider SoundVolumeSlider { get; set; }
+
+        public TextBlock SoundVolumeText { get; set; }
+
+        public ComboBox VoiceActivityBox { get; set; }
+
+        public HotkeyBindingControl PushTalkBind { get; set; }
+
+        public HotkeyBindingControl PushMuteBind { get; set; }
+
+        public HotkeyBindingControl PushDeafenBind { get; set; }
+
+        public HotkeyBindingControl ToggleMuteBind { get; set; }
+
+        public HotkeyBindingControl ToggleDeafenBind { get; set; }
+
+
+
+        private Timer hrtfTimer;
 
         private bool HRTFRotating { get; set; } = true;
         public SettingsPage()
@@ -47,10 +67,17 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 
             InitializeComponent();
 
-            Timer timer = new Timer();
-            timer.Elapsed += Timer_Elapsed;
-            timer.Interval = 16;
-            timer.Start();
+            if (hrtfTimer != null)
+            {
+                hrtfTimer.Stop();
+                hrtfTimer.Dispose();
+            }
+                
+
+            hrtfTimer = new Timer();
+            hrtfTimer.Elapsed += Timer_Elapsed;
+            hrtfTimer.Interval = 13;
+            hrtfTimer.Start();
 
             AudioSettingsGroup = this.FindControl<Grid>("AudioSettingsGroup");
             HRTFSwitch = this.FindControl<ToggleSwitch>("HRTFSwitch");
@@ -64,6 +91,14 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             AzimuthSlider = this.FindControl<Avalonia.Controls.Slider>("AzimuthSlider");
             ElevationSlider = this.FindControl<Avalonia.Controls.Slider>("ElevationSlider");
             HRTFImportButton = this.FindControl<Button>("HRTFImportButton");
+            SoundVolumeSlider = this.FindControl<Avalonia.Controls.Slider>("SoundVolumeSlider");
+            SoundVolumeText = this.FindControl<TextBlock>("SoundVolumeText");
+            VoiceActivityBox = this.FindControl<ComboBox>("VoiceActivityBox");
+            PushTalkBind = this.FindControl<HotkeyBindingControl>("PushTalkBind");
+            PushMuteBind = this.FindControl<HotkeyBindingControl>("PushMuteBind");
+            PushDeafenBind = this.FindControl<HotkeyBindingControl>("PushDeafenBind");
+            ToggleMuteBind = this.FindControl<HotkeyBindingControl>("ToggleMuteBind");
+            ToggleDeafenBind = this.FindControl<HotkeyBindingControl>("ToggleDeafenBind");
 
             foreach (string s in HRTFFilterList.Items)
             {
@@ -85,7 +120,112 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 
             HRTFImportButton.Click += HRTFImportButton_Click;
 
-            this.FindControl<ToggleSwitch>("AutoRotate").Click += SettingsPage_Click; 
+            SoundVolumeSlider.PropertyChanged += SoundVolumeSlider_PropertyChanged;
+
+            VoiceActivityBox.SelectionChanged += VoiceActivityBox_SelectionChanged;
+
+            this.FindControl<ToggleSwitch>("AutoRotate").Click += SettingsPage_Click;
+
+            SoundVolumeSlider.Value = App.Options.Obj.SoundEffectVolume;
+            VoiceActivityBox.SelectedIndex = App.Options.Obj.UseVoiceActivity ? 0 : 1;
+
+            // Load hotkeys
+            PushTalkBind.Hotkey.Clear();
+            foreach (string s in App.Options.Obj.PushTalkBind)
+                PushTalkBind.Hotkey.Add(Enum.Parse<VKeys>(s));
+
+            PushMuteBind.Hotkey.Clear();
+            foreach (string s in App.Options.Obj.PushMuteBind)
+                PushMuteBind.Hotkey.Add(Enum.Parse<VKeys>(s));
+
+            PushDeafenBind.Hotkey.Clear();
+            foreach (string s in App.Options.Obj.PushDeafenBind)
+                PushDeafenBind.Hotkey.Add(Enum.Parse<VKeys>(s));
+
+            ToggleMuteBind.Hotkey.Clear();
+            foreach (string s in App.Options.Obj.ToggleMuteBind)
+                ToggleMuteBind.Hotkey.Add(Enum.Parse<VKeys>(s));
+
+            ToggleDeafenBind.Hotkey.Clear();
+            foreach (string s in App.Options.Obj.ToggleDeafenBind)
+                ToggleDeafenBind.Hotkey.Add(Enum.Parse<VKeys>(s));
+
+            PushTalkBind.UpdateContent();
+            PushMuteBind.UpdateContent();
+            PushDeafenBind.UpdateContent();
+            ToggleMuteBind.UpdateContent();
+            ToggleDeafenBind.UpdateContent();
+
+            // Hotkey events
+            PushTalkBind.HotkeyChanged += PushTalkBind_HotkeyChanged;
+            PushMuteBind.HotkeyChanged += PushMuteBind_HotkeyChanged;
+            PushDeafenBind.HotkeyChanged += PushDeafenBind_HotkeyChanged; ;
+            ToggleMuteBind.HotkeyChanged += ToggleMuteBind_HotkeyChanged; ;
+            ToggleDeafenBind.HotkeyChanged += ToggleDeafenBind_HotkeyChanged; ;
+        }
+
+        private void ToggleDeafenBind_HotkeyChanged(List<VKeys> newHotkey)
+        {
+            App.Options.Obj.ToggleDeafenBind.Clear();
+            foreach (VKeys key in ToggleDeafenBind.Hotkey)
+                App.Options.Obj.ToggleDeafenBind.Add(key.ToString());
+
+            App.Options.Update();
+        }
+
+        private void ToggleMuteBind_HotkeyChanged(List<VKeys> newHotkey)
+        {
+            App.Options.Obj.ToggleMuteBind.Clear();
+            foreach (VKeys key in ToggleMuteBind.Hotkey)
+                App.Options.Obj.ToggleMuteBind.Add(key.ToString());
+
+            App.Options.Update();
+        }
+
+        private void PushDeafenBind_HotkeyChanged(List<VKeys> newHotkey)
+        {
+            App.Options.Obj.PushDeafenBind.Clear();
+            foreach (VKeys key in PushDeafenBind.Hotkey)
+                App.Options.Obj.PushDeafenBind.Add(key.ToString());
+
+            App.Options.Update();
+        }
+
+        private void PushMuteBind_HotkeyChanged(List<VKeys> newHotkey)
+        {
+            App.Options.Obj.PushMuteBind.Clear();
+            foreach (VKeys key in PushMuteBind.Hotkey)
+                App.Options.Obj.PushMuteBind.Add(key.ToString());
+
+            App.Options.Update();
+        }
+
+        private void PushTalkBind_HotkeyChanged(List<VKeys> newHotkey)
+        {
+            App.Options.Obj.PushTalkBind.Clear();
+            foreach (VKeys key in PushTalkBind.Hotkey)
+                App.Options.Obj.PushTalkBind.Add(key.ToString());
+
+            App.Options.Update();
+        }
+
+        private void VoiceActivityBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                App.Options.Obj.UseVoiceActivity = VoiceActivityBox.SelectedIndex == 0;
+            }
+        }
+
+        private void SoundVolumeSlider_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+        {
+            if (e.Property == Avalonia.Controls.Slider.ValueProperty)
+            {
+                App.Options.Obj.SoundEffectVolume = (float)SoundVolumeSlider.Value;
+                App.Options.Update();
+
+                SoundVolumeText.Text = $"{(int)(SoundVolumeSlider.Value * 100)}%";
+            }
         }
 
         private async void HRTFImportButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)

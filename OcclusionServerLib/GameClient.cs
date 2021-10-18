@@ -12,9 +12,11 @@ using OcclusionShared.NetworkingShared.Packets;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace OcclusionServerLib
 {
@@ -23,34 +25,28 @@ namespace OcclusionServerLib
 
         public bool Running { get; set; } = false;
 
+        public bool Connected { get; set; } = false;
+
         #region events
         public delegate void PacketRecieved(MCPacket packet, GameClient client);
         public event PacketRecieved PacketRecievedEvent;
 
-
         private void InternalPacketRecieved(MCPacket packet, GameClient client)
         {
-            if (packet is MCServerVerificationPacket)
+            if (packet is MCServerVerificationPacket serverVerificationPacket)
             {
+                Server.codesBeingVerified.TryGetValue(serverVerificationPacket.Code, out NetPeer connection);
 
-                var serverVerificationPacket = packet as MCServerVerificationPacket;
-
-                NetPeer connection;
-
-                NetPeer dummyCon;
-                Server.codesBeingVerified.TryGetValue(serverVerificationPacket.Code, out dummyCon);
-
-                if (dummyCon != null)
+                if (connection != null)
                 {
-                    Server.codesBeingVerified.Remove(serverVerificationPacket.Code, out connection);
-
                     if (serverVerificationPacket.Verified)
                     {
-                        server.GetUserByConnection(connection).verificationCode = serverVerificationPacket.Code;
-                        server.GetUserByConnection(connection).MCUUID = serverVerificationPacket.UUID;
-                        server.GetUserByConnection(connection).IsVerified = true;
-
                         VoiceUser newUser = server.GetUserByConnection(connection);
+
+                        newUser.verificationCode = serverVerificationPacket.Code;
+                        newUser.MCUUID = serverVerificationPacket.UUID;
+                        newUser.IsVerified = true;
+                        newUser.AutoDisconnectCount = -1;
 
                         // Check to make sure a verified user with the same uuid isn't connected. If they are, remove the old one.
                         // It's possible the old client crashed, meaning the server is still trying to ping it. Having two different connections of the same person being monitored
@@ -74,14 +70,33 @@ namespace OcclusionServerLib
 
                             server.SendMessage(userConnectedPacket, user.Connection, DeliveryMethod.ReliableOrdered);
                         }
-
-                        
                     }
                     else
                     {
                         server.SendMessage(new ServerValidationRejected(), connection, DeliveryMethod.ReliableOrdered);
                     }
                 }
+            }
+
+            if (packet is MCServerPlayerValidate validation)
+            {
+                if (server.GetUserByCode(validation.Code) != null)
+                {
+                    VoiceUser user = server.GetUserByCode(validation.Code);
+                    if (!validation.Verified)
+                    {
+                        server.SendMessage(new AutoDisconnectPacket() { ShowWarning = true }, user.Connection, DeliveryMethod.ReliableOrdered);
+                        user.IsVerified = false;
+                        user.AutoDisconnectCount = Server.IdleKickLength;
+                    }
+                    else
+                    {
+                        server.SendMessage(new AutoDisconnectPacket() { ShowWarning = false }, user.Connection, DeliveryMethod.ReliableOrdered);
+                        user.IsVerified = true;
+                        user.AutoDisconnectCount = -1;
+                    }
+                }
+                
             }
 
             if (packet is MCServerPlayerLocation)
@@ -120,7 +135,7 @@ namespace OcclusionServerLib
                                 Vector3 userPos = new Vector3(user.Location.Value.PosX, user.Location.Value.PosY, user.Location.Value.PosZ);
                                 Vector3 userWithinPos = new Vector3(userWithin.Location.Value.PosX, userWithin.Location.Value.PosY, userWithin.Location.Value.PosZ);
 
-                                if (Vector3.Distance(userPos, userWithinPos) <= server.SettingsFile.Obj.HearingDistance)
+                                if (Vector3.Distance(userPos, userWithinPos) <= Server.SettingsFile.Obj.HearingDistance)
                                 {
                                     usersInRange++;
                                 }
@@ -159,20 +174,28 @@ namespace OcclusionServerLib
 
             if (packet is MCServerPlayerLeave playerLeave)
             {
-                VoiceUser user = server.GetUserByCode(playerLeave.ID);
+                VoiceUser user = server.GetUserByCode(playerLeave.Code);
                 
                 if (user != null)
                 {
-                    server.BroadcastMessage(new ServerUserLeftPacket()
-                    {
-                        UUID = playerLeave.UUID
-                    }, DeliveryMethod.ReliableOrdered);
-
-                    server.SendMessage(new ServerDisconnectPacket() { DisconnectMessage = "disconnected from the minecraft server." }, user.Connection, DeliveryMethod.ReliableOrdered);
-
-                    server.Users.Remove(user);
+                    server.SendMessage(new AutoDisconnectPacket() { ShowWarning = true }, user.Connection, DeliveryMethod.ReliableOrdered);
+                    user.IsVerified = false;
+                    user.AutoDisconnectCount = Server.IdleKickLength;
                 }
             }
+
+            if (packet is MCServerPlayerJoin playerJoin)
+            {
+                VoiceUser user = server.GetUserByCode(playerJoin.Code);
+
+                if (user != null)
+                {
+                    server.SendMessage(new AutoDisconnectPacket() { ShowWarning = false }, user.Connection, DeliveryMethod.ReliableOrdered);
+                    user.IsVerified = true;
+                    user.AutoDisconnectCount = -1;
+                }
+            }
+
         }
         #endregion
 
@@ -182,6 +205,12 @@ namespace OcclusionServerLib
         private Server server;
 
         private GameClientHandler handler;
+
+        private Timer ReconnectTimer;
+
+        private int ReconnectTrySeconds = 5;
+
+        private Bootstrap clientBootstrap;
         #endregion
 
 
@@ -191,7 +220,14 @@ namespace OcclusionServerLib
             PacketRecievedEvent += InternalPacketRecieved;
 
             this.server = server;
+
+            ReconnectTimer = new Timer();
+            ReconnectTimer.Interval = ReconnectTrySeconds * 1000;
+            ReconnectTimer.Elapsed += ReconnectTimer_Elapsed;
+            ReconnectTimer.Start();
         }
+
+        
 
         public async Task Connect(string ip, int serverport)
         {
@@ -202,7 +238,7 @@ namespace OcclusionServerLib
 
             handler = new GameClientHandler(this);
             
-            Bootstrap clientBootstrap = new Bootstrap();
+            clientBootstrap = new Bootstrap();
             clientBootstrap.
                 Group(eventLoopGroup)
                 .Option(ChannelOption.TcpNodelay, true)
@@ -220,8 +256,8 @@ namespace OcclusionServerLib
             clientChannel = await clientBootstrap.ConnectAsync(new IPEndPoint(IPAddress.Parse(ip), serverport));
 
             Server.GameClientLogger.Log("Starting game client connected to port " + serverport);
-            
 
+            Connected = true;
         }
 
         /// <summary>
@@ -241,6 +277,35 @@ namespace OcclusionServerLib
                 
             }
                 
+        }
+
+        private async void ReconnectTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (clientChannel != null && !clientChannel.Active)
+            {
+                Server.GameClientLogger.Log("Retrying...");
+
+                int.TryParse(Server.SettingsFile.Obj.GamePort, out int port);
+                try
+                {
+                    await Connect(Server.SettingsFile.Obj.GameIP, port);
+
+                    if (Connected)
+                    {
+                        foreach(VoiceUser user in server.Users)
+                        {
+                            if (user.verificationCode >= 0)
+                            {
+                                SendMessage(new MCClientPlayerValidate() { Code = user.verificationCode });
+                            }
+                        }
+                    }
+                }
+                catch(ConnectException ex)
+                {
+                    Server.GameClientLogger.Log($"Connection Failed. {ex.Message}");
+                }
+            }
         }
     }
     public class GameClientHandler : SimpleChannelInboundHandler<IByteBuffer>
@@ -282,6 +347,8 @@ namespace OcclusionServerLib
             base.ChannelInactive(context);
 
             Server.GameClientLogger.Log("Lost connection to game server.");
+
+            client.Connected = false;
         }
 
         public override void ExceptionCaught(IChannelHandlerContext context, Exception exception)

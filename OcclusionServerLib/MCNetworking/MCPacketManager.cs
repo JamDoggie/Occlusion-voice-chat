@@ -17,6 +17,9 @@ namespace OcclusionServerLib.MCNetworking
             RegisterPacket<MCServerVerificationPacket>(1);
             RegisterPacket<MCServerPlayerLocation>(2);
             RegisterPacket<MCServerPlayerLeave>(3);
+            RegisterPacket<MCClientPlayerValidate>(4);
+            RegisterPacket<MCServerPlayerValidate>(5);
+            RegisterPacket<MCServerPlayerJoin>(6);
         }
 
         public static void RegisterPacket<T>(int id)

@@ -49,6 +49,8 @@ namespace OcclusionShared.NetworkingShared
 
         public bool IsVerified { get; set; } = false;
 
+        public float AutoDisconnectCount { get; set; } = -1;
+
         private object location_lock = new object();
 
         private PlayerLocation? _location = null;

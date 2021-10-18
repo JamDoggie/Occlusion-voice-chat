@@ -63,8 +63,10 @@ namespace Occlusion.NetworkingShared
 
                                     predefinedIds.Add(packetObj.Identifier);
 
+#if DEBUG
                                     Trace.WriteLine($"PACKET TYPE REGISTERED: {packetObj.Identifier} ID: {((PacketIdAttribute)attrib).id}");
                                     Console.WriteLine($"PACKET TYPE REGISTERED: {packetObj.Identifier} ID: {((PacketIdAttribute)attrib).id}");
+#endif
                                 }
                             }
 

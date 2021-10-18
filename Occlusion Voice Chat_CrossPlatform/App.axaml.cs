@@ -29,6 +29,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using Occlusion_Voice_Chat_CrossPlatform.HRTF;
 using Occlusion_Voice_Chat_CrossPlatform.audio;
+using Avalonia.Controls;
 
 #if WINDOWS
 using GlobalLowLevelHooks;
@@ -106,6 +107,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         public static object AudioInfoRetrieveLock = new object();
 
+        public static bool PushToTalkHeld { get; set; } = false;
+
+        public static bool PushToMuteHeld { get; set; } = false;
+
+        public static bool PushToDeafenHeld { get; set; } = false;
+
         private static Client _client = new Client();
         public static Client Client
         {
@@ -137,6 +144,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
 #if WINDOWS
         public static KeyboardHook keyboardHook = new KeyboardHook();
+
+        public static MouseHook mouseHook = new MouseHook();
 
         public delegate void HotkeyKeyUpEventDelegate(VKeys key);
         public static event HotkeyKeyUpEventDelegate HotkeyKeyUpEvent;
@@ -175,7 +184,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             VoiceActivity = Options.Obj.VoiceActivity;
 
             // HRTF
-            HRTFPreview = new HRTFTestSoundEffect(Sounds.DrumSound);
+            HRTFPreview = new HRTFTestSoundEffect(Sounds.WavesSound);
 
             if (File.Exists($"HRTF sets/{Options.Obj.CurrentHRTFSet}"))
             {
@@ -186,33 +195,39 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             HRTFPreview.Volume = 1;
 #if WINDOWS
+            if (!Design.IsDesignMode) // Odd behavior occurs when trying to initialize hotkey stuff from design mode. I should really switch to Raw Input at some point, instead of this win32 jank.
+            {
+                keyboardHook.KeyDown += KeyboardHook_KeyDown;
+                keyboardHook.KeyUp += KeyboardHook_KeyUp;
+                mouseHook.KeyDown += KeyboardHook_KeyDown;
+                mouseHook.KeyUp += KeyboardHook_KeyUp;
 
-            keyboardHook.KeyDown += KeyboardHook_KeyDown;
-            keyboardHook.KeyUp += KeyboardHook_KeyUp;
 
+
+                void KeyboardHook_KeyDown(VKeys key)
+                {
+                    if (!CurrentKeysPressed.Contains(key))
+                    {
+                        CurrentKeysPressed.Add(key);
+                        HotkeyKeyDownEvent.Invoke(key);
+                    }
+                }
+
+                void KeyboardHook_KeyUp(VKeys key)
+                {
+                    CurrentKeysPressed.Remove(key);
+                    HotkeyKeyUpEvent.Invoke(key);
+                }
+
+                keyboardHook.Install();
+                mouseHook.Install();
+
+                HotkeyKeyUpEvent += (k) => { };
+                HotkeyKeyDownEvent += (k) => { };
+            }
             
 
-            void KeyboardHook_KeyDown(VKeys key)
-            {
-                if (!CurrentKeysPressed.Contains(key))
-                {
-                    CurrentKeysPressed.Add(key);
-                    HotkeyKeyDownEvent.Invoke(key);
-                }
-            }
-
-            void KeyboardHook_KeyUp(VKeys key)
-            {
-                CurrentKeysPressed.Remove(key); 
-                HotkeyKeyUpEvent.Invoke(key);
-            }
-
-            keyboardHook.Install();
-
-            HotkeyKeyUpEvent += (k) => { };
-            HotkeyKeyDownEvent += (k) => { };
-
-
+#if !DEBUG // Occlusion was constantly opening the auto updater while testing and pissing me off, so I disabled in in debug mode since it's irrelevant here anyway.
             // Auto updater
             string autoUpdaterPath = "OcclusionAutoUpdater.exe";
 
@@ -225,8 +240,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 autoUpdater.Start();
             }
 #endif
+#endif
 
-            
+
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -237,6 +253,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             }
 
             base.OnFrameworkInitializationCompleted();
+
+            if (VoiceChatWindow != null)
+                VoiceChatWindow.Dispose();
 
             VoiceChatWindow = new VoiceChatWindow();
         }
@@ -429,12 +448,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             });
 
             // Silence audio if we're deafened. We still calculate the mix earlier though so that we can show the gray decibal bar.
-            if (Deafened)
+            if (Deafened || PushToDeafenHeld)
                 for (int i = 0; i < stream.Length; i++)
                     stream[i] = 0;
 
             // Add on all sounds here (mic muting, deafening, etc.)
-            // We do this last so deafening doesn't mute sounds, for instance.
+            // We do this last so deafening doesn't mute sounds, or show up in the output db meter for instance.
             for (int i = Sounds.ActiveSounds.Count - 1; i >= 0; i--)
             {
                 SoundEffect sound = Sounds.ActiveSounds[i];
@@ -496,16 +515,26 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
                     bool isTalking = true;
                         
-                    // If our total volume is under the voice activity threshold, just set it all to silence.
-                    if (_residualVoiceVolume <= VoiceActivity)
+                    if (Options.Obj.UseVoiceActivity)
                     {
-                        for (int i = 0; i < chunk.DataLength; i++)
+                        // If our total volume is under the voice activity threshold, just set it all to silence.
+                        if (_residualVoiceVolume <= VoiceActivity)
                         {
-                            chunk.Data[i] = 0;
-                        }
+                            for (int i = 0; i < chunk.DataLength; i++)
+                            {
+                                chunk.Data[i] = 0;
+                            }
 
-                        isTalking = false;
+                            isTalking = false;
+                        }
                     }
+                    else
+                    {
+                        isTalking = PushToTalkHeld && !MicMuted && !Deafened;
+                    }
+
+                    if (PushToMuteHeld)
+                        isTalking = false;
 
                     // Set voice activity variable that controls the animation on our player icon.
                     foreach (VoiceUser user in Users)
@@ -575,7 +604,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             }
 
             // We can change audio output here as well because this is on the sdl thread.
-            if (NewOutputDevice != null && PlaybackDevice != null && NewInputDevice == null && RecordingDevice == null)
+            if (NewOutputDevice != null && PlaybackDevice != null && NewInputDevice == null && RecordingDevice != null)
             {
                 string? newDevice = NewOutputDevice;
                 if (newDevice == "Default")

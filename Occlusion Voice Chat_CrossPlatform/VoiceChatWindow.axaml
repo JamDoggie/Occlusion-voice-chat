@@ -196,19 +196,117 @@
       </StackPanel>
     </Grid>
 
-
-    <controls1:SettingsPage x:Name="SettingsPage" Grid.RowSpan="3">
-      
-    </controls1:SettingsPage>
-    
-
     <Canvas x:Name="UserPanelCanvas" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
       <controls:UserPanel x:Name="UserControlPanel" Width="350" IsVisible="False" Height="200">
       </controls:UserPanel>
     </Canvas>
 
+    <controls1:SettingsPage x:Name="SettingsPage" Grid.RowSpan="3">
+
+    </controls1:SettingsPage>
+
+    <Grid Background="#80000000" Name="AutoDisconnectScreen" Grid.RowSpan="3" IsVisible="False">
+      <Border Name="AutoKickWindow" CornerRadius="15" Background="#454552" Width="500" Height="300" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Border.Styles>
+          <Style Selector="Border#AutoKickWindow">
+            <Style.Animations>
+              <Animation Duration="0:0:2" IterationCount="INFINITE" > 
+                <KeyFrame Cue="0%">
+                  <Setter Property="TranslateTransform.Y" Value="20"/>
+                </KeyFrame>
+                <KeyFrame Cue="10%">
+                  <Setter Property="TranslateTransform.Y" Value="0"/>
+                </KeyFrame>
+                <KeyFrame Cue="30%">
+                  <Setter Property="TranslateTransform.Y" Value="0"/>
+                </KeyFrame>
+                <KeyFrame Cue="100%">
+                  <Setter Property="TranslateTransform.Y" Value="20"/>
+                </KeyFrame>
+                
+                <Animation.Easing>
+                  <BounceEaseOut></BounceEaseOut>
+                </Animation.Easing>
+              </Animation>
+            </Style.Animations>
+          </Style>
+        </Border.Styles>
+        <Grid>
+          <Border CornerRadius="15 15 0 0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="100" Background="#3b3b47"></Border>
+          <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" Height="100">
+              <TextBlock  FontSize="25" VerticalAlignment="Center" TextAlignment="Center" FontWeight="SemiBold" Width="500">Please reconnect to the game server.</TextBlock>
+            </StackPanel>
+
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0 50 0 0">
+              <Grid Margin="0 10 5 10" VerticalAlignment="Center">
+                <Image Width="80" Height="80" VerticalAlignment="Center">
+                  <Image.Source>
+                    <SvgImage Source="/resources/clock_icon.svg"/>
+                  </Image.Source>
+                </Image>
+                
+                <Border Name="MinuteHand" HorizontalAlignment="Center" VerticalAlignment="Center" Width="30" Height="7" CornerRadius="10" Background="White">
+                  <Border.Styles>
+                    <Style Selector="Border#MinuteHand">
+                      <Style.Animations>
+                        <Animation Duration="0:0:5" IterationCount="INFINITE"> 
+                          <KeyFrame Cue="0%">
+                            <Setter Property="RotateTransform.Angle" Value="0.0"/>
+                          </KeyFrame>
+                          <KeyFrame Cue="100%">
+                            <Setter Property="RotateTransform.Angle" Value="360"/>
+                          </KeyFrame>
+                        </Animation>
+                      </Style.Animations>
+                    </Style>
+                  </Border.Styles>
+                  <Border.RenderTransform>
+                    <TransformGroup >
+                      <TranslateTransform X="15"></TranslateTransform>
+                      <RotateTransform>
+                        
+                      </RotateTransform>
+                    </TransformGroup>
+                    
+                  </Border.RenderTransform>
+                </Border>
+                
+                <Border Name="HourHand" HorizontalAlignment="Center" VerticalAlignment="Center" Width="24" Height="7" CornerRadius="10" Background="White">
+                  <Border.Styles>
+                    <Style Selector="Border#HourHand">
+                      <Style.Animations>
+                        <Animation Duration="0:0:30" IterationCount="INFINITE"> 
+                          <KeyFrame Cue="0%">
+                            <Setter Property="RotateTransform.Angle" Value="0.0"/>
+                          </KeyFrame>
+                          <KeyFrame Cue="100%">
+                            <Setter Property="RotateTransform.Angle" Value="360"/>
+                          </KeyFrame>
+                        </Animation>
+                      </Style.Animations>
+                    </Style>
+                  </Border.Styles>
+                  <Border.RenderTransform>
+                    <TransformGroup >
+                      <TranslateTransform X="12"></TranslateTransform>
+                      <RotateTransform>
+                        
+                      </RotateTransform>
+                    </TransformGroup>
+                    
+                  </Border.RenderTransform>
+                </Border>
+              </Grid>
+
+              <TextBlock Name="AutoDisconnectText" FontSize="20" Margin="10 0 0 0" VerticalAlignment="Center">You will be auto disconnected in 0:00</TextBlock>
+            </StackPanel>
+          
+          </StackPanel>
+        </Grid>
+        
+      </Border>
+    </Grid>
     
-
-
   </Grid>
 </Window>

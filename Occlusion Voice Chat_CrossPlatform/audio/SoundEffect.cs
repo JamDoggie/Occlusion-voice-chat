@@ -70,7 +70,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
                         int currentDataOffset = i + _queueOffset;
 
                         short currentDestinationValue = 0;
-                        short currentSampleValue = AudioMath.AmplifyShort(AudioData[currentDataOffset], Volume);
+                        short currentSampleValue = AudioMath.AmplifyShort(AudioData[currentDataOffset], Volume * App.Options.Obj.SoundEffectVolume);
 
                         // Convert from bytes to short
                         currentDestinationValue = (short)(((int)destination[(i * 2)]) << 0);

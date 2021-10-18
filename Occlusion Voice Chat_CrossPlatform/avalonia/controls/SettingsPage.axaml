@@ -76,9 +76,6 @@
     </Border>
     
     <Grid HorizontalAlignment="Stretch" Name="MainSettingsGrid" VerticalAlignment="Stretch" Width="600" Height="600"  Opacity="1">
-
-
-
       <controls:SmoothScrollViewer HorizontalScrollBarVisibility="Disabled" Margin="0 40 0 0" Name="SettingsScroller" VerticalAlignment="Top" Height="500" VerticalScrollBarVisibility="Auto">
         <StackPanel Orientation="Vertical" Margin="0 10 0 0">
           <TextBlock HorizontalAlignment="Stretch" Margin="0 0 0 20" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="16" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Audio Settings</TextBlock>
@@ -87,13 +84,13 @@
           <StackPanel Orientation="Vertical" Margin="0 0 0 0" HorizontalAlignment="Center">
             <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center">Input Device (Microphone)</TextBlock>
 
-            <ComboBox Background="#454552" Margin="0 10 0 0" Name="InputDeviceDropdown" Width="350" Height="35"/>
+            <ComboBox Background="#454552" Padding="10 0 0 0" Margin="0 10 0 0" Name="InputDeviceDropdown" Width="350" Height="35"/>
 
 
           </StackPanel>
           <StackPanel Orientation="Vertical" Margin="0 20 0 0" HorizontalAlignment="Center">
             <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center">Output Device (Speakers/Headphones)</TextBlock>
-            <ComboBox Background="#454552" Margin="0 10 0 0" Foreground="#BDC3C7" Name="OutputDeviceDropdown" Width="350" Height="35" SelectedIndex="0"/>
+            <ComboBox Background="#454552" Padding="10 0 0 0" Margin="0 10 0 0" Foreground="#BDC3C7" Name="OutputDeviceDropdown" Width="350" Height="35" SelectedIndex="0"/>
           </StackPanel>
 
           <StackPanel Orientation="Vertical" Margin="0 30 0 0" HorizontalAlignment="Center">
@@ -108,9 +105,23 @@
               <ProgressBar Name="VoiceActivityBar" Margin="0 5 0 0" Cursor="Hand" Minimum="0" Maximum="3000" Value="0" VerticalAlignment="Center" Height="20" Width="300" Foreground="#44FF4E4E" Background="Transparent" BorderBrush="#454552"></ProgressBar>
             </Grid>
 
+            <TextBlock Foreground="#BDC3C7" Margin="0 20 0 5" HorizontalAlignment="Center">Voice Input Method</TextBlock>
+            <ComboBox Name="VoiceActivityBox" Background="#454552" Padding="10 0 0 0" Margin="0 10 0 0" Foreground="#BDC3C7" Width="350" Height="35" SelectedIndex="0">
+              <ComboBox.Items>
+                <ComboBoxItem>Voice Activity</ComboBoxItem>
+                <ComboBoxItem>Push to Talk</ComboBoxItem>
+              </ComboBox.Items>
+            </ComboBox>
+            
           </StackPanel>
 
           <StackPanel Orientation="Vertical" Margin="0 30 0 0" HorizontalAlignment="Center">
+            <TextBlock Foreground="#BDC3C7" Margin="0 0 0 0" HorizontalAlignment="Center">Sound Effect Volume</TextBlock>
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+              <Slider x:Name="SoundVolumeSlider" Width="250" Height="30"  Minimum="0.0" Maximum="2.0" Value="1"></Slider>
+              <TextBlock x:Name="SoundVolumeText" Foreground="#BDC3C7" Width="30">100%</TextBlock>
+            </StackPanel>
+
             <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center">Output Volume</TextBlock>
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
               <Slider x:Name="OutputVolumeSlider" Width="250" Height="30"  Minimum="0.0" Maximum="2.0" Value="1"></Slider>
@@ -124,9 +135,34 @@
                 </Transitions>
               </ProgressBar.Transitions>
             </ProgressBar>
+            
           </StackPanel>
 
-          <TextBlock HorizontalAlignment="Stretch" Margin="0 25 0 20" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="16" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Advanced Settings</TextBlock>
+          
+          
+          
+          <TextBlock HorizontalAlignment="Stretch" Margin="0 35 0 0" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="16" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Key/Mouse Binds</TextBlock>
+          <TextBlock HorizontalAlignment="Stretch" Margin="0 0 0 0" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="12" IsVisible="False" Foreground="#BDC3C7" Opacity="0.5" TextAlignment="Center" TextWrapping="Wrap">Binds are not available on your platform.</TextBlock>
+
+          
+          <TextBlock HorizontalAlignment="Center" Margin="0 20 0 3" FontSize="13">Push to Talk</TextBlock>
+          <controls:HotkeyBindingControl Name="PushTalkBind"></controls:HotkeyBindingControl>
+
+          <TextBlock HorizontalAlignment="Center" Margin="0 10 0 3" FontSize="13">Push to Mute</TextBlock>
+          <controls:HotkeyBindingControl Name="PushMuteBind"></controls:HotkeyBindingControl>
+
+          <TextBlock HorizontalAlignment="Center" Margin="0 10 0 3" FontSize="13">Push to Deafen</TextBlock>
+          <controls:HotkeyBindingControl Name="PushDeafenBind"></controls:HotkeyBindingControl>
+
+          <TextBlock HorizontalAlignment="Center" Margin="0 10 0 3" FontSize="13">Toggle Mute</TextBlock>
+          <controls:HotkeyBindingControl Name="ToggleMuteBind"></controls:HotkeyBindingControl>
+
+          <TextBlock HorizontalAlignment="Center" Margin="0 10 0 3" FontSize="13">Toggle Deafen</TextBlock>
+          <controls:HotkeyBindingControl Name="ToggleDeafenBind"></controls:HotkeyBindingControl>
+
+
+
+          <TextBlock HorizontalAlignment="Stretch" Margin="0 35 0 20" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="16" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Advanced Settings</TextBlock>
           <ToggleSwitch HorizontalAlignment="Center" Name="HRTFSwitch" OnContent="Use HRTFs" OffContent="Use HRTFs"></ToggleSwitch>
           <TextBlock HorizontalAlignment="Center" Foreground="#BDC3C7" Margin="0 25 0 0" FontSize="12">HRTF Filter Sets</TextBlock>
 

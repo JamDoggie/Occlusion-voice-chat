@@ -9,6 +9,7 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using MessageBox.Avalonia;
 using MessageBox.Avalonia.DTO;
 using MessageBox.Avalonia.Enums;
@@ -26,7 +27,7 @@ using System.Net;
 
 namespace Occlusion_Voice_Chat_CrossPlatform
 {
-    public class VoiceChatWindow : Window
+    public class VoiceChatWindow : Window, IDisposable
     {
         #region Controls
         public ProgressBar MicDecibalMeter;
@@ -65,6 +66,10 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public Border DeafenIconSlash;
 
         public SettingsPage SettingsPage;
+
+        public Grid AutoDisconnectScreen;
+
+        public TextBlock AutoDisconnectText;
         #endregion
 
         public bool IsOpen { get; set; } = false;
@@ -76,6 +81,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         private List<PlayerIcon> _playerIcons = new List<PlayerIcon>();
 
+        public int AutoDisconnectSeconds { get; set; } = 0;
 
         public VoiceChatWindow()
         {
@@ -84,6 +90,23 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             Opened += VoiceChatWindow_Opened1;
         }
+
+        public void Dispose()
+        {
+            SettingsPage.PushTalkBind.HotkeyPressed -= PushTalkBind_HotkeyPressed;
+            SettingsPage.PushTalkBind.HotkeyReleased -= PushTalkBind_HotkeyReleased;
+
+            SettingsPage.PushMuteBind.HotkeyPressed -= PushMuteBind_HotkeyPressed;
+            SettingsPage.PushMuteBind.HotkeyReleased -= PushMuteBind_HotkeyReleased;
+
+            SettingsPage.PushDeafenBind.HotkeyPressed -= PushDeafenBind_HotkeyPressed;
+            SettingsPage.PushDeafenBind.HotkeyReleased -= PushDeafenBind_HotkeyReleased;
+
+            SettingsPage.ToggleMuteBind.HotkeyPressed -= ToggleMuteBind_HotkeyPressed;
+
+            SettingsPage.ToggleDeafenBind.HotkeyPressed -= ToggleDeafenBind_HotkeyPressed;
+        }
+
 
         private void VoiceChatWindow_Opened1(object sender, EventArgs e)
         {
@@ -119,6 +142,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             SettingsSpeakerMeter = SettingsPage.FindControl<ProgressBar>("SettingsSpeakerMeter");
             MuteIconSlash = this.FindControl<Border>("MuteIconSlash");
             DeafenIconSlash = this.FindControl<Border>("DeafenIconSlash");
+            AutoDisconnectScreen = this.FindControl<Grid>("AutoDisconnectScreen");
+            AutoDisconnectText = this.FindControl<TextBlock>("AutoDisconnectText");
 
 
             Closed += Window_Closed;
@@ -166,12 +191,197 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             SettingsPage.FindControl<Button>("SettingsOkButton").Click += Settings_Ok_Click;
 
+
+            // Key binds
+            SettingsPage.PushTalkBind.HotkeyPressed += PushTalkBind_HotkeyPressed;
+            SettingsPage.PushTalkBind.HotkeyReleased += PushTalkBind_HotkeyReleased;
+
+            SettingsPage.PushMuteBind.HotkeyPressed += PushMuteBind_HotkeyPressed;
+            SettingsPage.PushMuteBind.HotkeyReleased += PushMuteBind_HotkeyReleased;
+
+            SettingsPage.PushDeafenBind.HotkeyPressed += PushDeafenBind_HotkeyPressed;
+            SettingsPage.PushDeafenBind.HotkeyReleased += PushDeafenBind_HotkeyReleased;
+
+            SettingsPage.ToggleMuteBind.HotkeyPressed += ToggleMuteBind_HotkeyPressed;
+
+            SettingsPage.ToggleDeafenBind.HotkeyPressed += ToggleDeafenBind_HotkeyPressed;
+
+
             if (SettingsPage.AudioSettingsGroup.RenderTransform is TranslateTransform gridTransform)
                 gridTransform.Y = 1000;
 
             OpenAudioSettings();
 
+
+
+            System.Timers.Timer timer = new System.Timers.Timer();
+            timer.Interval = 1000;
+            timer.Elapsed += Timer_Elapsed;
+            timer.Start();
+        }
+
+
+
+        private void ToggleDeafenBind_HotkeyPressed()
+        {
+            SetDeafened(!App.Deafened);
+
+            if (App.Deafened)
+            {
+                new SoundEffect(Sounds.DeafenSound, 0.7f).Play();
+            }
+            else
+            {
+                new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+            }
+        }
+
+        private void ToggleMuteBind_HotkeyPressed()
+        {
+            bool wasDeaf = App.Deafened;
+            SetMuted(!App.MicMuted);
+
+            if (App.MicMuted)
+            {
+                new SoundEffect(Sounds.MicMuteSound, 0.7f).Play();
+            }
+            else
+            {
+                if (wasDeaf && !App.Deafened)
+                    new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+                else
+                    new SoundEffect(Sounds.MicUnmuteSound, 0.7f).Play();
+            }
+        }
+
+
+        // Push to Deafen
+        private void PushDeafenBind_HotkeyPressed()
+        {
+            App.PushToDeafenHeld = true;
+
+            DeafenIconSlash.Width = 45;
             
+            if (App.PushToDeafenHeld)
+            {
+                new SoundEffect(Sounds.DeafenSound, 0.7f).Play();
+            }
+            else
+            {
+                new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+            }
+        }
+
+        private void PushDeafenBind_HotkeyReleased()
+        {
+            App.PushToDeafenHeld = false;
+
+            if (!App.Deafened)
+            {
+                DeafenIconSlash.Width = 0;
+            }
+
+            if (App.PushToDeafenHeld)
+            {
+                new SoundEffect(Sounds.DeafenSound, 0.7f).Play();
+            }
+            else
+            {
+                new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+            }
+        }
+
+
+        // Push to Talk
+        private void PushTalkBind_HotkeyPressed()
+        {
+            App.PushToTalkHeld = true;
+
+            if (App.PushToTalkHeld)
+            {
+                new SoundEffect(Sounds.PushUnmuteSound, 0.7f).Play();
+            }
+            else
+            {
+                new SoundEffect(Sounds.PushMuteSound, 0.7f).Play();
+            }
+        }
+
+        private void PushTalkBind_HotkeyReleased()
+        {
+            App.PushToTalkHeld = false;
+
+            if (App.PushToTalkHeld)
+            {
+                new SoundEffect(Sounds.PushUnmuteSound, 0.7f).Play();
+            }
+            else
+            {
+                new SoundEffect(Sounds.PushMuteSound, 0.7f).Play();
+            }
+        }
+
+        // Push to Mute
+        private void PushMuteBind_HotkeyPressed()
+        {
+            App.PushToMuteHeld = true;
+
+            MuteIconSlash.Width = 45;
+
+            if (App.PushToMuteHeld)
+            {
+                new SoundEffect(Sounds.MicMuteSound, 0.7f).Play();
+            }
+            else
+            {
+                new SoundEffect(Sounds.MicUnmuteSound, 0.7f).Play();
+            }
+        }
+
+        private void PushMuteBind_HotkeyReleased()
+        {
+            App.PushToMuteHeld = false;
+
+            if (App.PushToMuteHeld)
+            {
+                new SoundEffect(Sounds.MicMuteSound, 0.7f).Play();
+            }
+            else
+            {
+                new SoundEffect(Sounds.MicUnmuteSound, 0.7f).Play();
+            }
+
+            if (!App.MicMuted)
+            {
+                MuteIconSlash.Width = 0;
+            }
+        }
+
+        
+
+        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (AutoDisconnectSeconds > 0)
+            {
+                AutoDisconnectSeconds--;
+
+                int minutes = AutoDisconnectSeconds / 60;
+                int seconds = AutoDisconnectSeconds - (minutes * 60);
+
+                string minString = $"{minutes}";
+                if (minutes < 10)
+                    minString = $"0{minutes}";
+
+                string secString = $"{seconds}";
+                if (seconds < 10)
+                    secString = $"0{seconds}";
+
+                Dispatcher.UIThread.InvokeAsync(() => 
+                {
+                    AutoDisconnectText.Text = $"You will be auto disconnected in {minString}:{secString}";
+                });
+                
+            }    
         }
 
         public bool ForceClose { get; set; } = false;
@@ -328,7 +538,14 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             }
 
             InputDeviceDropdown.Items = items;
-            InputDeviceDropdown.SelectedIndex = 0;
+
+            foreach (string s in items)
+            {
+                if (s == App.Options.Obj.InputDevice)
+                {
+                    InputDeviceDropdown.SelectedItem = s;
+                }
+            }
             
         }
 
@@ -344,8 +561,14 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             }
 
             OutputDeviceDropdown.Items = items;
-            OutputDeviceDropdown.SelectedIndex = 0;
-            
+
+            foreach (string s in items)
+            {
+                if (s == App.Options.Obj.OutputDevice)
+                {
+                    OutputDeviceDropdown.SelectedItem = s;
+                }
+            }
         }
 
 
@@ -414,10 +637,13 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         public void OutputDeviceDropdown_DropDownClosed(object sender, SelectionChangedEventArgs e)
         {
+            if (OutputDeviceDropdown.SelectedItem != null)
+            {
                 App.Options.Obj.OutputDevice = (string)OutputDeviceDropdown.SelectedItem;
                 App.Options.Update();
 
                 App.NewOutputDevice = App.Options.Obj.OutputDevice;
+            }
         }
 
         public void Window_Closed(object sender, EventArgs e)
@@ -579,5 +805,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         {
 
         }
+
+        
     }
 }

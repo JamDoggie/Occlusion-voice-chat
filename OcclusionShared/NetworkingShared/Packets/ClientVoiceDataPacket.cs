@@ -22,22 +22,41 @@ namespace OcclusionShared.NetworkingShared.Packets
         public override void FromMessage(NetPacketReader message)
         {
             base.FromMessage(message);
-            
+
             if (!message.IsNull && message.AvailableBytes > 0 && !message.EndOfData)
-                VoiceData = message.GetBytesWithLength();
+            {
+                int length = message.GetInt();
+
+                if (message.AvailableBytes < length)
+                    return; // Litenetlib sometimes randomly seems to just cut this packet off, or corrupt it or something(??). IDK anyway this should fix it.
+
+                if (VoiceData == null || VoiceData.Length != length)
+                {
+                    VoiceData = new byte[length];
+                }
+
+                for(int i = 0; i < VoiceData.Length; i++)
+                {
+                    VoiceData[i] = message.GetByte();
+                }
+            }
         }
 
         public override void ToMessage(NetDataWriter message)
         {
             base.ToMessage(message);
 
-            if (VoiceData != null)
-                message.PutBytesWithLength(VoiceData);
-            else
+            if (VoiceData == null)
             {
-                message.Put(2);
-                for (int i = 0; i < 2; i++)
-                    message.Put((byte)0);
+                VoiceData = new byte[2];
+                VoiceData[0] = 0;
+                VoiceData[1] = 0;
+            }
+
+            message.Put(VoiceData.Length);
+            for(int i = 0; i < VoiceData.Length; i++)
+            {
+                message.Put(VoiceData[i]);
             }
         }
     }

@@ -14,6 +14,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\PacketManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\Attributes\PacketIdAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\Attributes\PooledPacketAttribute.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\AutoDisconnectPacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ClientVerificationPacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\ClientVoiceDataPacket.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkingShared\Packets\NetworkPacket.cs" />
