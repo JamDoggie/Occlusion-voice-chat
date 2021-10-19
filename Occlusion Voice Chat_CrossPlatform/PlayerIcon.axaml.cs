@@ -86,16 +86,16 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         
         private void Button_Click(object sender, PointerPressedEventArgs e)
         {
-            App.VoiceChatWindow.UserControlPanel.UserNameText.Text = PlayerCache.GetCachedPlayerUsername(UUID);
-            App.VoiceChatWindow.UserControlPanel.UUIDText.Text = UUID;
-            App.VoiceChatWindow.UserControlPanel.UUID = UUID;
+            MainWindow.mainWindow.VoiceChatWindow.UserControlPanel.UserNameText.Text = PlayerCache.GetCachedPlayerUsername(UUID);
+            MainWindow.mainWindow.VoiceChatWindow.UserControlPanel.UUIDText.Text = UUID;
+            MainWindow.mainWindow.VoiceChatWindow.UserControlPanel.UUID = UUID;
 
-            App.VoiceChatWindow.UserControlPanel.Opacity = 1;
+            MainWindow.mainWindow.VoiceChatWindow.UserControlPanel.Opacity = 1;
             
             Point relativePoint = Bounds.Position;
 
-            Canvas.SetTop(App.VoiceChatWindow.UserControlPanel, relativePoint.Y + PlayerIconButton.Height + 20);
-            Canvas.SetLeft(App.VoiceChatWindow.UserControlPanel, relativePoint.X + 10);
+            Canvas.SetTop(MainWindow.mainWindow.VoiceChatWindow.UserControlPanel, relativePoint.Y + PlayerIconButton.Height + 20);
+            Canvas.SetLeft(MainWindow.mainWindow.VoiceChatWindow.UserControlPanel, relativePoint.X + 10);
 
 
             float userVolume;
@@ -104,10 +104,10 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 userVolume = 1;
             }
 
-            App.VoiceChatWindow.UserControlPanel.VolumeSlider.Value = userVolume;
+            MainWindow.mainWindow.VoiceChatWindow.UserControlPanel.VolumeSlider.Value = userVolume;
 
 
-            App.VoiceChatWindow.UserPanelOpen = true;
+            MainWindow.mainWindow.VoiceChatWindow.UserPanelOpen = true;
         }
     }
 }

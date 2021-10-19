@@ -269,6 +269,11 @@
     <ApplicationIcon>Occlusion_icon.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+    <Authors>JamDoggie</Authors>
+    <Company />
+    <Product>Occlusion Voice Chat</Product>
+    <AssemblyVersion>3.0.*</AssemblyVersion>
+    <Deterministic>false</Deterministic>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

@@ -85,7 +85,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                     App.Options.Update();
                 }
 
-                if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+                if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                 {
                     VolumeText.Text = (int)(VolumeSlider.Value * 100) + "%";
 

@@ -14,6 +14,7 @@ using MessageBox.Avalonia.Enums;
 using Occlusion.NetworkingShared;
 using Occlusion_voice_chat.Networking;
 using Occlusion_voice_chat.util.json_structs;
+using Occlusion_Voice_Chat_CrossPlatform.avalonia.view_models;
 using OcclusionShared.NetworkingShared.Packets;
 
 namespace Occlusion_Voice_Chat_CrossPlatform
@@ -37,6 +38,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public Button RemoveServerButton;
         public Image ConnectingLoadingBar;
         public TextBlock ConnectionStatusText;
+        public VoiceChatControl VoiceChatWindow;
         #endregion
 
         private ServerSelection? _currentServerSelection = null;
@@ -110,6 +112,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         {
             AvaloniaXamlLoader.Load(this);
 
+            DataContext = new MainWindowViewModel();
+
             NameTextbox = this.FindControl<TextBox>("NameTextbox");
             IpTextbox = this.FindControl<TextBox>("IpTextbox");
             PortTextbox = this.FindControl<TextBox>("PortTextbox");
@@ -123,7 +127,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             RemoveServerButton = this.FindControl<Button>("RemoveServerButton");
             ConnectingLoadingBar = this.FindControl<Image>("ConnectingLoadingBar");
             ConnectionStatusText = this.FindControl<TextBlock>("ConnectionStatusText");
-            
+            VoiceChatWindow = this.FindControl<VoiceChatControl>("VoiceChatWindow");
+
             AddServerButton.Click += AddServerButtonOnClick;
             RemoveServerButton.Click += RemoveServerButtonOnClick;
             

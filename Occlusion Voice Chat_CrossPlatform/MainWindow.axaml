@@ -9,7 +9,7 @@
         x:Class="Occlusion_Voice_Chat_CrossPlatform.MainWindow"
         Title="Occlusion Voice Chat"
         Background="#32323b"
-        Height="720" Width="1280" Icon="resources/Occlusion_icon.ico">
+        Height="720" Width="1280" Icon="/resources/Occlusion_icon.ico">
   <Window.Styles>
     <StyleInclude Source="avares://Occlusion Voice Chat_CrossPlatform/DefaultTheme.xaml"/>
     <Style Selector="Button.opacityfadebutton">
@@ -28,7 +28,8 @@
       <Setter Property="CornerRadius" Value="5" />
     </Style>
   </Window.Styles>
-  <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+  <Grid>
+    <Grid Name="MainWindowGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
     <controls1:OcclusionBackground HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></controls1:OcclusionBackground>
     <Grid Width="800" Height="450" HorizontalAlignment="Center" VerticalAlignment="Center">
       <Grid.RowDefinitions>
@@ -76,7 +77,7 @@
       </StackPanel>
 
       <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0 40 0 0" VerticalAlignment="Top" HorizontalAlignment="Center">
-        <Image Source="resources/Occlusion_icon.png" Width="100" Height="100" ></Image>
+        <Image Source="/resources/Occlusion_icon.png" Width="100" Height="100" ></Image>
         <TextBlock Margin="20 0 0 0" FontSize="23" FontWeight="DemiBold" FontFamily="Corbel" VerticalAlignment="Center">
           Welcome. To start, select a server or create one.
         </TextBlock>
@@ -175,7 +176,7 @@
 
           <TextBlock HorizontalAlignment="Center" Padding="5" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Connection rejected by server, code is invalid. Please ensure you have typed your code correctly. The code will be simply a number. When you log in to the minecraft server, you will be given your code. It will look something like this:</TextBlock>
 
-          <Image Source="resources/occlusion_code_example.png" HorizontalAlignment="Center" Margin="0 30 0 0" Width="293"></Image>
+          <Image Source="/resources/occlusion_code_example.png" HorizontalAlignment="Center" Margin="0 30 0 0" Width="293"></Image>
 
           <Button Name="ErrorMessageOk" Cursor="Hand" VerticalAlignment="Bottom" Margin="5" BorderBrush="#454552" Width="80" Height="30" Foreground="#BDC3C7" Background="#454552">Ok</Button>
         </Grid>
@@ -192,6 +193,14 @@
 
       
     </Grid>
+
+    <TextBlock Name="BuildWaterMark" Opacity="1" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Text="{Binding BuildNumber, StringFormat='Build {0}'}"></TextBlock>
+    </Grid>
+
+    <Grid Name="VoiceChatGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <occlusionVoiceChatCrossPlatform:VoiceChatControl Name="VoiceChatWindow" Background="#32323b" IsVisible="False" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></occlusionVoiceChatCrossPlatform:VoiceChatControl>
+    </Grid>
   </Grid>
+  
   
 </Window>

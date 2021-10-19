@@ -101,8 +101,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         public static ConcurrentList<VoiceUser> Users = new ConcurrentList<VoiceUser>();
 
-        public static VoiceChatWindow VoiceChatWindow { get; set; }
-
         public static JsonFile<OptionsJson> Options { get; set; } = new JsonFile<OptionsJson>("occlusion_options.json", new OptionsJson());
 
         public static object AudioInfoRetrieveLock = new object();
@@ -154,8 +152,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public static event HotkeyKeyUpEventDelegate HotkeyKeyDownEvent;
 
         public static List<VKeys> CurrentKeysPressed = new List<VKeys>();
-
-        
 
         public static void ClearHotKeys()
         {
@@ -236,6 +232,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 // If the auto updater exists, run it.
                 Process autoUpdater = new Process();
                 autoUpdater.StartInfo.FileName = autoUpdaterPath;
+                autoUpdater.StartInfo.Arguments = "-updatemode";
 
                 autoUpdater.Start();
             }
@@ -253,11 +250,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             }
 
             base.OnFrameworkInitializationCompleted();
-
-            if (VoiceChatWindow != null)
-                VoiceChatWindow.Dispose();
-
-            VoiceChatWindow = new VoiceChatWindow();
         }
 
         private void Client_PacketRecievedEvent(NetPacketReader message, IPacket packet, Client client)
@@ -295,9 +287,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                         // Add user to grid on UI
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            if (VoiceChatWindow != null && VoiceChatWindow.IsOpen)
+                            if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                             {
-                                VoiceChatWindow.AddPlayer(id.Value, id.Key);
+                                MainWindow.mainWindow.VoiceChatWindow.AddPlayer(id.Value, id.Key);
                             }
                         });
                     }
@@ -336,20 +328,20 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    VoiceChatWindow.Show();
+                    MainWindow.mainWindow.VoiceChatWindow.Open();
                 });
             }
 
             if (packet is ServerUserLeftPacket userLeft)
             {
-                if (VoiceChatWindow != null && VoiceChatWindow.IsOpen)
+                if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                 {
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        PlayerIcon icon = VoiceChatWindow.GetPlayerIconByUUID(userLeft.UUID);
+                        PlayerIcon icon = MainWindow.mainWindow.VoiceChatWindow.GetPlayerIconByUUID(userLeft.UUID);
 
                         if (icon != null)
-                            VoiceChatWindow.RemovePlayerIcon(icon);
+                            MainWindow.mainWindow.VoiceChatWindow.RemovePlayerIcon(icon);
                     });
 
                     Users.Remove(GetUserByUUID(userLeft.UUID));
@@ -436,13 +428,13 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             AudioChunk chunk = new AudioChunk(stream.ToArray(), samplingRate);
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                if (VoiceChatWindow != null && VoiceChatWindow.IsOpen && PlaybackDevice.Status == AudioStatus.Playing)
+                if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen && PlaybackDevice.Status == AudioStatus.Playing)
                 {
-                    VoiceChatWindow.SpeakerDecibalMeter.Value = Math.Clamp(chunk.Volume(), 0, 3000);
+                    MainWindow.mainWindow.VoiceChatWindow.SpeakerDecibalMeter.Value = Math.Clamp(chunk.Volume(), 0, 3000);
 
-                    if (VoiceChatWindow.AudioSettingsOpen && VoiceChatWindow.SettingsSpeakerMeter != null)
+                    if (MainWindow.mainWindow.VoiceChatWindow.AudioSettingsOpen && MainWindow.mainWindow.VoiceChatWindow.SettingsSpeakerMeter != null)
                     {
-                        ProgressBarAnimationExtensions.SetValue(VoiceChatWindow.SettingsSpeakerMeter, Math.Clamp(chunk.Volume(), 0, 3000));
+                        ProgressBarAnimationExtensions.SetValue(MainWindow.mainWindow.VoiceChatWindow.SettingsSpeakerMeter, Math.Clamp(chunk.Volume(), 0, 3000));
                     }
                 }
             });
@@ -555,13 +547,13 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                     
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        if (VoiceChatWindow != null && VoiceChatWindow.IsOpen && RecordingDevice.Status == AudioStatus.Playing)
+                        if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen && RecordingDevice.Status == AudioStatus.Playing)
                         {
-                            VoiceChatWindow.MicDecibalMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * VoiceChatWindow.InputVolumeSlider.Value;
+                            MainWindow.mainWindow.VoiceChatWindow.MicDecibalMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * MainWindow.mainWindow.VoiceChatWindow.InputVolumeSlider.Value;
 
-                            if (VoiceChatWindow.AudioSettingsOpen)
+                            if (MainWindow.mainWindow.VoiceChatWindow.AudioSettingsOpen)
                             {
-                                VoiceChatWindow.SettingsMicMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * VoiceChatWindow.InputVolumeSlider.Value;
+                                MainWindow.mainWindow.VoiceChatWindow.SettingsMicMeter.Value = Math.Clamp(rawChunk.Volume(), 0, 3000) * MainWindow.mainWindow.VoiceChatWindow.InputVolumeSlider.Value;
                             }
                         }
                     });

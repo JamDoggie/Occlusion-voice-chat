@@ -14,6 +14,19 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.view_models
     {
         public ObservableCollection<string> HRTFFilters { get; set; } = new ObservableCollection<string>();
 
+        // Whether or not this platform supports keybinds.
+        public bool UnsupportedPlatform
+        {
+            get
+            {
+#if !WINDOWS
+                return true;
+#else
+                return false;
+#endif
+            }
+        }
+
         public SettingsPageModel()
         {
             RefreshListBox();

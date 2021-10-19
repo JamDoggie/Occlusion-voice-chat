@@ -221,19 +221,19 @@ namespace OcclusionShared.NetworkingShared
                 
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsVisible && App.VoiceChatWindow.IsOpen)
+                    if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsVisible && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                     {
                         if (value)
                         {
-                            if (App.VoiceChatWindow.GetPlayerIconByUUID(MCUUID) != null)
-                            App.VoiceChatWindow.GetPlayerIconByUUID(MCUUID).VoiceActivityBorder.BorderThickness =
+                            if (MainWindow.mainWindow.VoiceChatWindow.GetPlayerIconByUUID(MCUUID) != null)
+                                MainWindow.mainWindow.VoiceChatWindow.GetPlayerIconByUUID(MCUUID).VoiceActivityBorder.BorderThickness =
                                                                 new Thickness(5);
                         }
                         else
                         {
-                            if (App.VoiceChatWindow.GetPlayerIconByUUID(MCUUID) != null && App.VoiceChatWindow.GetPlayerIconByUUID(MCUUID).VoiceActivityBorder.BorderThickness.Left != 0)
+                            if (MainWindow.mainWindow.VoiceChatWindow.GetPlayerIconByUUID(MCUUID) != null && MainWindow.mainWindow.VoiceChatWindow.GetPlayerIconByUUID(MCUUID).VoiceActivityBorder.BorderThickness.Left != 0)
                             {
-                                App.VoiceChatWindow.GetPlayerIconByUUID(MCUUID).VoiceActivityBorder.BorderThickness =
+                                MainWindow.mainWindow.VoiceChatWindow.GetPlayerIconByUUID(MCUUID).VoiceActivityBorder.BorderThickness =
                                     new Thickness(0);
                             }
                         }

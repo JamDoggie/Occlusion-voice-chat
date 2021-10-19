@@ -142,7 +142,7 @@
           
           
           <TextBlock HorizontalAlignment="Stretch" Margin="0 35 0 0" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="16" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">Key/Mouse Binds</TextBlock>
-          <TextBlock HorizontalAlignment="Stretch" Margin="0 0 0 0" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="12" IsVisible="False" Foreground="#BDC3C7" Opacity="0.5" TextAlignment="Center" TextWrapping="Wrap">Binds are not available on your platform.</TextBlock>
+          <TextBlock HorizontalAlignment="Stretch" Margin="0 0 0 0" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="12" IsVisible="{Binding UnsupportedPlatform}" Foreground="#BDC3C7" Opacity="0.5" TextAlignment="Center" TextWrapping="Wrap">Binds are not available on your platform.</TextBlock>
 
           
           <TextBlock HorizontalAlignment="Center" Margin="0 20 0 3" FontSize="13">Push to Talk</TextBlock>

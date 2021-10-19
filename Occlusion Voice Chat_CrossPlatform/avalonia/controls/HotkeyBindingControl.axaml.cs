@@ -90,7 +90,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
         private void App_HotkeyKeyDownEvent(VKeys key)
         {
 #if WINDOWS
-            if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+            if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                 if (BindContent.IsFocused && BindContent.IsPointerOver)
                 {
                     Hotkey.Clear();
@@ -133,7 +133,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
         private void App_HotkeyKeyUpEvent(VKeys key)
         {
 #if WINDOWS
-            if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+            if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                 if (!BindContent.IsFocused || !BindContent.IsPointerOver)
                 {
                     if (Hotkey.Count > 0 && HotkeyReleased != null && isPressed && Hotkey.Contains(key))

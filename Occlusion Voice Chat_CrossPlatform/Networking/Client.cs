@@ -80,10 +80,10 @@ namespace Occlusion_voice_chat.Networking
             {
                 Dispatcher.UIThread.InvokeAsync(() => 
                 { 
-                    if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+                    if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                     {
-                        App.VoiceChatWindow.AutoDisconnectScreen.IsVisible = autoDisconnect.ShowWarning;
-                        App.VoiceChatWindow.AutoDisconnectSeconds = (int)autoDisconnect.SecondsTillDisconnect;
+                        MainWindow.mainWindow.VoiceChatWindow.AutoDisconnectScreen.IsVisible = autoDisconnect.ShowWarning;
+                        MainWindow.mainWindow.VoiceChatWindow.AutoDisconnectSeconds = (int)autoDisconnect.SecondsTillDisconnect;
                     }
                 });
             }
@@ -167,12 +167,9 @@ namespace Occlusion_voice_chat.Networking
                 // Now we update the UI to reflect we were disconnected.
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+                    if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                     {
-                        App.VoiceChatWindow.ForceClose = true;
-                        App.VoiceChatWindow.Close();
-                        App.VoiceChatWindow.Dispose();
-                        App.VoiceChatWindow = new VoiceChatWindow();
+                        MainWindow.mainWindow.VoiceChatWindow.Close();
                     }
 
                     if (MainWindow.mainWindow != null)
@@ -190,9 +187,9 @@ namespace Occlusion_voice_chat.Networking
             {
                 Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+                    if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                     {
-                        var tip = App.VoiceChatWindow.FindControl<TextBlock>("InfoToolTipText");
+                        var tip = MainWindow.mainWindow.VoiceChatWindow.FindControl<TextBlock>("InfoToolTipText");
                         tip.Text = $"Ping: {latency}ms";
                     }
                 });
@@ -381,12 +378,9 @@ namespace Occlusion_voice_chat.Networking
 
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
+                if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                 {
-                    App.VoiceChatWindow.ForceClose = true; // This bypasses the "are you sure you want to disconnect" message box.
-                    App.VoiceChatWindow.Close();
-                    App.VoiceChatWindow.Dispose();
-                    App.VoiceChatWindow = new VoiceChatWindow();
+                    MainWindow.mainWindow.VoiceChatWindow.Close();
                 }
             });
 

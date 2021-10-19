@@ -142,7 +142,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
         {
             lock (_queueLock)
             {
-                if (_queueOffset >= 0 && !Muted && App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen && App.VoiceChatWindow.AudioSettingsOpen)
+                if (_queueOffset >= 0 && !Muted && MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen && MainWindow.mainWindow.VoiceChatWindow.AudioSettingsOpen)
                 {
                     // HRTF init
                     int azimuth = (int)Azimuth;
