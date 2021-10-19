@@ -127,6 +127,10 @@
         <Style Selector=":is(controls|SmoothScrollViewer).menuscroller /template/ RepeatButton:pointerover > Path">
           <Setter Property="Fill" Value="{DynamicResource ThemeAccentBrush}" />
         </Style>
+
+        <Style Selector="Button /template/ ContentPresenter">
+          <Setter Property="CornerRadius" Value="5" />
+        </Style>
     </Application.Styles>
   
 </Application>

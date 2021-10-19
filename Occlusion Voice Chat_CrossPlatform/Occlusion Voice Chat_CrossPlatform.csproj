@@ -12,11 +12,11 @@
     <CFBundleName>Occlusion Voice Chat_CrossPlatform</CFBundleName> <!-- Also defines .app file name -->
     <CFBundleDisplayName>Occlusion Voice Chat</CFBundleDisplayName>
     <CFBundleIdentifier>com.occlusion</CFBundleIdentifier>
-    <CFBundleVersion>2</CFBundleVersion>
+    <CFBundleVersion>4</CFBundleVersion>
     <CFBundlePackageType>APPL</CFBundlePackageType>
     <CFBundleIconFile>Occlusion Voice Chat_CrossPlatform.icns</CFBundleIconFile>
     <CFBundleExecutable>Occlusion Voice Chat_CrossPlatform</CFBundleExecutable>
-	  <CFBundleShortVersionString>2.0.0</CFBundleShortVersionString>
+	  <CFBundleShortVersionString>4.0.0</CFBundleShortVersionString>
     <NSPrincipalClass>NSApplication</NSPrincipalClass>
     <NSHighResolutionCapable>true</NSHighResolutionCapable>
   </PropertyGroup>
@@ -272,7 +272,7 @@
     <Authors>JamDoggie</Authors>
     <Company />
     <Product>Occlusion Voice Chat</Product>
-    <AssemblyVersion>3.0.*</AssemblyVersion>
+    <AssemblyVersion>4.0.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
   </PropertyGroup>
   

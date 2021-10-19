@@ -30,6 +30,7 @@ using System.IO;
 using Occlusion_Voice_Chat_CrossPlatform.HRTF;
 using Occlusion_Voice_Chat_CrossPlatform.audio;
 using Avalonia.Controls;
+using System.Threading.Tasks;
 
 #if WINDOWS
 using GlobalLowLevelHooks;
@@ -666,6 +667,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             clientThread.IsBackground = true;
 
             clientThread.Start();
+            
+
+            
         }
     }
 }

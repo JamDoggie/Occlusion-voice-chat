@@ -6,6 +6,6 @@ namespace OcclusionVersionControl
 {
     public static class OcclusionVersion
     {
-        public const int VersionNumber = 3;
+        public const int VersionNumber = 4;
     }
 }

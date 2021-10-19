@@ -136,6 +136,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             this.FindControl<Button>("LeaveButton").Click += LeaveButton_Click;
 
 
+            PropertyChanged += VoiceChatControl_PropertyChanged;
+
             SettingsPage.IsVisible = true;
 
             // Volume controls
@@ -204,6 +206,24 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             timer.Start();
         }
 
+        private void VoiceChatControl_PropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
+        {
+            if (e.Property == Grid.OpacityProperty && e.Priority == BindingPriority.Animation)
+            {
+                
+                if ((double)e.OldValue != 0 && (double)e.NewValue == 0)
+                {
+                    IsVisible = false;
+                }
+
+                if ((double)e.OldValue == 0 && (double)e.NewValue != 0)
+                {
+                    IsVisible = true;
+                }
+                
+            }
+        }
+
         private async void LeaveButton_Click(object? sender, RoutedEventArgs e)
         {
             var msBoxStandardWindow = MessageBoxManager.GetMessageBoxStandardWindow(
@@ -213,7 +233,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                         ContentTitle = "Warning",
                         ContentMessage = "Really disconnect from the server?",
                         Icon = MessageBox.Avalonia.Enums.Icon.Warning,
-                        Style = Style.Windows,
+                        Style = Style.None,
 
                     });
 
@@ -610,14 +630,15 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         public void Close()
         {
-            IsVisible = false;
             IsOpen = false;
+            Opacity = 0;
             MainWindow.mainWindow.ConnectButton.IsEnabled = true;
         }
 
         public void Open()
         {
             IsVisible = true;
+            Opacity = 1;
             IsOpen = true;
             // Window load stuff
             MainWindow.mainWindow.ConnectButton.IsEnabled = false;

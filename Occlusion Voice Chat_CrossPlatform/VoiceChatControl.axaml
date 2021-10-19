@@ -21,6 +21,16 @@
     </Styles>
   </UserControl.Styles>
 
+  <UserControl.Transitions>
+    <Transitions>
+      <DoubleTransition Property="Opacity" Duration="0:0:0.3">
+        <DoubleTransition.Easing>
+          <CubicEaseOut/>
+        </DoubleTransition.Easing>
+      </DoubleTransition>
+    </Transitions>
+  </UserControl.Transitions>
+  
   <UserControl.Resources>
 
     <ext:BitmapAssetValueConverter x:Key="variableImage"/>

@@ -181,7 +181,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                         ContentTitle = "Warning",
                         ContentMessage = "Really close the program and disconnect from the server?",
                         Icon = MessageBox.Avalonia.Enums.Icon.Warning,
-                        Style = Style.Windows,
+                        Style = Style.None,
 
                     });
 
