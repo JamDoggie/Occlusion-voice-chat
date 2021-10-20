@@ -358,11 +358,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             }
         }
 
-        public void ShowErrorMessage(string message)
+        public void ShowErrorMessage(string message, string subtitle = "")
         {
             GenericMessageGroup.IsVisible = true;
 
             GenericErrorMessage.Text = message;
+            this.FindControl<TextBlock>("ErrorDetails").Text = subtitle;
         }
 
         public void Connect_Click(object? sender, RoutedEventArgs e)

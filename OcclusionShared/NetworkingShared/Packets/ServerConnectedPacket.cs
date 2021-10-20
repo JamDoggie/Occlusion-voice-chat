@@ -16,7 +16,7 @@ namespace OcclusionShared.NetworkingShared.Packets
     [PacketId(4)]
     public class ServerConnectedPacket : NetworkPacket
     {
-        public int OcclusionVersion { get; set; }
+        public int OcclusionVersion { get; set; } = OcclusionVersionControl.OcclusionVersion.VersionNumber;
 
         public bool EnableVoiceIconMeterOnClients { get; set; } = true;
 
@@ -28,7 +28,7 @@ namespace OcclusionShared.NetworkingShared.Packets
         public override void ToMessage(NetDataWriter message)
         {
             base.ToMessage(message);
-            message.Put(OcclusionVersionControl.OcclusionVersion.VersionNumber);
+            message.Put(OcclusionVersion);
             message.Put(EnableVoiceIconMeterOnClients);
         }
 

@@ -667,9 +667,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             clientThread.IsBackground = true;
 
             clientThread.Start();
-            
-
-            
         }
     }
 }

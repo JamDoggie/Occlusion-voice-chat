@@ -8,6 +8,10 @@ using System.Text;
 
 namespace OcclusionShared.NetworkingShared.Packets
 {
+    /// <summary>
+    /// Sends information including the player's occlusion code, and the version their client is running.
+    /// NOTE: This packet should probably not be changed in the future, to ensure that all client and server versions can communicate with it.
+    /// </summary>
     [PacketId(3)]
     public class ClientVerificationPacket : NetworkPacket
     {

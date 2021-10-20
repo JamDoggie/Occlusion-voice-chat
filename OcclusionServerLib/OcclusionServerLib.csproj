@@ -30,7 +30,7 @@
     <PackageReference Include="DotNetty.Codecs" Version="0.6.0" />
     <PackageReference Include="DotNetty.Common" Version="0.6.0" />
     <PackageReference Include="DotNetty.Transport" Version="0.6.0" />
-    <PackageReference Include="LiteNetLib" Version="0.9.5" />
+    <PackageReference Include="LiteNetLib" Version="0.9.5.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 

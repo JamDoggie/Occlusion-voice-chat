@@ -10,6 +10,7 @@ using OcclusionServerLib.structs;
 using OcclusionShared.NetworkingShared;
 using OcclusionShared.NetworkingShared.Packets;
 using OcclusionShared.Util;
+using OcclusionVersionControl;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -66,7 +67,7 @@ namespace OcclusionServerLib
             if (packet is ClientVerificationPacket)
             {
                 var verificationPacket = packet as ClientVerificationPacket;
-
+                
 #if DEVMODE
                 // DEVMODE:
                 //  This code is for testing purposes and will only compile with the DEVMODE compiler word.
@@ -90,6 +91,7 @@ namespace OcclusionServerLib
 
                 return; // Prevent normal behavior if this compiles.
 #endif
+
 
 
                 codesBeingVerified[verificationPacket.VerificationCode] = peer;
@@ -247,34 +249,55 @@ namespace OcclusionServerLib
 
             EventListener.ConnectionRequestEvent += (request) => 
             {
-                var netPeer = request.Accept();
-
-                ServerLogger.Log($"{netPeer.EndPoint.Address} has connected.");
-
-                Users.Add(new VoiceUser()
+                string tag = request.Data.GetString();
+                if (tag == "OcclusionVoiceClient")
                 {
-                    Connection = netPeer,
-                    id = userIdIter
-                });
+                    int version = request.Data.GetInt();
 
-                // Send packet to client that tells it we've properly connected as well as tells the client about the server's settings.
-                ServerConnectedPacket serverConnectedPacket = new ServerConnectedPacket();
-                serverConnectedPacket.EnableVoiceIconMeterOnClients = SettingsFile.Obj.EnableVoiceIconMeterOnClients;
-                SendMessage(serverConnectedPacket, netPeer, DeliveryMethod.ReliableOrdered);
+                    if (version < OcclusionVersion.VersionNumber)
+                    {
+                        request.Reject(Encoding.UTF8.GetBytes($"Outdated client (server is on v{OcclusionVersion.VersionNumber}, client is on v{version}). Please update Occlusion."));
+                    }
 
-                // Send full list of users to the user that just connected
-                ServerUserConnectedPacket userConnectedPacket = new ServerUserConnectedPacket();
-                userConnectedPacket.idsToAdd = new List<KeyValuePair<int, string>>();
-                foreach (VoiceUser user in Users)
-                {
-                    if (user.IsVerified && user != GetUserByConnection(netPeer))
-                        userConnectedPacket.idsToAdd.Add(new KeyValuePair<int, string>(user.verificationCode, user.MCUUID));
+                    if (version > OcclusionVersion.VersionNumber)
+                    {
+                        request.Reject(Encoding.UTF8.GetBytes($"Outdated server (server is on v{OcclusionVersion.VersionNumber}, client is on v{version}). Please contact the server administrator as this is most likely a mistake."));
+                    }
+
+                    if (version != OcclusionVersion.VersionNumber)
+                        return;
+
+                    var netPeer = request.Accept();
+
+                    ServerLogger.Log($"{netPeer.EndPoint.Address} has connected.");
+
+                    Users.Add(new VoiceUser()
+                    {
+                        Connection = netPeer,
+                        id = userIdIter
+                    });
+
+                    // Send packet to client that tells it we've properly connected as well as tells the client about the server's settings.
+                    ServerConnectedPacket serverConnectedPacket = new ServerConnectedPacket();
+                    serverConnectedPacket.EnableVoiceIconMeterOnClients = SettingsFile.Obj.EnableVoiceIconMeterOnClients;
+                    SendMessage(serverConnectedPacket, netPeer, DeliveryMethod.ReliableOrdered);
+
+                    // Send full list of users to the user that just connected
+                    ServerUserConnectedPacket userConnectedPacket = new ServerUserConnectedPacket();
+                    userConnectedPacket.idsToAdd = new List<KeyValuePair<int, string>>();
+                    foreach (VoiceUser user in Users)
+                    {
+                        if (user.IsVerified && user != GetUserByConnection(netPeer))
+                            userConnectedPacket.idsToAdd.Add(new KeyValuePair<int, string>(user.verificationCode, user.MCUUID));
+                    }
+
+                    SendMessage(userConnectedPacket, netPeer, DeliveryMethod.ReliableOrdered);
+
+
+                    userIdIter++;
                 }
 
-                SendMessage(userConnectedPacket, netPeer, DeliveryMethod.ReliableOrdered);
-
-
-                userIdIter++;
+                
             };
 
             EventListener.PeerDisconnectedEvent += (peer, info) =>

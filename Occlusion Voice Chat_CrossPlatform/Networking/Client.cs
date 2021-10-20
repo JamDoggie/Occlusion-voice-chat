@@ -155,14 +155,16 @@ namespace Occlusion_voice_chat.Networking
                 {
                     errorMessage = $"Disconnected, Reason: {reason}";
                 }
-                
+
+                string subtitle = "";
+
                 if (info.AdditionalData.RawDataSize > 0)
                 {
-                    errorMessage += $"\n Additional Information: \"{Encoding.UTF8.GetString(info.AdditionalData.GetRemainingBytes())}\"";
+                    subtitle = $"{Encoding.UTF8.GetString(info.AdditionalData.GetRemainingBytes())}";
                 }
 
                 Console.WriteLine(errorMessage);
-
+                Console.WriteLine(subtitle);
 
                 // Now we update the UI to reflect we were disconnected.
                 Dispatcher.UIThread.InvokeAsync(() =>
@@ -174,7 +176,7 @@ namespace Occlusion_voice_chat.Networking
 
                     if (MainWindow.mainWindow != null)
                     {
-                        MainWindow.mainWindow.ShowErrorMessage(errorMessage);
+                        MainWindow.mainWindow.ShowErrorMessage(errorMessage, subtitle);
                         MainWindow.mainWindow.ConnectionStatusText.Text = "Server connection lost or failed.";
                         MainWindow.mainWindow.ConnectingLoadingBar.IsVisible = false;
                     }
@@ -200,7 +202,11 @@ namespace Occlusion_voice_chat.Networking
         {
             InternalClient.Start();
 
-            InternalClient.Connect(ip, serverport, "OcclusionVoiceClient");
+            NetDataWriter connectionData = new NetDataWriter();
+            connectionData.Put("OcclusionVoiceClient");
+            connectionData.Put(OcclusionVersion.VersionNumber);
+
+            InternalClient.Connect(ip, serverport, connectionData);
 
             // Start connecting animation.
             Dispatcher.UIThread.InvokeAsync(() =>
