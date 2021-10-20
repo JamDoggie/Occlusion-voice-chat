@@ -18,7 +18,7 @@ namespace Occlusion_voice_chat.Opus
 
     public class OpusCodec : ICodec
     {
-        private const string OPUS_TARGET_DLL = "opus.dll";
+        private const string OPUS_TARGET_DLL = "opus";
 
         [DllImport(OPUS_TARGET_DLL, CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr opus_encoder_create(int Fs, int channels, int application, out IntPtr error);
