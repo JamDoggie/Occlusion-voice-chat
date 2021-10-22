@@ -34,7 +34,8 @@ jobs:
       - name: Copy Libraries
         run:
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/SDL2.so" "${{ github.workspace }}/occlusionlinuxrelease/SDL2.so";
-          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/SDL2.a" "${{ github.workspace }}/occlusionlinuxrelease/SDL2.a"
+          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/SDL2.a" "${{ github.workspace }}/occlusionlinuxrelease/SDL2.a";
+          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/opus.so" "${{ github.workspace }}/occlusionlinuxrelease/opus.so"
           
       - name: Zip the published binaries.
         uses: thedoctor0/zip-release@master
@@ -80,7 +81,8 @@ jobs:
       - name: Copy Libraries.
         run:
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.dylib" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.dylib";
-          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.a" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.a"
+          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.a" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.a";
+          cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/opus.dylib" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/opus.dylib"
           
       - name: Make the pkg
         run:
