@@ -164,3 +164,69 @@ jobs:
         with:
           name: occlusion-win64-installer-artifact
           path: installerartifact.zip
+          
+  build-server-linux:
+    runs-on: ubuntu-20.04
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+    
+      - name: Restore libraries
+        run: 
+          dotnet restore "${{ github.workspace }}\OcclusionDedicatedServer\OcclusionDedicatedServer.csproj" -r linux-x64
+          
+      - name: Publish server to a folder
+        run: 
+          dotnet publish "${{ github.workspace }}\OcclusionDedicatedServer\OcclusionDedicatedServer.csproj" -c "Release" -r linux-x64 --self-contained true --output "occlusionlinuxrelease/"
+
+      - name: Zip the published binaries.
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'tar'
+          filename: 'occlusion-linux-portable-server-x64.tar.gz'
+          path: '${{ github.workspace }}/occlusionlinuxrelease/'
+          
+      - name: And upload an artifact.
+        uses: actions/upload-artifact@v2
+        with:
+          name: occlusion-linux-portable-server-x64-artifact
+          path: occlusion-linux-portable-server-x64.tar.gz
+          
+  build-server-win:
+    # Windows Server 2019
+    runs-on: windows-2019
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '5.0.x'
+
+      - name: Publish server to a folder.
+        run: 
+          dotnet publish "${{ github.workspace }}\OcclusionDedicatedServer\OcclusionDedicatedServer.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\"
+          
+      #- name: Zip the published binaries.
+      #  uses: papeloto/action-zip@v1
+      #  with:
+      #    files: occlusionwinrelease/
+      #    recursive: false
+      #    dest: programfiles.zip
+      - name: Zip the published binaries.
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          filename: 'occlusion-server-win-x64.zip'
+          path: '${{ github.workspace }}\occlusionwinrelease\*'
+        
+      - name: And upload an artifact.
+        uses: actions/upload-artifact@v2
+        with:
+          name: occlusion-server-win-x64-artifact
+          path: occlusion-server-win-x64.zip
