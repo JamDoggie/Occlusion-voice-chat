@@ -77,6 +77,7 @@ namespace OcclusionAutoUpdater.Views
                         // When the file is finished downloading, run it.
                         Process installer = new Process();
                         installer.StartInfo.FileName = installerPath;
+                        installer.StartInfo.Arguments = "-updatemode";
 
                         installer.Start();
 
