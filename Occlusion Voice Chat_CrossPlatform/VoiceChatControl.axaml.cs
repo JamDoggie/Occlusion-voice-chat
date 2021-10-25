@@ -477,8 +477,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         public void AddPlayer(string uuid, int id)
         {
-            Console.WriteLine("Added player icon");
-
             PlayerIcon playerIcon = new PlayerIcon();
             PlayerIconsPanel.Children.Add(playerIcon);
             _playerIcons.Add(playerIcon);

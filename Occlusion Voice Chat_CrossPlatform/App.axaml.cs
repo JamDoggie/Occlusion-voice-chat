@@ -287,10 +287,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                         // Add user to grid on UI
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
-                            Console.WriteLine($"dietz {MainWindow.mainWindow.VoiceChatWindow != null} {MainWindow.mainWindow.VoiceChatWindow.IsOpen}");
                             if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                             {
-                                Console.WriteLine("nuts");
                                 MainWindow.mainWindow.VoiceChatWindow.AddPlayer(id.Value, id.Key);
                             }
                         });

@@ -47,7 +47,6 @@
 
     <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
       <WrapPanel Name="PlayerIconsPanel">
-
       </WrapPanel>
     </ScrollViewer>
 

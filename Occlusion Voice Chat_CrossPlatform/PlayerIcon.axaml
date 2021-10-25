@@ -6,7 +6,8 @@
         x:Class="Occlusion_Voice_Chat_CrossPlatform.PlayerIcon">
   <Button Name="IconButton" Margin="10" Background="Transparent" Cursor="Hand">
     <Grid Classes="playerIconGrid" Width="100" Height="100" Name="PlayerIconButton">
-      <Image x:Name="PlayerIconImg" Width="100" Height="100" RenderOptions.BitmapInterpolationMode="Default"></Image>
+      <Image x:Name="PlayerIconImg" Width="100" Height="100" RenderOptions.BitmapInterpolationMode="Default">
+      </Image>
       
       <Border Name="VoiceActivityBorder" BorderBrush="#32a852" BorderThickness="0" Width="100" Height="100">
         <Border.Transitions>
