@@ -261,39 +261,41 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (packet is ServerUserConnectedPacket userConnectedPacket)
             {
-                foreach (KeyValuePair<int, string> id in userConnectedPacket.idsToAdd)
+                // Add user to grid on UI
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    if (GetUserById(id.Key) == null)
+                    foreach (KeyValuePair<int, string> id in userConnectedPacket.idsToAdd)
                     {
-                        var voiceUser = new VoiceUser()
+                        if (GetUserById(id.Key) == null)
                         {
-                            id = id.Key,
-                            MCUUID = id.Value,
-                            codec = new OpusCodec()
-                        };
+                            var voiceUser = new VoiceUser()
+                            {
+                                id = id.Key,
+                                MCUUID = id.Value,
+                                codec = new OpusCodec()
+                            };
 
-                        if (voiceUser.id == client.verificationCode)
-                        {
-                            voiceUser.IsLocalClient = true;
-                        }
-                        
-                        voiceUser.InitializeArrays();
+                            if (voiceUser.id == client.verificationCode)
+                            {
+                                voiceUser.IsLocalClient = true;
+                            }
 
-                        voiceUser.codec.SetFrameSize(20);
-                        
+                            voiceUser.InitializeArrays();
 
-                        Users.Add(voiceUser);
+                            voiceUser.codec.SetFrameSize(20);
 
-                        // Add user to grid on UI
-                        Dispatcher.UIThread.InvokeAsync(() =>
-                        {
+
+                            Users.Add(voiceUser);
+
+
                             if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                             {
-                                MainWindow.mainWindow.VoiceChatWindow.AddPlayer(Guid.NewGuid().ToString(), 69);
+                                MainWindow.mainWindow.VoiceChatWindow.AddPlayer(id.Value, id.Key);
                             }
-                        });
+
+                        }
                     }
-                }
+                });
             }
 
             if (packet is ServerVoiceDataPacket voiceDataPacket)
