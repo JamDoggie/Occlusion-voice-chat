@@ -61,9 +61,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
                 if (!_enableVoiceIconMeterOnClients)
                 {
-                    foreach(VoiceUser user in Users)
+                    foreach (VoiceUser user in Users)
                     {
-                        if(!user.IsLocalClient)
+                        if (!user.IsLocalClient)
                         {
                             user.IsTalking = false;
                         }
@@ -173,7 +173,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             Client.PacketRecievedEvent += Client_PacketRecievedEvent;
             Console.WriteLine($"The entry point thread is Thread #{Thread.CurrentThread.ManagedThreadId} ({Thread.CurrentThread.ManagedThreadId.ToString("X")})");
             InitSound();
-            
+
             PlayerCache.RetrieveCacheFile();
 
             InputVolume = Options.Obj.InputVolume;
@@ -222,7 +222,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 HotkeyKeyUpEvent += (k) => { };
                 HotkeyKeyDownEvent += (k) => { };
             }
-            
+
 
 #if !DEBUG // Occlusion was constantly opening the auto updater while testing and pissing me off, so I disabled in in debug mode since it's irrelevant here anyway.
             // Auto updater
@@ -279,24 +279,23 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                             {
                                 voiceUser.IsLocalClient = true;
                             }
-                            
+
                             voiceUser.InitializeArrays();
 
-                        voiceUser.codec.SetFrameSize(20);
-                        
+                            voiceUser.codec.SetFrameSize(20);
+
 
                             Users.Add(voiceUser);
 
-                        // Add user to grid on UI
-                        Dispatcher.UIThread.InvokeAsync(() =>
-                        {
+
                             if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                             {
-                                MainWindow.mainWindow.VoiceChatWindow.AddPlayer(Guid.NewGuid().ToString(), 69);
+                                MainWindow.mainWindow.VoiceChatWindow.AddPlayer(id.Value, id.Key);
                             }
-                        });
+
+                        }
                     }
-                }
+                });
             }
 
             if (packet is ServerVoiceDataPacket voiceDataPacket)
@@ -360,7 +359,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             {
                 Options.Obj.InputDevice = "Default";
             }
-            
+
             if (!Audio.NonCaptureDevices.Contains(Options.Obj.OutputDevice))
             {
                 Options.Obj.OutputDevice = "Default";
@@ -462,7 +461,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                     sound.MixAudioIntoArray(ref stream);
                 }
             }
-            
+
             // We can change audio input here as well because this is on the sdl thread.
 
             if (NewInputDevice != null && RecordingDevice != null)
@@ -479,10 +478,10 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 RecordingDevice.Unpause();
 
                 NewInputDevice = null;
-                
-                
+
+
             }
-            
+
         }
 
         private short _residualVoiceVolume = 0;
@@ -509,7 +508,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                         _residualVoiceVolume = (short)volume;
 
                     bool isTalking = true;
-                        
+
                     if (Options.Obj.UseVoiceActivity)
                     {
                         // If our total volume is under the voice activity threshold, just set it all to silence.
@@ -539,7 +538,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                             user.IsTalking = isTalking;
                         }
                     }
-                        
+
 
                     byte[] newBytes = chunk.GetDataAsBytes();
 
@@ -547,7 +546,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                     {
                         stream[i] = newBytes[i];
                     }
-                    
+
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
                         if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen && RecordingDevice.Status == AudioStatus.Playing)
@@ -612,9 +611,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 PlaybackDevice.Unpause();
 
                 NewOutputDevice = null;
-                    
+
             }
-            
+
         }
 
         public static VoiceUser GetUserById(int id)
