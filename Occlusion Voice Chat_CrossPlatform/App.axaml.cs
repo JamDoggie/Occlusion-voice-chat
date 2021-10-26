@@ -279,23 +279,24 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                             {
                                 voiceUser.IsLocalClient = true;
                             }
-
+                            
                             voiceUser.InitializeArrays();
 
-                            voiceUser.codec.SetFrameSize(20);
-
+                        voiceUser.codec.SetFrameSize(20);
+                        
 
                             Users.Add(voiceUser);
 
-
+                        // Add user to grid on UI
+                        Dispatcher.UIThread.InvokeAsync(() =>
+                        {
                             if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                             {
-                                MainWindow.mainWindow.VoiceChatWindow.AddPlayer(id.Value, id.Key);
+                                MainWindow.mainWindow.VoiceChatWindow.AddPlayer(Guid.NewGuid().ToString(), 69);
                             }
-
-                        }
+                        });
                     }
-                });
+                }
             }
 
             if (packet is ServerVoiceDataPacket voiceDataPacket)
