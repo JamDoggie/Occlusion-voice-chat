@@ -261,39 +261,41 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (packet is ServerUserConnectedPacket userConnectedPacket)
             {
-                foreach (KeyValuePair<int, string> id in userConnectedPacket.idsToAdd)
+                // Add user to grid on UI
+                Dispatcher.UIThread.InvokeAsync(() =>
                 {
-                    if (GetUserById(id.Key) == null)
+                    foreach (KeyValuePair<int, string> id in userConnectedPacket.idsToAdd)
                     {
-                        var voiceUser = new VoiceUser()
+                        if (GetUserById(id.Key) == null)
                         {
-                            id = id.Key,
-                            MCUUID = id.Value,
-                            codec = new OpusCodec()
-                        };
-
-                        if (voiceUser.id == client.verificationCode)
-                        {
-                            voiceUser.IsLocalClient = true;
-                        }
-                        
-                        voiceUser.InitializeArrays();
-
-                        voiceUser.codec.SetFrameSize(20);
-                        
-
-                        Users.Add(voiceUser);
-
-                        // Add user to grid on UI
-                        Dispatcher.UIThread.InvokeAsync(() =>
-                        {
-                            if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
+                            var voiceUser = new VoiceUser()
                             {
-                                MainWindow.mainWindow.VoiceChatWindow.AddPlayer(Guid.NewGuid().ToString(), 69);
+                                id = id.Key,
+                                MCUUID = id.Value,
+                                codec = new OpusCodec()
+                            };
+
+                            if (voiceUser.id == client.verificationCode)
+                            {
+                                voiceUser.IsLocalClient = true;
                             }
-                        });
+                            
+                            voiceUser.InitializeArrays();
+
+                            voiceUser.codec.SetFrameSize(20);
+                            
+
+                            Users.Add(voiceUser);
+
+                            
+                                if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
+                                {
+                                    MainWindow.mainWindow.VoiceChatWindow.AddPlayer(id.Value, id.Key);
+                                }
+                            
+                        }
                     }
-                }
+                });
             }
 
             if (packet is ServerVoiceDataPacket voiceDataPacket)

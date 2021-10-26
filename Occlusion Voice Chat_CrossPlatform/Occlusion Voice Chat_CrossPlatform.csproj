@@ -58,6 +58,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="DefaultTheme.xaml" />
+    <None Update="opus.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="SDL2.a">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="SDL2.so">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Include="DefaultTheme.xaml" />
