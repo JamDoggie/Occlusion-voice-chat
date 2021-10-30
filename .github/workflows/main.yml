@@ -38,11 +38,13 @@ jobs:
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/opus.so" "${{ github.workspace }}/occlusionlinuxrelease/opus.so"
           
       - name: Zip the published binaries.
-        uses: thedoctor0/zip-release@master
+        uses: master-atul/tar-action@v1.0.2
         with:
-          type: 'tar'
-          filename: 'occlusion-linux-debian-x64.tar.gz'
-          path: '${{ github.workspace }}/occlusionlinuxrelease/'
+          command: c
+          cwd: '${{ github.workspace }}/'
+          files: |
+            ./occlusionlinuxrelease
+          outPath: occlusion-linux-debian-x64.tar.gz
           
       - name: And upload an artifact.
         uses: actions/upload-artifact@v2
