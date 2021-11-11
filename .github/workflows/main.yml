@@ -44,7 +44,7 @@ jobs:
           cwd: '${{ github.workspace }}/'
           files: |
             ./occlusionlinuxrelease
-          outPath: occlusion-linux-debian-x64.tar.gz
+          outPath: oocclusion-linux-x64-binaries.tar.gz
           
       - name: And upload an artifact.
         uses: actions/upload-artifact@v2
