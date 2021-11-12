@@ -6,8 +6,12 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using System;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Reflection;
+using System.Text;
+using ICSharpCode.SharpZipLib.Tar;
 
 namespace OcclusionAutoUpdater.Views
 {
@@ -60,8 +64,14 @@ namespace OcclusionAutoUpdater.Views
                 {
                     var installerPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\occlusion-release-installer-update.tmp.exe";
 
+                    if (App.GetOperatingSystem() == OperatingSystem.Linux)
+                    {
+                        installerPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\occlusion-binaries.tar.gz.tmp";
+                    }
+                    
                     wc.DownloadFileAsync(new Uri(App.DownloadLink), installerPath);
 
+                    
                     // Progress bar
                     wc.DownloadProgressChanged += (sender, e) =>
                     {
@@ -74,12 +84,7 @@ namespace OcclusionAutoUpdater.Views
 
                     wc.DownloadFileCompleted += (sender, e) =>
                     {
-                        // When the file is finished downloading, run it.
-                        Process installer = new Process();
-                        installer.StartInfo.FileName = installerPath;
-                        installer.StartInfo.Arguments = "-updatemode";
-
-                        installer.Start();
+                        OperatingSystem? os = App.GetOperatingSystem();
 
                         // Once the installer is run, we can exit both the auto updater and occlusion (which should be the assembly that ran us in the first place)
                         var exeAssembly = Assembly.GetEntryAssembly();
@@ -94,6 +99,69 @@ namespace OcclusionAutoUpdater.Views
                                 process.Kill();
                             }
                         }
+                        
+                        if (os != null)
+                        {
+                            switch (os)
+                            {
+                                case OperatingSystem.Windows:
+                                    {
+                                        // When the file is finished downloading, run it.
+                                        Process installer = new Process();
+                                        installer.StartInfo.FileName = installerPath;
+                                        installer.StartInfo.Arguments = "-updatemode";
+
+                                        installer.Start();
+                                        break;
+                                    }
+                                case OperatingSystem.Linux:
+                                    {
+                                        // Extract the tar.gz file located at installerPath to a temporary location.
+                                        using (FileStream fs = new FileStream(installerPath, FileMode.Open))
+                                        {
+                                            using (GZipStream gz = new(fs, CompressionMode.Decompress))
+                                            {
+                                                using (TarArchive tar = TarArchive.CreateInputTarArchive(gz, TarBuffer.DefaultBlockFactor, Encoding.Default))
+                                                {
+                                                    tar.ExtractContents($"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}");
+
+                                                    string[] files = Directory.GetFiles(
+                                                        $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/occlusionlinuxrelease/");
+
+                                                    string[] directories = Directory.GetDirectories(
+                                                        $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/occlusionlinuxrelease/");
+                                                    
+                                                    // Get the path to the currently executing executable
+                                                    string exePath = Assembly.GetExecutingAssembly().Location;
+                                                    
+                                                    // Rename the auto updater so that it can essentially overwrite itself.
+                                                    File.Move(exePath, exePath + ".bak");
+                                                    
+                                                    foreach (string file in files)
+                                                    {
+                                                        FileInfo fi = new(file);
+                                                        fi.MoveTo(Path.GetFullPath("/" + fi.Name));
+                                                    }
+                                                    
+                                                    foreach (string dir in directories)
+                                                    {
+                                                        DirectoryInfo di = new(dir);
+                                                        di.MoveTo(Path.GetFullPath("/" + di.Name));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        break;
+                                    }
+                                case OperatingSystem.Mac:
+                                    {
+                                        
+                                        break;
+                                    }
+                            }
+                        }
+
+                        
 
                         if (Avalonia.Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
                         {
@@ -104,6 +172,7 @@ namespace OcclusionAutoUpdater.Views
             }
         }
 
+        
         private void RemindButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             if (Avalonia.Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)

@@ -73,19 +73,61 @@ namespace OcclusionAutoUpdater
                     {
                         foreach(ReleaseAsset asset in latestRelease.Assets)
                         {
-                            if (asset.ContentType == "application/x-msdownload")
+                            OperatingSystem? os = GetOperatingSystem();
+                            
+                            switch(os)
                             {
-                                DownloadLink = asset.BrowserDownloadUrl;
-                                break;
+                                case OperatingSystem.Windows:
+                                    if (asset.ContentType == "x-msdownload")
+                                    {
+                                        DownloadLink = asset.BrowserDownloadUrl;
+                                        return true;
+                                    }
+                                    break;
+                                case OperatingSystem.Mac:
+                                    if (asset.ContentType == "application/gzip" && asset.Name.StartsWith("occlusion-mac-x64-binaries"))
+                                    {
+                                        DownloadLink = asset.BrowserDownloadUrl;
+                                        return true;
+                                    }
+                                    break;
+                                case OperatingSystem.Linux:
+                                    // If statement to check if the asset ContentType is tar.gz
+                                    if (asset.ContentType == "application/gzip" && asset.Name.StartsWith("occlusion-linux-x64-binaries"))
+                                    {
+                                        DownloadLink = asset.BrowserDownloadUrl;
+                                        return true;
+                                    }
+                                    break;
                             }
                         }
-
-                        return true;
                     }
                 }
             }
             return false;
         }
+        
+        // Method that gets the current operating system and returns an enum.
+        public static OperatingSystem? GetOperatingSystem()
+        {
+            var os = Environment.OSVersion;
+            var platform = os.Platform;
+
+            switch (platform)
+            {
+                case PlatformID.Win32NT:
+                    return OperatingSystem.Windows;
+                case PlatformID.Unix:
+                    return OperatingSystem.Linux;
+                case PlatformID.MacOSX:
+                    return OperatingSystem.Mac;
+                default:
+                    return null;
+            }
+        }
+        
+        
+        
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -98,5 +140,13 @@ namespace OcclusionAutoUpdater
             }
             base.OnFrameworkInitializationCompleted();
         }
+    }
+    
+    // Enum that represents an operating system
+    public enum OperatingSystem
+    {
+        Windows,
+        Mac,
+        Linux
     }
 }

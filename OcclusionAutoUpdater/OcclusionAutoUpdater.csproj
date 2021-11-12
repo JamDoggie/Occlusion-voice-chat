@@ -4,8 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ApplicationIcon>Occlusion_icon.ico</ApplicationIcon>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <PublishSingleFile>true</PublishSingleFile>
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     <PublishTrimmed>true</PublishTrimmed>
     <Configurations>Debug;Release;Debug Win;Release Win</Configurations>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -38,6 +37,7 @@
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.3" />
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.3" />
     <PackageReference Include="Octokit" Version="0.50.0" />
+    <PackageReference Include="SharpZipLib" Version="1.3.3" />
   </ItemGroup>
   <Import Project="..\OcclusionVersionControl\OcclusionVersionControl.projitems" Label="Shared" />
 </Project>

@@ -8,7 +8,6 @@ namespace OcclusionAutoUpdater
 {
     class Program
     {
-        
         public static void Main(string[] args)
         {
             AppDomain currentDomain = default(AppDomain);
