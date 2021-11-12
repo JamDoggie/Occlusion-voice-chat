@@ -43,7 +43,7 @@ jobs:
           command: c
           cwd: '${{ github.workspace }}/'
           files: |
-            ./occlusionlinuxrelease/*
+            ./occlusionlinuxrelease/
           outPath: occlusion-linux-x64-binaries.tar.gz
           
       - name: And upload an artifact.
