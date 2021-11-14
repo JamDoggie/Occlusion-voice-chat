@@ -8,7 +8,7 @@
         xmlns:occ="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia"
         xmlns:controls1="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia.controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="800"
-        x:Class="Occlusion_Voice_Chat_CrossPlatform.VoiceChatControl">
+        x:Class="Occlusion_Voice_Chat_CrossPlatform.VoiceChatControl" FontFamily="Arial">
   <UserControl.Styles>
     <Styles>
       <Style Selector="TextBox /template/ Border">

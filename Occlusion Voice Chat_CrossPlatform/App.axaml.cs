@@ -229,12 +229,15 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
 #if DEBUG // Occlusion was constantly opening the auto updater while testing and pissing me off, so I disabled in in debug mode since it's irrelevant here anyway.
             // Auto updater
-            string autoUpdaterPath = "OcclusionAutoUpdater.exe";
+            
+            string exePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            
+            string autoUpdaterPath = $"OcclusionAutoUpdater.exe";
 
             // Check if we're on linux
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                autoUpdaterPath = "OcclusionAutoUpdater";
+                autoUpdaterPath = $"{exePath}/OcclusionAutoUpdater";
             }
             
             if (File.Exists(autoUpdaterPath))

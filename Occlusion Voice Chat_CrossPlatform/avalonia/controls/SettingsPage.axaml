@@ -5,7 +5,7 @@
              xmlns:occ="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia"
              xmlns:controls="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia.controls;assembly=Occlusion Voice Chat_CrossPlatform"
              mc:Ignorable="d" 
-             x:Class="Occlusion_Voice_Chat_CrossPlatform.avalonia.controls.SettingsPage" Background="#77282830">
+             x:Class="Occlusion_Voice_Chat_CrossPlatform.avalonia.controls.SettingsPage" Background="#77282830" FontFamily="Arial">
   <UserControl.Transitions>
     <Transitions>
       <DoubleTransition Property="Opacity" Duration="0:0:0.2">

@@ -9,7 +9,7 @@
         x:Class="Occlusion_Voice_Chat_CrossPlatform.MainWindow"
         Title="Occlusion Voice Chat"
         Background="#32323b"
-        Height="720" Width="1280" Icon="/resources/Occlusion_icon.ico">
+        Height="720" Width="1280" Icon="/resources/Occlusion_icon.ico" FontFamily="Arial">
   <Window.Styles>
     <StyleInclude Source="avares://Occlusion Voice Chat_CrossPlatform/DefaultTheme.xaml"/>
     <Style Selector="Button.opacityfadebutton">

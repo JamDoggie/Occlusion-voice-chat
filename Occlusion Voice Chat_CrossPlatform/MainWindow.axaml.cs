@@ -24,7 +24,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public static MainWindow mainWindow;
 
         #region Controls
-
         public TextBox NameTextbox;
         public TextBox IpTextbox;
         public TextBox PortTextbox;

@@ -7,8 +7,8 @@
         MinWidth="450" MaxWidth="450" MinHeight="150" MaxHeight="150"
         x:Class="OcclusionAutoUpdater.Views.MainWindow"
         Icon="/Assets/Occlusion_icon.ico"
-        Title="Occlusion Auto Updater" TransparencyLevelHint="AcrylicBlur"
-        Background="#B33f3f4a" ExtendClientAreaToDecorationsHint="True">
+        Title="Occlusion Auto Updater"
+        Background="#3f3f4a" FontFamily="Arial">
 
   <Window.Resources>
     <PageSlide x:Key="PageSlider" Duration="0:0:0.5" Orientation="Horizontal">
@@ -27,7 +27,7 @@
 
   <Grid>
     <Grid Name="MainPage">
-      <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="0 50 0 0">
+      <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="0 25 0 0">
         <TextBlock HorizontalAlignment="Center" FontWeight="SemiBold" FontSize="21">There is an update for Occlusion available.</TextBlock>
         <TextBlock HorizontalAlignment="Center" FontSize="13" TextWrapping="Wrap" TextAlignment="Center" Margin="20 10 20 0">Would you like to download it now? You will be required to use the new version if you wish to connect to up to date servers.</TextBlock>
       </StackPanel>
@@ -45,7 +45,6 @@
           <ProgressBar Name="DownloadBar" Minimum="0" Maximum="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
           <TextBlock Name="ProgressText" Margin="10 0 0 0" VerticalAlignment="Center">0%</TextBlock>
         </Grid>
-        
       </StackPanel>
     </Grid>
   </Grid>

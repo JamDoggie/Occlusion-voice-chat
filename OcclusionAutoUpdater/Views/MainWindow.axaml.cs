@@ -11,6 +11,7 @@ using System.IO.Compression;
 using System.Net;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using ICSharpCode.SharpZipLib.Tar;
 
 namespace OcclusionAutoUpdater.Views
@@ -62,11 +63,23 @@ namespace OcclusionAutoUpdater.Views
             {
                 using (WebClient wc = new WebClient())
                 {
-                    var installerPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\occlusion-release-installer-update.tmp.exe";
+                    var exeAssembly = Assembly.GetExecutingAssembly();
+                    var entryAssembly = Assembly.GetEntryAssembly();
+                    
+                    string localPath = AppContext.BaseDirectory;
+
+
+                    var installerPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "/occlusion-release-installer-update.tmp.exe";
 
                     if (App.GetOperatingSystem() == OperatingSystem.Linux)
                     {
-                        installerPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\occlusion-binaries.tar.gz.tmp";
+                        // If localPath ends with a /, remove it.
+                        if (localPath.EndsWith("/"))
+                        {
+                            localPath = localPath.Substring(0, localPath.Length - 1);
+                        }
+                        
+                        installerPath = $"{localPath}/occlusion-binaries.tar.gz.tmp";
                     }
                     
                     wc.DownloadFileAsync(new Uri(App.DownloadLink), installerPath);
@@ -82,23 +95,24 @@ namespace OcclusionAutoUpdater.Views
                         });
                     };
 
+                    // Close Occlusion
+                    Process[] runningProcesses = Process.GetProcesses();
+                    foreach (Process process in runningProcesses)
+                    {
+                        if (process.ProcessName == "Occlusion Voice Chat_CrossPlatform")
+                        {
+                            process.Kill();
+                        }
+                    }
+                    
                     wc.DownloadFileCompleted += (sender, e) =>
                     {
                         OperatingSystem? os = App.GetOperatingSystem();
 
                         // Once the installer is run, we can exit both the auto updater and occlusion (which should be the assembly that ran us in the first place)
-                        var exeAssembly = Assembly.GetEntryAssembly();
-                        var entryAssembly = Assembly.GetExecutingAssembly();
+                        
 
-                        // Close Occlusion
-                        Process[] runningProcesses = Process.GetProcesses();
-                        foreach (Process process in runningProcesses)
-                        {
-                            if (process.ProcessName == "Occlusion Voice Chat_CrossPlatform")
-                            {
-                                process.Kill();
-                            }
-                        }
+                        
                         
                         if (os != null)
                         {
@@ -123,36 +137,72 @@ namespace OcclusionAutoUpdater.Views
                                             {
                                                 using (TarArchive tar = TarArchive.CreateInputTarArchive(gz, TarBuffer.DefaultBlockFactor, Encoding.Default))
                                                 {
-                                                    tar.ExtractContents($"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}");
+                                                    
+                                                    tar.ExtractContents(localPath);
 
                                                     string[] files = Directory.GetFiles(
-                                                        $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/occlusionlinuxrelease/");
+                                                        $"{localPath}/occlusionlinuxrelease/");
 
                                                     string[] directories = Directory.GetDirectories(
-                                                        $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/occlusionlinuxrelease/");
+                                                        $"{localPath}/occlusionlinuxrelease/");
                                                     
                                                     // Get the path to the currently executing executable
-                                                    string exePath = Assembly.GetExecutingAssembly().Location;
+                                                    string exePath = $"{localPath}/{exeAssembly.GetName().Name}";
                                                     
                                                     // Rename the auto updater so that it can essentially overwrite itself.
-                                                    File.Move(exePath, exePath + ".bak");
+                                                    
+                                                    MoveFileAndReplace(exePath, exePath + ".bak");
+                                                    
+                                                    if (File.Exists(exePath + ".dll"))
+                                                        MoveFileAndReplace(exePath + ".dll", exePath + ".dll.bak");
                                                     
                                                     foreach (string file in files)
                                                     {
                                                         FileInfo fi = new(file);
-                                                        fi.MoveTo(Path.GetFullPath("/" + fi.Name));
+
+                                                        MoveFileAndReplace(fi, $"{localPath}/{fi.Name}");
                                                     }
                                                     
                                                     foreach (string dir in directories)
                                                     {
                                                         DirectoryInfo di = new(dir);
-                                                        di.MoveTo(Path.GetFullPath("/" + di.Name));
+
+                                                        MoveDirAndReplace(di, $"{localPath}/{di.Name}/");
                                                     }
+
+                                                    
+                                                    // Try catch to catch IO exceptions.
+                                                    try
+                                                    {
+                                                        // Chmod the executable so that it can be executed.
+                                                        Process chmod = new();
+                                                        chmod.StartInfo.FileName = "chmod";
+                                                        chmod.StartInfo.Arguments = "+x \"Occlusion Voice Chat_CrossPlatform\"";
+
+                                                        chmod.Start();
+                                                        chmod.WaitForExit();
+
+                                                        // Execute the executable.
+                                                        Process exe = new();
+                                                        exe.StartInfo.FileName = $"Occlusion Voice Chat_CrossPlatform";
+                                                    
+                                                        // Block this thread until the process has started.
+                                                        exe.Start();
+                                                    }
+                                                    catch (IOException)
+                                                    {
+                                                        // Do nothing... for now. In the future, we need to show a page to the user 
+                                                        // that says that the update failed.
+                                                    }
+                                                    
+                                                    
+                                                    
                                                 }
                                             }
                                         }
                                         break;
                                     }
+                                
                                 case OperatingSystem.Mac:
                                     {
                                         
@@ -173,12 +223,43 @@ namespace OcclusionAutoUpdater.Views
         }
 
         
+        
         private void RemindButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             if (Avalonia.Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
             {
                 lifetime.Shutdown();
             }
+        }
+        
+        private void MoveFileAndReplace(FileInfo source, string destination)
+        {
+            if (File.Exists(destination))
+            {
+                File.Delete(destination);
+            }
+
+            source.MoveTo(destination);
+        }
+        
+        private void MoveFileAndReplace(string source, string destination)
+        {
+            if (File.Exists(destination))
+            {
+                File.Delete(destination);
+            }
+
+            File.Move(source, destination);
+        }
+        
+        private void MoveDirAndReplace(DirectoryInfo source, string destination)
+        {
+            if (Directory.Exists(destination))
+            {
+                Directory.Delete(destination, true);
+            }
+
+            source.MoveTo(destination);
         }
 
         private void InitializeComponent()

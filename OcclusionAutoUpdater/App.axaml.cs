@@ -92,7 +92,6 @@ namespace OcclusionAutoUpdater
                                     }
                                     break;
                                 case OperatingSystem.Linux:
-                                    // If statement to check if the asset ContentType is tar.gz
                                     if (asset.ContentType == "application/gzip" && asset.Name.StartsWith("occlusion-linux-x64-binaries"))
                                     {
                                         DownloadLink = asset.BrowserDownloadUrl;
@@ -101,6 +100,8 @@ namespace OcclusionAutoUpdater
                                     break;
                             }
                         }
+
+                        return true;
                     }
                 }
             }
