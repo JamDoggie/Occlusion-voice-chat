@@ -16,6 +16,7 @@ using Occlusion_voice_chat.Networking;
 using Occlusion_voice_chat.util.json_structs;
 using Occlusion_Voice_Chat_CrossPlatform.avalonia.view_models;
 using OcclusionShared.NetworkingShared.Packets;
+using Avalonia.Diagnostics;
 
 namespace Occlusion_Voice_Chat_CrossPlatform
 {
@@ -99,6 +100,10 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             mainWindow = this;
 
             InitializeComponent();
+
+#if DEBUG
+            this.AttachDevTools();
+#endif
 
 #if WINDOWS
             uint attr = 19;

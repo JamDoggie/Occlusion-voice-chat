@@ -26,7 +26,7 @@
         <TextBlock Foreground="#BDC3C7" HorizontalAlignment="Center" Margin="0 45 0 0">User Volume</TextBlock>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
           <Slider Width="200" Name="VolumeSlider" Minimum="0" Maximum="2" Value="1" Margin="0 5 0 0"></Slider>
-          <TextBlock x:Name="VolumeText" VerticalAlignment="Center" Width="30" Foreground="#BDC3C7">100%</TextBlock>
+          <TextBlock x:Name="VolumeText" VerticalAlignment="Center" Foreground="#BDC3C7">100%</TextBlock>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal" ClipToBounds="False" Margin="0 60 0 0">

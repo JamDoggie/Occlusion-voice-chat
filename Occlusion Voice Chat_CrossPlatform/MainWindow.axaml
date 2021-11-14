@@ -9,7 +9,7 @@
         x:Class="Occlusion_Voice_Chat_CrossPlatform.MainWindow"
         Title="Occlusion Voice Chat"
         Background="#32323b"
-        Height="720" Width="1280" Icon="/resources/Occlusion_icon.ico" FontFamily="Arial">
+        Height="720" Width="1280" Icon="/resources/Occlusion_icon.ico" FontFamily="Verdana">
   <Window.Styles>
     <StyleInclude Source="avares://Occlusion Voice Chat_CrossPlatform/DefaultTheme.xaml"/>
     <Style Selector="Button.opacityfadebutton">
@@ -18,14 +18,6 @@
     
     <Style Selector="Button.opacityfadebutton:pointerover">
       <Setter Property="Opacity" Value="1.0"></Setter>
-    </Style>
-
-    <Style Selector="TextBox /template/ Border">
-      <Setter Property="CornerRadius" Value="5" />
-    </Style>
-
-    <Style Selector="Button /template/ ContentPresenter">
-      <Setter Property="CornerRadius" Value="5" />
     </Style>
   </Window.Styles>
   <Grid>

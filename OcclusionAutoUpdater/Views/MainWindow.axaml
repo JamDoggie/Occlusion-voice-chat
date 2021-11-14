@@ -8,7 +8,7 @@
         x:Class="OcclusionAutoUpdater.Views.MainWindow"
         Icon="/Assets/Occlusion_icon.ico"
         Title="Occlusion Auto Updater"
-        Background="#3f3f4a" FontFamily="Arial">
+        Background="#3f3f4a" FontFamily="Verdana">
 
   <Window.Resources>
     <PageSlide x:Key="PageSlider" Duration="0:0:0.5" Orientation="Horizontal">
