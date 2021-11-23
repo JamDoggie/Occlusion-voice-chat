@@ -43,6 +43,7 @@
     <PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
     <PackageReference Include="SdlSharp" Version="0.9.3-alpha" />
     <PackageReference Include="Dotnet.Bundle" Version="*" />
+    <PackageReference Include="X11" Version="1.0.6" />
    </ItemGroup>
   <ItemGroup>
 	<AvaloniaResource Include="resources\**" />

@@ -227,6 +227,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
 #endif
 
+
 #if !DEBUG // Occlusion was constantly opening the auto updater while testing and pissing me off, so I disabled in in debug mode since it's irrelevant here anyway.
             // Auto updater
             
@@ -249,8 +250,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 autoUpdater.Start();
             }
 #endif
-            
-
         }
 
         public override void OnFrameworkInitializationCompleted()
