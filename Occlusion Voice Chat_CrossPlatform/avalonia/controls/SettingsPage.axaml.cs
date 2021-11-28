@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Timers;
+using GlobalLowLevelHooks;
 using static GlobalLowLevelHooks.KeyboardHook;
 
 namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
@@ -132,23 +133,23 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             // Load hotkeys
             PushTalkBind.Hotkey.Clear();
             foreach (string s in App.Options.Obj.PushTalkBind)
-                PushTalkBind.Hotkey.Add(Enum.Parse<VKeys>(s));
+                PushTalkBind.Hotkey.Add(new UniversalKey(s));
 
             PushMuteBind.Hotkey.Clear();
             foreach (string s in App.Options.Obj.PushMuteBind)
-                PushMuteBind.Hotkey.Add(Enum.Parse<VKeys>(s));
+                PushMuteBind.Hotkey.Add(new UniversalKey(s));
 
             PushDeafenBind.Hotkey.Clear();
             foreach (string s in App.Options.Obj.PushDeafenBind)
-                PushDeafenBind.Hotkey.Add(Enum.Parse<VKeys>(s));
+                PushDeafenBind.Hotkey.Add(new UniversalKey(s));
 
             ToggleMuteBind.Hotkey.Clear();
             foreach (string s in App.Options.Obj.ToggleMuteBind)
-                ToggleMuteBind.Hotkey.Add(Enum.Parse<VKeys>(s));
+                ToggleMuteBind.Hotkey.Add(new UniversalKey(s));
 
             ToggleDeafenBind.Hotkey.Clear();
             foreach (string s in App.Options.Obj.ToggleDeafenBind)
-                ToggleDeafenBind.Hotkey.Add(Enum.Parse<VKeys>(s));
+                ToggleDeafenBind.Hotkey.Add(new UniversalKey(s));
 
             PushTalkBind.UpdateContent();
             PushMuteBind.UpdateContent();
@@ -164,46 +165,46 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             ToggleDeafenBind.HotkeyChanged += ToggleDeafenBind_HotkeyChanged; ;
         }
 
-        private void ToggleDeafenBind_HotkeyChanged(List<VKeys> newHotkey)
+        private void ToggleDeafenBind_HotkeyChanged(List<UniversalKey> newHotkey)
         {
             App.Options.Obj.ToggleDeafenBind.Clear();
-            foreach (VKeys key in ToggleDeafenBind.Hotkey)
+            foreach (UniversalKey key in ToggleDeafenBind.Hotkey)
                 App.Options.Obj.ToggleDeafenBind.Add(key.ToString());
 
             App.Options.Update();
         }
 
-        private void ToggleMuteBind_HotkeyChanged(List<VKeys> newHotkey)
+        private void ToggleMuteBind_HotkeyChanged(List<UniversalKey> newHotkey)
         {
             App.Options.Obj.ToggleMuteBind.Clear();
-            foreach (VKeys key in ToggleMuteBind.Hotkey)
+            foreach (UniversalKey key in ToggleMuteBind.Hotkey)
                 App.Options.Obj.ToggleMuteBind.Add(key.ToString());
 
             App.Options.Update();
         }
 
-        private void PushDeafenBind_HotkeyChanged(List<VKeys> newHotkey)
+        private void PushDeafenBind_HotkeyChanged(List<UniversalKey> newHotkey)
         {
             App.Options.Obj.PushDeafenBind.Clear();
-            foreach (VKeys key in PushDeafenBind.Hotkey)
+            foreach (UniversalKey key in PushDeafenBind.Hotkey)
                 App.Options.Obj.PushDeafenBind.Add(key.ToString());
 
             App.Options.Update();
         }
 
-        private void PushMuteBind_HotkeyChanged(List<VKeys> newHotkey)
+        private void PushMuteBind_HotkeyChanged(List<UniversalKey> newHotkey)
         {
             App.Options.Obj.PushMuteBind.Clear();
-            foreach (VKeys key in PushMuteBind.Hotkey)
+            foreach (UniversalKey key in PushMuteBind.Hotkey)
                 App.Options.Obj.PushMuteBind.Add(key.ToString());
 
             App.Options.Update();
         }
 
-        private void PushTalkBind_HotkeyChanged(List<VKeys> newHotkey)
+        private void PushTalkBind_HotkeyChanged(List<UniversalKey> newHotkey)
         {
             App.Options.Obj.PushTalkBind.Clear();
-            foreach (VKeys key in PushTalkBind.Hotkey)
+            foreach (UniversalKey key in PushTalkBind.Hotkey)
                 App.Options.Obj.PushTalkBind.Add(key.ToString());
 
             App.Options.Update();

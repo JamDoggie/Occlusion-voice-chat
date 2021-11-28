@@ -2,7 +2,7 @@
   <PropertyGroup>
     <RuntimeIdentifiers>osx-x64</RuntimeIdentifiers>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <PublishTrimmed>true</PublishTrimmed>
     <Platforms>AnyCPU;x64</Platforms>

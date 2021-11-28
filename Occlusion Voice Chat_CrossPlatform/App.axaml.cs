@@ -31,6 +31,7 @@ using Occlusion_Voice_Chat_CrossPlatform.HRTF;
 using Occlusion_Voice_Chat_CrossPlatform.audio;
 using Avalonia.Controls;
 using System.Threading.Tasks;
+using GlobalLowLevelHooks;
 
 #if WINDOWS
 using GlobalLowLevelHooks;
@@ -125,6 +126,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             }
         }
 
+        public static KeybindManager KeybindManager { get; private set; } = new KeybindManager();
+        
         #region WindowsOnly
 #if WINDOWS
         /// <summary>
@@ -140,25 +143,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public static extern int DwmSetWindowAttribute(IntPtr hwnd, uint attr, ref int attrValue, int attrSize);
 #endif
         #endregion
-
-#if WINDOWS
-        public static KeyboardHook keyboardHook = new KeyboardHook();
-
-        public static MouseHook mouseHook = new MouseHook();
-
-        public delegate void HotkeyKeyUpEventDelegate(VKeys key);
-        public static event HotkeyKeyUpEventDelegate HotkeyKeyUpEvent;
-
-        public delegate void HotkeyKeyDownEventDelegate(VKeys key);
-        public static event HotkeyKeyUpEventDelegate HotkeyKeyDownEvent;
-
-        public static List<VKeys> CurrentKeysPressed = new List<VKeys>();
-
-        public static void ClearHotKeys()
-        {
-            CurrentKeysPressed.Clear();
-        }
-#endif
+        
 
         public static HRTFTestSoundEffect HRTFPreview;
 
@@ -191,43 +176,10 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             HRTFPreview.Play();
 
             HRTFPreview.Volume = 1;
-#if WINDOWS
-            if (!Design.IsDesignMode) // Odd behavior occurs when trying to initialize hotkey stuff from design mode. I should really switch to Raw Input at some point, instead of this win32 jank.
-            {
-                keyboardHook.KeyDown += KeyboardHook_KeyDown;
-                keyboardHook.KeyUp += KeyboardHook_KeyUp;
-                mouseHook.KeyDown += KeyboardHook_KeyDown;
-                mouseHook.KeyUp += KeyboardHook_KeyUp;
 
-
-
-                void KeyboardHook_KeyDown(VKeys key)
-                {
-                    if (!CurrentKeysPressed.Contains(key))
-                    {
-                        CurrentKeysPressed.Add(key);
-                        HotkeyKeyDownEvent.Invoke(key);
-                    }
-                }
-
-                void KeyboardHook_KeyUp(VKeys key)
-                {
-                    CurrentKeysPressed.Remove(key);
-                    HotkeyKeyUpEvent.Invoke(key);
-                }
-
-                keyboardHook.Install();
-                mouseHook.Install();
-
-                HotkeyKeyUpEvent += (k) => { };
-                HotkeyKeyDownEvent += (k) => { };
-            }
-
-
-
-#endif
-
-
+            // Key binds
+            KeybindManager.EnableKeybinds();
+            
 #if !DEBUG // Occlusion was constantly opening the auto updater while testing and pissing me off, so I disabled in in debug mode since it's irrelevant here anyway.
             // Auto updater
             
@@ -262,6 +214,19 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             base.OnFrameworkInitializationCompleted();
         }
 
+        // Method that blocks current thread for a certain amount of time using a pre made stopwatch for less GC overhead.
+        private static Stopwatch blockStopWatch = new Stopwatch();
+        public static void BlockFor(int milliseconds)
+        {
+            
+            blockStopWatch.Start();
+            while (blockStopWatch.ElapsedMilliseconds < milliseconds)
+            {
+                // Do nothing, just block the thread.
+            }
+            blockStopWatch.Stop();
+        }
+        
         private void Client_PacketRecievedEvent(NetPacketReader message, IPacket packet, Client client)
         {
             if (packet is ServerBitrateChangePacket bitratePacket)
