@@ -161,7 +161,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             SettingsActive = false;
 
-            Thread x11Thread = new Thread(() => {
+            /*Thread x11Thread = new Thread(() => {
                 while (true)
                 {
                     if (MainWindow.mainWindow != null)
@@ -183,7 +183,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
                 }
             });
-            x11Thread.Start();
+            x11Thread.Start();*/
         }
 
         private void CodeTextBoxOnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
