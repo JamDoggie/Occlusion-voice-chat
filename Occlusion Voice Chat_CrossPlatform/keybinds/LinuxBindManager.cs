@@ -56,6 +56,7 @@ namespace GlobalLowLevelHooks
                         byte[] keymap = new byte[32];
                         Occlusion_Voice_Chat_CrossPlatform.platform.Xlib.XQueryKeymap(x11Display, keymap);
 
+
                         foreach(Occlusion_Voice_Chat_CrossPlatform.platform.KeySym key in Enum.GetValues(typeof(Occlusion_Voice_Chat_CrossPlatform.platform.KeySym)))
                         {
                             KeyCode code = Xlib.XKeysymToKeycode(x11Display, (KeySym) key);
@@ -85,10 +86,9 @@ namespace GlobalLowLevelHooks
                         {
                             if ((maskReturn & (int)mask) != 0)
                             {
-                                Console.WriteLine(mask);
+                                CurrentPressedKeys.Add(new UniversalKey(mask.ToString()));
                             }
                         }
-                        Console.WriteLine(maskReturn);
                         
 
                         // Check if any keys have been pressed, and invoke an event if so.

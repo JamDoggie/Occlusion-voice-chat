@@ -7,7 +7,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.platform
 {
     public static class Xlib
     {
-        public const string X11Import = "libX11";
+        public const string X11Import = "libX11.so.6";
         
         [DllImport(X11Import)]
         public static extern IntPtr XOpenDisplay(string display_name);
