@@ -11,11 +11,15 @@
         x:Class="Occlusion_Voice_Chat_CrossPlatform.VoiceChatControl" FontFamily="Verdana">
   <UserControl.Styles>
     <Styles>
-      <Style Selector="TextBox /template/ Border">
+      <Style Selector="TextBox">
         <Setter Property="CornerRadius" Value="5" />
       </Style>
 
-      <Style Selector="Button /template/ ContentPresenter">
+      <Style Selector="Button">
+        <Setter Property="CornerRadius" Value="5" />
+      </Style>
+
+      <Style Selector="Border">
         <Setter Property="CornerRadius" Value="5" />
       </Style>
     </Styles>
@@ -121,7 +125,7 @@
         </Button>
 
 
-        <ProgressBar x:Name="MicDecibalMeter" Margin="5 0 0 0" MinWidth="8" MinHeight="40" Width="4" Height="40" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
+        <ProgressBar x:Name="MicDecibalMeter" Margin="5 0 0 0" CornerRadius="5" MinWidth="8" MinHeight="40" Width="4" Height="40" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
 
         <Button Name="DeafenButton" BorderBrush="Transparent" Margin="10 0 0 0" Width="40" Height="40" Background="Transparent" Cursor="Hand">
           <Button.Styles>
@@ -172,7 +176,7 @@
 
         </Button>
 
-        <ProgressBar x:Name="SpeakerDecibalMeter" Margin="8 0 0 0" MinWidth="8" MinHeight="40" Width="4" Height="40" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
+        <ProgressBar x:Name="SpeakerDecibalMeter" Margin="8 0 0 0" CornerRadius="5" MinWidth="8" MinHeight="40" Width="4" Height="40" Orientation="Vertical" Minimum="0" Maximum="3000" Value="1000" Foreground="#7f2edb" VerticalAlignment="Center" Background="#3f3f4a" BorderBrush="#454552"></ProgressBar>
       </StackPanel>
 
       <StackPanel HorizontalAlignment="Right" VerticalAlignment="Stretch" Orientation="Horizontal" Margin="0 0 28 0">

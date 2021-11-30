@@ -33,11 +33,7 @@
     </Grid.RenderTransform>
     
     <Grid.Styles>
-      <Style Selector="ComboBox /template/ Border">
-        <Setter Property="CornerRadius" Value="7" />
-      </Style>
-      
-      <Style Selector="ComboBox /template/ ContentPresenter">
+      <Style Selector="ComboBox">
         <Setter Property="CornerRadius" Value="7" />
       </Style>
 
@@ -53,7 +49,7 @@
         <Setter Property="BorderBrush" Value="#3f3f4a" />
       </Style>
 
-      <Style Selector="ProgressBar /template/ Border">
+      <Style Selector="ProgressBar">
         <Setter Property="CornerRadius" Value="6" />
       </Style>
       

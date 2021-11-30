@@ -9,8 +9,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 {
     class Program
     {
-
-
         // Initialization code. Don't use any Avalonia, third-party APIs or any
         // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
         // yet and stuff might break.
@@ -23,6 +21,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             currentDomain = AppDomain.CurrentDomain;
             // Handler for unhandled exceptions.
             currentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
 
             var entryAssembly = Assembly.GetEntryAssembly();
             if (entryAssembly != null)

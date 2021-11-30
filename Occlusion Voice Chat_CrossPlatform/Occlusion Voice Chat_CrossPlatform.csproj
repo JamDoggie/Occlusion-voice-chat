@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <RuntimeIdentifiers>osx-x64</RuntimeIdentifiers>
+    <RuntimeIdentifiers>osx-x64;win-x64</RuntimeIdentifiers>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -719,6 +719,7 @@
   
   <ItemGroup>
     <Folder Include="keybinds\" />
+    <Folder Include="plugin\api" />
     <Folder Include="winlibs\" />
   </ItemGroup>
   

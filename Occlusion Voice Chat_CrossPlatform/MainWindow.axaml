@@ -104,23 +104,12 @@
         <StackPanel Orientation="Vertical">
           <TextBlock HorizontalAlignment="Left" Margin="35 10 0 0" Foreground="#BDC3C7">Your code</TextBlock>
           <StackPanel Width="200" Orientation="Horizontal" Margin="0 0 0 0" HorizontalAlignment="Center">
-            <TextBox Width="100" Height="30" Name="CodeTextBox" Background="#3f3f4a" Watermark="Code..." HorizontalContentAlignment="Left" BorderBrush="#31313b" BorderThickness="1" Foreground="#BDC3C7" Padding="10 5 5 5" FontSize="12" VerticalContentAlignment="Center">
-              <TextBox.Styles>
-                <Style Selector="TextBox /template/ Border">
-                  <Setter Property="CornerRadius" Value="5 0 0 5" />
-                </Style>
-              </TextBox.Styles>
+            <TextBox Width="100" Height="30" CornerRadius="5 0 0 5" Name="CodeTextBox" Background="#3f3f4a" Watermark="Code..." HorizontalContentAlignment="Left" BorderBrush="#31313b" BorderThickness="1" Foreground="#BDC3C7" Padding="10 5 5 5" FontSize="12" VerticalContentAlignment="Center">
             </TextBox>
-            <Button x:Name="ConnectButton" Content="Connect" Cursor="Hand" Width="100" Height="30" HorizontalAlignment="Right" Background="#454552" BorderBrush="#31313b" Foreground="#BDC3C7">
-              <Button.Styles>
-                <Style Selector="Button /template/ ContentPresenter">
-                  <Setter Property="CornerRadius" Value="0 5 5 0" />
-                </Style>
-              </Button.Styles>
+            <Button x:Name="ConnectButton" CornerRadius="0 5 5 0" Content="Connect" Cursor="Hand" Width="100" Height="30" HorizontalAlignment="Right" Background="#454552" BorderBrush="#31313b" Foreground="#BDC3C7">
             </Button>
           </StackPanel>
         </StackPanel>
-
 
         <StackPanel HorizontalAlignment="Center" Margin="0 15 0 0" Orientation="Horizontal">
           <TextBlock VerticalAlignment="Center" Name="ConnectionStatusText"></TextBlock>

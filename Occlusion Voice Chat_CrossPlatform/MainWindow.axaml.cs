@@ -19,12 +19,6 @@ using OcclusionShared.NetworkingShared.Packets;
 using Avalonia.Diagnostics;
 using System.Threading;
 using System.Diagnostics;
-using Occlusion_Voice_Chat_CrossPlatform.platform;
-using Occlusion_Voice_Chat_CrossPlatform.util;
-using SdlSharp;
-using SdlSharp.Input;
-using Button = Avalonia.Controls.Button;
-using Window = Avalonia.Controls.Window;
 
 namespace Occlusion_Voice_Chat_CrossPlatform
 {
@@ -166,6 +160,30 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             }
 
             SettingsActive = false;
+
+            /*Thread x11Thread = new Thread(() => {
+                while (true)
+                {
+                    if (MainWindow.mainWindow != null)
+                    {
+                        var platformImpl = MainWindow.mainWindow.PlatformImpl;
+
+                        IntPtr handle = platformImpl.Handle.Handle;
+
+                        X11.XKeyEvent keyEvent = new X11.XKeyEvent();
+
+                        IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf(keyEvent));
+
+                        Marshal.StructureToPtr(keyEvent, ptr, false);
+
+                        X11.Xlib.XNextEvent(handle, ptr);
+
+                        Debug.WriteLine(keyEvent.keycode);
+                    }
+
+                }
+            });
+            x11Thread.Start();*/
         }
 
         private void CodeTextBoxOnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)
@@ -400,9 +418,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         }
     }
 
-    
-        
-    
     public enum DWMWINDOWATTRIBUTE : uint
     {
         NCRenderingEnabled = 1,
