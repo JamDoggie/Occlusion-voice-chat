@@ -719,7 +719,6 @@
   
   <ItemGroup>
     <Folder Include="keybinds\" />
-    <Folder Include="plugin\api" />
     <Folder Include="winlibs\" />
   </ItemGroup>
   
