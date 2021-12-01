@@ -78,7 +78,7 @@ jobs:
 
       - name: Copy published .app to a folder.
         run:
-          cp -R "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/bin/Release/net5.0/osx-x64/publish/Occlusion Voice Chat.app" "${{ github.workspace }}/occlusionmacbuild/"
+          cp -R "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/bin/Release/net6.0/osx-x64/publish/Occlusion Voice Chat.app" "${{ github.workspace }}/occlusionmacbuild/"
 
       - name: Copy Libraries.
         run:
