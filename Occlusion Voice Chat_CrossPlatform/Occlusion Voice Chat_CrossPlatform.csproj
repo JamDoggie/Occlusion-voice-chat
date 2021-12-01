@@ -49,6 +49,12 @@
 	<AvaloniaResource Include="resources\**" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaXaml Remove="plugin\api\**" />
+    <Compile Remove="plugin\api\**" />
+    <EmbeddedResource Remove="plugin\api\**" />
+    <None Remove="plugin\api\**" />
+  </ItemGroup>
+  <ItemGroup>
     <AvaloniaResource Remove="resources\occlusion_deafen.opus" />
     <AvaloniaResource Remove="resources\occlusion_drum_pattern.opus" />
     <AvaloniaResource Remove="resources\occlusion_mute.opus" />
@@ -64,10 +70,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SDL2.a">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="SDL2.so">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -719,7 +725,6 @@
   
   <ItemGroup>
     <Folder Include="keybinds\" />
-    <Folder Include="plugin\api" />
     <Folder Include="winlibs\" />
   </ItemGroup>
   
