@@ -32,6 +32,8 @@ using Occlusion_Voice_Chat_CrossPlatform.audio;
 using Avalonia.Controls;
 using System.Threading.Tasks;
 using GlobalLowLevelHooks;
+using Occlusion_voice_chat_CrossPlatform.plugin;
+using Occlusion_voice_chat_CrossPlatform.plugin.api;
 
 #if WINDOWS
 using GlobalLowLevelHooks;
@@ -202,6 +204,26 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 autoUpdater.Start();
             }
 #endif
+            
+            // Load plugins
+            try
+            {
+                if (!Directory.Exists("plugins/"))
+                {
+                    Directory.CreateDirectory("plugins/");
+                }
+                
+                PluginManager.LoadPlugins("plugins/");
+            }
+            catch (IOException e)
+            {
+                Console.WriteLine("ERROR LOADING PLUGINS: Something went wrong. A log file has been created.");
+                Console.WriteLine(e);
+
+                string logFile = $"{e.Message}\n\nSTACK TRACE:\n{e.StackTrace}";
+                File.WriteAllText($"plugincrashlog-{string.Format("{0:yyyy-MM-dd_HH-mm-ss-fff}", DateTime.Now)}.txt", logFile);
+            }
+           
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -388,6 +410,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 user.MixMicIntoSpanAndCutQueue(ref stream);
             }
 
+            // Allow plugins to do some audio mixing at this stage.
+            foreach(AudioAPI.ProcessAudioOutputDelegate del in AudioAPI.ProcessAudioOutputCallbacks)
+            {
+                del.Invoke(stream);
+            }
+            
             // Change output volume based on global volume slider
             short[] shorts = AudioMath.BytesToShorts(stream.ToArray());
             for (int i = 0; i < shorts.Length; i++)
@@ -401,7 +429,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 stream[i] = newBytes[i];
             }
 
-            // Microphone volume bar
+            // Speaker volume bar
             AudioChunk chunk = new AudioChunk(stream.ToArray(), samplingRate);
             Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -437,6 +465,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 }
             }
 
+            // Allow plugins to mix audio here
+            foreach(AudioAPI.ProcessAudioOutputDelegate del in AudioAPI.ProcessPostAudioOutputCallbacks)
+            {
+                del.Invoke(stream);
+            }
+            
             // We can change audio input here as well because this is on the sdl thread.
 
             if (NewInputDevice != null && RecordingDevice != null)
@@ -463,11 +497,16 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         void micCallback(Span<byte> stream, nint userdata)
         {
-
-            if (RecordingDevice != null && Client.IsConnected())
+            if (Client.IsConnected())
             {
                 if (stream.Length > 0)
                 {
+                    // Allow plugins to mix in microphone data here
+                    foreach (AudioAPI.ProcessMicrophoneInputDelegate del in AudioAPI.ProcessMicrophoneInputCallbacks)
+                    {
+                        del.Invoke(stream);
+                    }
+                    
                     // Microphone volume bar
                     AudioChunk rawChunk = new AudioChunk(stream.ToArray(), samplingRate);
 

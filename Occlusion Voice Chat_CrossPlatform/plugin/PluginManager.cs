@@ -56,9 +56,32 @@ namespace Occlusion_voice_chat_CrossPlatform.plugin
 
     }
 
-    public abstract class Plugin
+    /// <summary>
+    /// This is the base class for your plugin.
+    /// This is where you set up all your callbacks, as well as metadata for occlusion to know about your plugin.
+    /// </summary>
+    public interface Plugin
     {
-        public abstract void Load();
-        public abstract void Unload();
+        string PluginName { get; set; }
+        
+        string PluginVersion { get; set; }
+        
+        /// <summary>
+        /// Minimum version of Occlusion your plugin supports
+        /// </summary>
+        int MinVersion { get; }
+        
+        // Maximum version of Occlusion your plugin supports (-1 if there is no max)
+        int MaxVersion { get; }
+        
+        /// <summary>
+        /// This is where you set up all your callbacks and run your initialization logic.
+        /// </summary>
+        void Load();
+        
+        /// <summary>
+        /// This is where you dispose of anything you need to. Callbacks are cleared automatically.
+        /// </summary>
+        void Unload();
     }
 }

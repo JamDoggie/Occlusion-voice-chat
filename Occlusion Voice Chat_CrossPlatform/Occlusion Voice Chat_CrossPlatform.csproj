@@ -12,11 +12,11 @@
     <CFBundleName>Occlusion Voice Chat_CrossPlatform</CFBundleName> <!-- Also defines .app file name -->
     <CFBundleDisplayName>Occlusion Voice Chat</CFBundleDisplayName>
     <CFBundleIdentifier>com.occlusion</CFBundleIdentifier>
-    <CFBundleVersion>5</CFBundleVersion>
+    <CFBundleVersion>4</CFBundleVersion>
     <CFBundlePackageType>APPL</CFBundlePackageType>
     <CFBundleIconFile>Occlusion Voice Chat_CrossPlatform.icns</CFBundleIconFile>
     <CFBundleExecutable>Occlusion Voice Chat_CrossPlatform</CFBundleExecutable>
-	  <CFBundleShortVersionString>5.0.0</CFBundleShortVersionString>
+	  <CFBundleShortVersionString>4.0.0</CFBundleShortVersionString>
     <NSPrincipalClass>NSApplication</NSPrincipalClass>
     <NSHighResolutionCapable>true</NSHighResolutionCapable>
   </PropertyGroup>
@@ -49,12 +49,6 @@
 	<AvaloniaResource Include="resources\**" />
   </ItemGroup>
   <ItemGroup>
-    <AvaloniaXaml Remove="plugin\api\**" />
-    <Compile Remove="plugin\api\**" />
-    <EmbeddedResource Remove="plugin\api\**" />
-    <None Remove="plugin\api\**" />
-  </ItemGroup>
-  <ItemGroup>
     <AvaloniaResource Remove="resources\occlusion_deafen.opus" />
     <AvaloniaResource Remove="resources\occlusion_drum_pattern.opus" />
     <AvaloniaResource Remove="resources\occlusion_mute.opus" />
@@ -70,10 +64,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SDL2.a">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SDL2.so">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -275,7 +269,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SDL2.dll">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="..\OcclusionShared\OcclusionShared.projitems" Label="Shared" />
@@ -289,7 +283,7 @@
     <Authors>JamDoggie</Authors>
     <Company />
     <Product>Occlusion Voice Chat</Product>
-    <AssemblyVersion>5.0.*</AssemblyVersion>
+    <AssemblyVersion>4.0.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
   </PropertyGroup>
   

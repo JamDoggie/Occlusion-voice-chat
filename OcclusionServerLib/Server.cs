@@ -175,7 +175,8 @@ namespace OcclusionServerLib
                                     voicePacket.HRTFAzimuth = (float)degrees; // -180 to 180 degrees.
 
                                     Vector3 playerDiff = (otherPlayerVec - recievingPlayerVec);
-
+                                        
+                                    // Elevation (height from player)
                                     voicePacket.HRTFElevation = (float)ConvertRadiansToDegrees(Math.Asin(playerDiff.Y / playerDiff.Length()));
                                 }
                                 else
