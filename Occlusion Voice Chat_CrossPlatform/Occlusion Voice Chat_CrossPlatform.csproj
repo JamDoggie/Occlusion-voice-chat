@@ -12,11 +12,11 @@
     <CFBundleName>Occlusion Voice Chat_CrossPlatform</CFBundleName> <!-- Also defines .app file name -->
     <CFBundleDisplayName>Occlusion Voice Chat</CFBundleDisplayName>
     <CFBundleIdentifier>com.occlusion</CFBundleIdentifier>
-    <CFBundleVersion>4</CFBundleVersion>
+    <CFBundleVersion>5</CFBundleVersion>
     <CFBundlePackageType>APPL</CFBundlePackageType>
     <CFBundleIconFile>Occlusion Voice Chat_CrossPlatform.icns</CFBundleIconFile>
     <CFBundleExecutable>Occlusion Voice Chat_CrossPlatform</CFBundleExecutable>
-	  <CFBundleShortVersionString>4.0.0</CFBundleShortVersionString>
+	  <CFBundleShortVersionString>5.0.0</CFBundleShortVersionString>
     <NSPrincipalClass>NSApplication</NSPrincipalClass>
     <NSHighResolutionCapable>true</NSHighResolutionCapable>
   </PropertyGroup>
@@ -275,7 +275,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SDL2.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="..\OcclusionShared\OcclusionShared.projitems" Label="Shared" />
@@ -289,7 +289,7 @@
     <Authors>JamDoggie</Authors>
     <Company />
     <Product>Occlusion Voice Chat</Product>
-    <AssemblyVersion>4.0.*</AssemblyVersion>
+    <AssemblyVersion>5.0.*</AssemblyVersion>
     <Deterministic>false</Deterministic>
   </PropertyGroup>
   
