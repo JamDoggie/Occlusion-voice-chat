@@ -7,35 +7,35 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;SERVER;DEVMODE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <DefineConstants>TRACE;SERVER;DEVMODE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;SERVER;DEVMODE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win|AnyCPU'">
-    <DefineConstants>TRACE;SERVER;DEVMODE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|AnyCPU'">
-    <DefineConstants>TRACE;SERVER;DEVMODE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <DefineConstants>TRACE;SERVER;DEVMODE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|x86'">
-    <DefineConstants>TRACE;SERVER;DEVMODE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win|x86'">
-    <DefineConstants>TRACE;SERVER;DEVMODE</DefineConstants>
+    <DefineConstants>TRACE;SERVER</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
