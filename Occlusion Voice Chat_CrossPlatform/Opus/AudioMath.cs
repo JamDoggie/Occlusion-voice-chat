@@ -250,6 +250,9 @@ namespace Occlusion_voice_chat.Opus
 
         public static void CopyBytesToShorts(short[] shorts, byte[] bytes)
         {
+            if (shorts == null)
+                shorts = new short[bytes.Length / 2];
+
             for (int c = 0; c < shorts.Length; c++)
             {
                 shorts[c] = (short)(((int)bytes[(c * 2)]) << 0);
@@ -259,6 +262,9 @@ namespace Occlusion_voice_chat.Opus
 
         public static void CopyBytesToShorts(short[] shorts, Span<byte> bytes)
         {
+            if (shorts == null)
+                shorts = new short[bytes.Length / 2];
+
             for (int c = 0; c < shorts.Length; c++)
             {
                 shorts[c] = (short)(((int)bytes[(c * 2)]) << 0);
@@ -268,6 +274,9 @@ namespace Occlusion_voice_chat.Opus
 
         public static void CopyShortsToBytes(byte[] bytes, short[] shorts)
         {
+            if (bytes == null)
+                bytes = new byte[shorts.Length * 2];
+
             for (int c = 0; c < shorts.Length; c++)
             {
                 bytes[c * 2] = (byte)(shorts[c] & 0xFF);
@@ -277,6 +286,9 @@ namespace Occlusion_voice_chat.Opus
 
         public static void CopyShortsToBytes(Span<byte> bytes, short[] shorts)
         {
+            if (bytes == null)
+                bytes = new byte[shorts.Length * 2];
+
             for (int c = 0; c < shorts.Length; c++)
             {
                 bytes[c * 2] = (byte)(shorts[c] & 0xFF);

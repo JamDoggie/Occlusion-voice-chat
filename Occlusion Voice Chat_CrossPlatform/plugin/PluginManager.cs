@@ -15,6 +15,7 @@ namespace Occlusion_voice_chat_CrossPlatform.plugin
             string[] files = Directory.GetFiles(path, "*.dll");
             foreach (string file in files)
             {
+                Console.WriteLine($"Loading plugin {file}...");
                 LoadPlugin(file);
             }
         }
@@ -35,6 +36,8 @@ namespace Occlusion_voice_chat_CrossPlatform.plugin
                     // Create an instance of the plugin
                     Plugin plugin = (Plugin)Activator.CreateInstance(type);
                     
+                    plugin.Load();
+
                     // Add the plugin to the list
                     plugins.Add(plugin);
                 }
@@ -60,28 +63,28 @@ namespace Occlusion_voice_chat_CrossPlatform.plugin
     /// This is the base class for your plugin.
     /// This is where you set up all your callbacks, as well as metadata for occlusion to know about your plugin.
     /// </summary>
-    public interface Plugin
+    public abstract class Plugin
     {
-        string PluginName { get; set; }
+        public virtual string PluginName { get; }
         
-        string PluginVersion { get; set; }
+        public virtual string PluginVersion { get; }
         
         /// <summary>
         /// Minimum version of Occlusion your plugin supports
         /// </summary>
-        int MinVersion { get; }
+        public virtual int MinVersion { get; }
         
         // Maximum version of Occlusion your plugin supports (-1 if there is no max)
-        int MaxVersion { get; }
+        public virtual int MaxVersion { get; }
         
         /// <summary>
         /// This is where you set up all your callbacks and run your initialization logic.
         /// </summary>
-        void Load();
+        public abstract void Load();
         
         /// <summary>
         /// This is where you dispose of anything you need to. Callbacks are cleared automatically.
         /// </summary>
-        void Unload();
+        public abstract void Unload();
     }
 }

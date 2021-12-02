@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31005.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OcclusionServerLib", "OcclusionServerLib\OcclusionServerLib.csproj", "{98F04B78-1213-4786-B576-3EEBDB50EBBE}"
 EndProject
@@ -22,7 +22,7 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "OcclusionVersionControl", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OcclusionClientUnitTests", "OcclusionClientUnitTests\OcclusionClientUnitTests.csproj", "{07610040-42AE-4763-BE4E-A415545566A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WhiteNoiseExamplePlugin", "WhiteNoiseExamplePlugin\WhiteNoiseExamplePlugin.csproj", "{10051625-D80F-420F-8B5C-975E5E760D62}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoiseExamplePlugin", "WhiteNoiseExamplePlugin\NoiseExamplePlugin.csproj", "{10051625-D80F-420F-8B5C-975E5E760D62}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution

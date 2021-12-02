@@ -69,10 +69,15 @@
       </StackPanel>
 
       <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0 40 0 0" VerticalAlignment="Top" HorizontalAlignment="Center">
-        <Image Source="/resources/Occlusion_icon.png" Width="100" Height="100" ></Image>
-        <TextBlock Margin="20 0 0 0" FontSize="23" FontWeight="DemiBold" FontFamily="Corbel" VerticalAlignment="Center">
-          Welcome. To start, select a server or create one.
-        </TextBlock>
+        <Image Source="/resources/Occlusion_icon.png" Width="110" Height="110" Margin="0 0 10 0" ></Image>
+        <StackPanel Orientation="Vertical" Margin="10 0 0 0" VerticalAlignment="Center">
+          <TextBlock Margin="0 0 0 0" FontSize="27" FontWeight="Medium" FontFamily="Corbel" VerticalAlignment="Center">
+            Welcome.
+          </TextBlock>
+          <TextBlock Margin="0 0 0 0" FontSize="25" FontWeight="Light" FontFamily="Corbel" VerticalAlignment="Center">
+            To start, select a server or create one.
+          </TextBlock>
+        </StackPanel>
       </StackPanel>
 
       <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
