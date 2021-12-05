@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Occlusion_voice_chat_CrossPlatform.plugin.api;
-
-public static class AudioAPI
+namespace Occlusion_voice_chat_CrossPlatform.plugin.api
+{
+    public static class AudioAPI
 {
     public delegate void ProcessAudioOutputDelegate(Span<byte> data);
 
@@ -48,3 +48,6 @@ public static class AudioAPI
     }
     
 }
+
+}
+
