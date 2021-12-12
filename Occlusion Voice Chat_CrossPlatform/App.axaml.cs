@@ -170,9 +170,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             // HRTF
             HRTFPreview = new HRTFTestSoundEffect(Sounds.WavesSound);
 
-            if (File.Exists($"HRTF sets/{Options.Obj.CurrentHRTFSet}"))
+            if (File.Exists($"{Directory.GetCurrentDirectory()}/HRTF sets/{Options.Obj.CurrentHRTFSet}"))
             {
-                HRTF.HRTF.CurrentHRTFFile = MHRFile.Parse($"HRTF sets/{Options.Obj.CurrentHRTFSet}");
+                HRTF.HRTF.CurrentHRTFFile = MHRFile.Parse($"{Directory.GetCurrentDirectory()}/HRTF sets/{Options.Obj.CurrentHRTFSet}");
             }
 
             HRTFPreview.Play();
@@ -208,12 +208,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             // Load plugins
             try
             {
-                if (!Directory.Exists("plugins/"))
+                if (!Directory.Exists($"{Directory.GetCurrentDirectory()}/plugins/"))
                 {
-                    Directory.CreateDirectory("plugins/");
+                    Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}/plugins/");
                 }
                 
-                PluginManager.LoadPlugins("plugins/");
+                PluginManager.LoadPlugins($"{Directory.GetCurrentDirectory()}/plugins/");
             }
             catch (IOException e)
             {
