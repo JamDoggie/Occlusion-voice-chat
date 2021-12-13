@@ -23,16 +23,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             currentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 
-            var entryAssembly = Assembly.GetExecutingAssembly();
-            if (entryAssembly != null)
-            {
-                var exePath = Path.GetDirectoryName(entryAssembly.Location);
-                if (exePath != null)
-                    Directory.SetCurrentDirectory(exePath); // Not really required on windows, but required on mac for some reason or else it tries to use 
-                                                            // the home directory for storage which breaks things.
-                
-                Console.WriteLine("Current Directory: " + Directory.GetCurrentDirectory() + "!");
-            }
+            Directory.SetCurrentDirectory(AppContext.BaseDirectory); // Not really required on windows, but required on mac for some reason or else it tries to use 
+                                                                     // the home directory for storage which breaks things.
+                                                                     // Update: also required on linux when in a flatpak so that it's ensured everything goes to the right place.
+                                                                     
+            Console.WriteLine("Current Directory: " + Directory.GetCurrentDirectory() + "!");
+            
             
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
         }
