@@ -30,6 +30,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 if (exePath != null)
                     Directory.SetCurrentDirectory(exePath); // Not really required on windows, but required on mac for some reason or else it tries to use 
                                                             // the home directory for storage which breaks things.
+                
+                Console.WriteLine("Current Directory: " + Directory.GetCurrentDirectory() + "!");
             }
             
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
