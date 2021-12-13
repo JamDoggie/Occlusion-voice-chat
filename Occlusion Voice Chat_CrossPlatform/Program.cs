@@ -23,7 +23,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             currentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
 
-            var entryAssembly = Assembly.GetEntryAssembly();
+            var entryAssembly = Assembly.GetExecutingAssembly();
             if (entryAssembly != null)
             {
                 var exePath = Path.GetDirectoryName(entryAssembly.Location);
