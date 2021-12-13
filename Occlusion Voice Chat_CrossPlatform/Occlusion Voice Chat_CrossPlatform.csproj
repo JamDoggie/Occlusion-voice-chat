@@ -69,47 +69,10 @@
     <None Update="SDL2.so">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <AvaloniaResource Include="DefaultTheme.xaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Concentus.Oggfile.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="HRTF sets\MIT-48000.mhr">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="resources\occlusion_deafen.opus">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="resources\occlusion_drum_pattern.opus">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <AvaloniaResource Update="resources\occlusion_mic_icon_muted.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AvaloniaResource>
-    <None Update="resources\occlusion_pushunmute.opus">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="resources\occlusion_pushmute.opus">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="resources\waves_sample.opus">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="resources\occlusion_mute.opus">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="resources\occlusion_undeafen.opus">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="resources\occlusion_unmute.opus">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <None Update="HRTF sets\CIAIR_48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="HRTF sets\HRTF_CREDITS.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="HRTF sets\irc_1002_48000.mhr">
@@ -262,6 +225,46 @@
     <None Update="HRTF sets\irc_1059_48000.mhr">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="HRTF sets\MIT-48000.mhr">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="DefaultTheme.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Concentus.Oggfile.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\occlusion_deafen.opus">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\occlusion_drum_pattern.opus">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <AvaloniaResource Update="resources\occlusion_mic_icon_muted.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+    <None Update="resources\occlusion_pushunmute.opus">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\occlusion_pushmute.opus">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\waves_sample.opus">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\occlusion_mute.opus">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\occlusion_undeafen.opus">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="resources\occlusion_unmute.opus">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <None Update="Occlusion Voice Chat_CrossPlatform.icns">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
