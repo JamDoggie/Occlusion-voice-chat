@@ -61,6 +61,8 @@
         <sys:Double x:Key="FontSizeLarge">16</sys:Double>
 
         <sys:Double x:Key="ScrollBarThickness">20</sys:Double>
+
+       
     </Style.Resources>
 
 </Style>

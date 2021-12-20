@@ -234,7 +234,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform.HRTF
 
                 int totalElevations = closestField.Elevations.Count;
 
-                //float elevIndexDecimal = ((elevation / 90f) + 1) / 2f * totalElevations;
                 int elevIndexFloor = (int)Math.Floor(((elevation / 90f) + 1) / 2f * totalElevations);
                 int elevIndexCeil = (int)Math.Clamp(Math.Ceiling(((elevation / 90f) + 1) / 2f * totalElevations), 0, totalElevations - 1);
 
@@ -251,14 +250,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform.HRTF
                 int eF_azimuthFloorIndex = (int)Math.Floor((normalizedAzimuth / 360f) * (float)totalAzimuthsFloor);
                 int eF_azimuthCeilIndex = (int)Math.Ceiling((normalizedAzimuth / 360f) * (float)totalAzimuthsFloor);
 
-                //double eC_azimuthDecimal = (normalizedAzimuth / 360f) * (float)totalAzimuthsCiel;
-                //int eC_azimuthFloorIndex = (int)Math.Floor((normalizedAzimuth / 360f) * (float)totalAzimuthsCiel);
-                //int eC_azimuthCeilIndex = (int)Math.Ceiling((normalizedAzimuth / 360f) * (float)totalAzimuthsCiel);
-
                 CoeffSet elevFloor_FloorSet = azimuthsFloor[eF_azimuthFloorIndex >= totalAzimuthsFloor ? eF_azimuthFloorIndex - totalAzimuthsFloor : eF_azimuthFloorIndex];
                 CoeffSet elevFloor_CeilSet = azimuthsFloor[eF_azimuthCeilIndex >= totalAzimuthsFloor ? eF_azimuthCeilIndex - totalAzimuthsFloor : eF_azimuthCeilIndex];
-                //CoeffSet elevCeil_FloorSet = azimuthsCeil[eC_azimuthFloorIndex >= totalAzimuthsFloor ? eC_azimuthFloorIndex - totalAzimuthsFloor : eC_azimuthFloorIndex];
-                //CoeffSet elevCeil_CeilSet = azimuthsCeil[eC_azimuthCeilIndex >= totalAzimuthsCiel ? eC_azimuthCeilIndex - totalAzimuthsCiel : eC_azimuthCeilIndex];
 
                 // If the filter arrays are the wrong size, recreate them. Otherwise just leave them be.
                 if (leftFilter == null || leftFilter.Length != elevFloor_FloorSet.Channels.GetLength(1))

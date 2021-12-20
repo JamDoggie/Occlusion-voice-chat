@@ -4,38 +4,39 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <Platforms>AnyCPU;x86</Platforms>
     <Configurations>Debug;Release;Debug Win;Release Win</Configurations>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>TRACE;SERVER</DefineConstants>
+    <DefineConstants>TRACE;SERVER;DEVMODE;LOOPBACK</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <DefineConstants>TRACE;SERVER</DefineConstants>
+    <DefineConstants>TRACE;SERVER;DEVMODE;LOOPBACK</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;SERVER</DefineConstants>
+    <DefineConstants>TRACE;SERVER;DEVMODE;LOOPBACK</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win|AnyCPU'">
-    <DefineConstants>TRACE;SERVER</DefineConstants>
+    <DefineConstants>TRACE;SERVER;DEVMODE;LOOPBACK</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|AnyCPU'">
-    <DefineConstants>TRACE;SERVER</DefineConstants>
+    <DefineConstants>TRACE;SERVER;DEVMODE;LOOPBACK</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <DefineConstants>TRACE;SERVER</DefineConstants>
+    <DefineConstants>TRACE;SERVER;DEVMODE;LOOPBACK</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|x86'">
-    <DefineConstants>TRACE;SERVER</DefineConstants>
+    <DefineConstants>TRACE;SERVER;DEVMODE;LOOPBACK</DefineConstants>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Win|x86'">
-    <DefineConstants>TRACE;SERVER</DefineConstants>
+    <DefineConstants>TRACE;SERVER;DEVMODE;LOOPBACK</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

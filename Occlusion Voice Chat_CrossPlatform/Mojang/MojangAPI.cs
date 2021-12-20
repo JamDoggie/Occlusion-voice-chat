@@ -1,10 +1,12 @@
 ﻿using MLG_UHC_Stats_Editor.mojang.json;
 using Newtonsoft.Json;
+using Occlusion_Voice_Chat_CrossPlatform;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,9 +17,9 @@ namespace Occlusion_voice_chat.Mojang
     /// </summary>
     public static class MojangAPI
     {
-        public static string GetPlayerUUID(string username)
+        public static async Task<string> GetPlayerUUID(string username)
         {
-            var json = HttpGet($"https://api.mojang.com/users/profiles/minecraft/{ username }");
+            var json = await HttpGet($"https://api.mojang.com/users/profiles/minecraft/{ username }");
             var obj = JsonConvert.DeserializeObject<MojangNameUIDPair>(json);
 
             CheckError(json);
@@ -28,9 +30,9 @@ namespace Occlusion_voice_chat.Mojang
                 return string.Empty;
         }
 
-        public static MojangProfile GetPlayerProfile(string uuid)
+        public static async Task<MojangProfile> GetPlayerProfile(string uuid)
         {
-            var json = HttpGet($"https://sessionserver.mojang.com/session/minecraft/profile/{ uuid }");
+            var json = await HttpGet($"https://sessionserver.mojang.com/session/minecraft/profile/{ uuid }");
 
             MojangProfile profile = JsonConvert.DeserializeObject<MojangProfile>(json);
 
@@ -47,19 +49,14 @@ namespace Occlusion_voice_chat.Mojang
                 throw new MojangAPIException($"The Mojang API sent back an error message. \nReturned error type: {error.error}, Returned error message: {error.errorMessage}");
         }
 
-        private static string HttpGet(string uri)
+        private static async Task<string> HttpGet(string uri)
         {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
-            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-
             try
             {
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                using (Stream stream = response.GetResponseStream())
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    return reader.ReadToEnd();
-                }
+                HttpResponseMessage response = await App.HttpClient.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadAsStringAsync();
             }
             catch
             {

@@ -1,0 +1,10 @@
+﻿<Styles
+      xmlns="https://github.com/avaloniaui"
+        
+      xmlns:mdc="clr-namespace:Markdown.Avalonia.Controls;assembly=Markdown.Avalonia"
+      xmlns:mde="clr-namespace:Markdown.Avalonia.Extensions;assembly=Markdown.Avalonia"
+      xmlns:ctxt="clr-namespace:ColorTextBlock.Avalonia;assembly=ColorTextBlock.Avalonia"
+      xmlns:avedit="https://github.com/avaloniaui/avaloniaedit"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  
+</Styles>

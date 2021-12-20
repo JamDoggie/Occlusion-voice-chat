@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using GlobalLowLevelHooks;
 using Occlusion_voice_chat_CrossPlatform.plugin;
 using Occlusion_voice_chat_CrossPlatform.plugin.api;
+using System.Net.Http;
 
 #if WINDOWS
 using GlobalLowLevelHooks;
@@ -148,6 +149,10 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         
 
         public static HRTFTestSoundEffect HRTFPreview;
+
+        public static readonly HttpClient HttpClient = new HttpClient();
+
+        public const string WebsiteURL = "https://occlusion-blog-site.herokuapp.com";
 
         public override void Initialize()
         {

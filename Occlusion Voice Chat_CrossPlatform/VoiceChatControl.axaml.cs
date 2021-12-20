@@ -22,6 +22,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Occlusion_Voice_Chat_CrossPlatform
 {
@@ -475,14 +477,14 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 gridTransform.Y = 0;
         }
 
-        public void AddPlayer(string uuid, int id)
+        public async void AddPlayer(string uuid, int id)
         {
             PlayerIcon playerIcon = new PlayerIcon();
             PlayerIconsPanel.Children.Add(playerIcon);
             _playerIcons.Add(playerIcon);
 
-            string skinURL = PlayerCache.GetCachedPlayerSkinURL(uuid);
-            string playerName = PlayerCache.GetCachedPlayerUsername(uuid);
+            string skinURL = await PlayerCache.GetCachedPlayerSkinURL(uuid);
+            string playerName = await PlayerCache.GetCachedPlayerUsername(uuid);
 
             if (skinURL == null)
                 skinURL = "http://assets.mojang.com/SkinTemplates/4px_reference.png";
@@ -490,9 +492,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             if (playerName == null)
                 playerName = "Unknown Player";
 
-            WebClient webClient = new WebClient();
-            byte[] imageBytes = webClient.DownloadData(skinURL);
-            MemoryStream stream = new MemoryStream(imageBytes);
+
+            Stream stream = await HttpGetStream(skinURL);
 
             Bitmap image = new Bitmap(stream);
 
@@ -505,6 +506,21 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             playerIcon.UUID = uuid;
 
             playerIcon.InitImages();
+        }
+
+        private static async Task<Stream> HttpGetStream(string uri)
+        {
+            try
+            {
+                HttpResponseMessage response = await App.HttpClient.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadAsStreamAsync();
+            }
+            catch
+            {
+                return Stream.Null;
+            }
         }
 
         public void RetrieveInputDevices()

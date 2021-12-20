@@ -5,7 +5,7 @@
         xmlns:occlusionVoiceChatCrossPlatform="clr-namespace:Occlusion_Voice_Chat_CrossPlatform"
         xmlns:controls1="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia.controls"
         xmlns:svg="clr-namespace:Avalonia.Svg;assembly=Avalonia.Svg"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="1280" d:DesignHeight="720"
         x:Class="Occlusion_Voice_Chat_CrossPlatform.MainWindow"
         Title="Occlusion Voice Chat"
         Background="#32323b"
@@ -19,144 +19,202 @@
     <Style Selector="Button.opacityfadebutton:pointerover">
       <Setter Property="Opacity" Value="1.0"></Setter>
     </Style>
+
+    <Style Selector="ScrollBar /template/ RepeatButton.repeattrack">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="ScrollBar /template/ Border">
+      <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    
+    
   </Window.Styles>
   <Grid>
     <Grid Name="MainWindowGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
     <controls1:OcclusionBackground HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></controls1:OcclusionBackground>
-    <Grid Width="800" Height="450" HorizontalAlignment="Center" VerticalAlignment="Center">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="*"></RowDefinition>
-        <RowDefinition Height="*"></RowDefinition>
-      </Grid.RowDefinitions>
 
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"></ColumnDefinition>
-        <ColumnDefinition Width="*"></ColumnDefinition>
-      </Grid.ColumnDefinitions>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Grid Width="750" Height="450" Margin="0 0 10 0">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+          </Grid.RowDefinitions>
 
-      <Border Background="#32323b" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="15" Grid.RowSpan="2" Grid.ColumnSpan="2"></Border>
-      
-      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
-        <Button Classes="opacityfadebutton" Cursor="Hand" Name="AddServerButton" Background="Transparent"  Width="40" Height="40">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+          </Grid.ColumnDefinitions>
 
-          <Button.Transitions>
-            <Transitions>
-              <DoubleTransition Property="Opacity" Duration="0:0:0.3">
-              </DoubleTransition>
-            </Transitions>
-          </Button.Transitions>
+          <Border Background="#32323b" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" CornerRadius="15" Grid.RowSpan="2" Grid.ColumnSpan="2"></Border>
 
-          <Image>
-            <Image.Source>
-              <svg:SvgImage Source="/resources/add_server.svg" />
-            </Image.Source>
-          </Image>
-        </Button>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+            <Button Classes="opacityfadebutton" Cursor="Hand" Name="AddServerButton" Background="Transparent"  Width="40" Height="40">
 
-        <Button Classes="opacityfadebutton" Cursor="Hand" Name="RemoveServerButton" Background="Transparent" Width="40" Height="40">
-          <Button.Transitions>
-            <Transitions>
-              <DoubleTransition Property="Opacity" Duration="0:0:0.3">
-              </DoubleTransition>
-            </Transitions>
-          </Button.Transitions>
-          <Image>
-            <Image.Source>
-              <svg:SvgImage Source="/resources/remove_server.svg" />
-            </Image.Source>
-          </Image>
-        </Button>
-      </StackPanel>
+              <Button.Transitions>
+                <Transitions>
+                  <DoubleTransition Property="Opacity" Duration="0:0:0.3">
+                  </DoubleTransition>
+                </Transitions>
+              </Button.Transitions>
 
-      <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0 40 0 0" VerticalAlignment="Top" HorizontalAlignment="Center">
-        <Image Source="/resources/Occlusion_icon.png" Width="110" Height="110" Margin="0 0 10 0" ></Image>
-        <StackPanel Orientation="Vertical" Margin="10 0 0 0" VerticalAlignment="Center">
-          <TextBlock Margin="0 0 0 0" FontSize="27" FontWeight="Medium" FontFamily="Corbel" VerticalAlignment="Center">
-            Welcome.
-          </TextBlock>
-          <TextBlock Margin="0 0 0 0" FontSize="25" FontWeight="Light" FontFamily="Corbel" VerticalAlignment="Center">
-            To start, select a server or create one.
-          </TextBlock>
-        </StackPanel>
-      </StackPanel>
+              <Image>
+                <Image.Source>
+                  <svg:SvgImage Source="/resources/add_server.svg" />
+                </Image.Source>
+              </Image>
+            </Button>
 
-      <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-        <StackPanel Orientation="Horizontal" Margin="0 0 0 10" HorizontalAlignment="Left">
-          <StackPanel Orientation="Vertical">
-            <TextBlock HorizontalAlignment="Left" Margin="10 0 0 0" Foreground="#BDC3C7">Name</TextBlock>
-
-
-            <TextBox x:Name="NameTextbox" Watermark="My Server" HorizontalAlignment="Center" VerticalContentAlignment="Center"
-                     Height="25" Width="250" Margin="0 0 0 0" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Padding="6 4 4 4">
-            </TextBox>
-
-
-          </StackPanel>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
-          <StackPanel Orientation="Vertical">
-            <TextBlock HorizontalAlignment="Left" Margin="10 0 0 0" Foreground="#BDC3C7">IP</TextBlock>
-            <TextBox x:Name="IpTextbox" VerticalContentAlignment="Center" Height="25" Width="200" Watermark="0.0.0.0" Margin="0 0 2 0" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Padding="6 4 4 4"></TextBox>
-          </StackPanel>
-
-          <StackPanel Orientation="Vertical">
-            <TextBlock HorizontalAlignment="Left" Margin="10 0 0 0" Foreground="#BDC3C7">Port</TextBlock>
-            <TextBox x:Name="PortTextbox" VerticalContentAlignment="Center" Height="25" Width="46" Margin="2 0 0 0" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Watermark="9755" Padding="6 4 4 4">9755</TextBox>
-          </StackPanel>
-
-        </StackPanel>
-
-        <StackPanel Orientation="Vertical">
-          <TextBlock HorizontalAlignment="Left" Margin="35 10 0 0" Foreground="#BDC3C7">Your code</TextBlock>
-          <StackPanel Width="200" Orientation="Horizontal" Margin="0 0 0 0" HorizontalAlignment="Center">
-            <TextBox Width="100" Height="30" CornerRadius="5 0 0 5" Name="CodeTextBox" Background="#3f3f4a" Watermark="Code..." HorizontalContentAlignment="Left" BorderBrush="#31313b" BorderThickness="1" Foreground="#BDC3C7" Padding="10 5 5 5" FontSize="12" VerticalContentAlignment="Center">
-            </TextBox>
-            <Button x:Name="ConnectButton" CornerRadius="0 5 5 0" Content="Connect" Cursor="Hand" Width="100" Height="30" HorizontalAlignment="Right" Background="#454552" BorderBrush="#31313b" Foreground="#BDC3C7">
+            <Button Classes="opacityfadebutton" Cursor="Hand" Name="RemoveServerButton" Background="Transparent" Width="40" Height="40">
+              <Button.Transitions>
+                <Transitions>
+                  <DoubleTransition Property="Opacity" Duration="0:0:0.3">
+                  </DoubleTransition>
+                </Transitions>
+              </Button.Transitions>
+              <Image>
+                <Image.Source>
+                  <svg:SvgImage Source="/resources/remove_server.svg" />
+                </Image.Source>
+              </Image>
             </Button>
           </StackPanel>
-        </StackPanel>
 
-        <StackPanel HorizontalAlignment="Center" Margin="0 15 0 0" Orientation="Horizontal">
-          <TextBlock VerticalAlignment="Center" Name="ConnectionStatusText"></TextBlock>
-          <Image Classes="LoadingImage" IsVisible="False" Name="ConnectingLoadingBar" VerticalAlignment="Center" Margin="10 0 0 0">
-            <Image.Source>
-              <svg:SvgImage Source="/resources/occlusion_loading.svg" />
-            </Image.Source>
+          <StackPanel Grid.ColumnSpan="2" Orientation="Horizontal" Margin="0 40 0 0" VerticalAlignment="Top" HorizontalAlignment="Center">
+            <Image Source="/resources/Occlusion_icon.png" Width="110" Height="110" Margin="0 0 10 0" ></Image>
+            <StackPanel Orientation="Vertical" Margin="10 0 0 0" VerticalAlignment="Center">
+              <TextBlock Margin="0 0 0 0" FontSize="27" FontWeight="Medium" FontFamily="Open Sans" VerticalAlignment="Center">
+                Welcome.
+              </TextBlock>
+              <TextBlock Margin="0 0 0 0" FontSize="25" FontWeight="Light" FontFamily="Open Sans" VerticalAlignment="Center">
+                To start, select a server or create one.
+              </TextBlock>
+            </StackPanel>
+          </StackPanel>
 
-            <Image.RenderTransform>
-              <RotateTransform Angle="0"></RotateTransform>
-            </Image.RenderTransform>
+          <StackPanel Grid.Column="1" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel Orientation="Horizontal" Margin="0 0 0 10" HorizontalAlignment="Left">
+              <StackPanel Orientation="Vertical">
+                <TextBlock HorizontalAlignment="Left" Margin="10 0 0 0" Foreground="#BDC3C7">Name</TextBlock>
 
-            <Image.Styles>
-              <Style Selector="Image.LoadingImage">
-                <Style.Animations>
-                  <Animation Duration="0:0:0:1" IterationCount="INFINITE">
-                    <KeyFrame Cue="0%">
-                      <Setter Property="RotateTransform.Angle" Value="0"/>
-                    </KeyFrame>
-                    <KeyFrame Cue="100%">
-                      <Setter Property="RotateTransform.Angle" Value="360"/>
-                    </KeyFrame>
-                    <Animation.Easing>
-                      <QuadraticEaseOut></QuadraticEaseOut>
-                    </Animation.Easing>
-                  </Animation>
-                </Style.Animations>
-              </Style>
-            </Image.Styles>
-          </Image>
-        </StackPanel>
+
+                <TextBox x:Name="NameTextbox" Watermark="My Server" HorizontalAlignment="Center" VerticalContentAlignment="Center"
+                         Height="25" Width="250" Margin="0 0 0 0" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Padding="6 4 4 4">
+                </TextBox>
+
+
+              </StackPanel>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+              <StackPanel Orientation="Vertical">
+                <TextBlock HorizontalAlignment="Left" Margin="10 0 0 0" Foreground="#BDC3C7">IP</TextBlock>
+                <TextBox x:Name="IpTextbox" VerticalContentAlignment="Center" Height="25" Width="200" Watermark="0.0.0.0" Margin="0 0 2 0" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Padding="6 4 4 4"></TextBox>
+              </StackPanel>
+
+              <StackPanel Orientation="Vertical">
+                <TextBlock HorizontalAlignment="Left" Margin="10 0 0 0" Foreground="#BDC3C7">Port</TextBlock>
+                <TextBox x:Name="PortTextbox" VerticalContentAlignment="Center" Height="25" Width="46" Margin="2 0 0 0" Background="#3f3f4a" BorderBrush="#282830" Foreground="#BDC3C7" Watermark="9755" Padding="6 4 4 4">9755</TextBox>
+              </StackPanel>
+
+            </StackPanel>
+
+            <StackPanel Orientation="Vertical">
+              <TextBlock HorizontalAlignment="Left" Margin="35 10 0 0" Foreground="#BDC3C7">Your code</TextBlock>
+              <StackPanel Width="200" Orientation="Horizontal" Margin="0 0 0 0" HorizontalAlignment="Center">
+                <TextBox Width="100" Height="30" CornerRadius="5 0 0 5" Name="CodeTextBox" Background="#3f3f4a" Watermark="Code..." HorizontalContentAlignment="Left" BorderBrush="#31313b" BorderThickness="1" Foreground="#BDC3C7" Padding="10 5 5 5" FontSize="12" VerticalContentAlignment="Center">
+                </TextBox>
+                <Button x:Name="ConnectButton" CornerRadius="0 5 5 0" Content="Connect" Cursor="Hand" Width="100" Height="30" HorizontalAlignment="Right" Background="#454552" BorderBrush="#31313b" Foreground="#BDC3C7">
+                </Button>
+              </StackPanel>
+            </StackPanel>
+
+            <StackPanel HorizontalAlignment="Center" Margin="0 15 0 0" Orientation="Horizontal">
+              <TextBlock VerticalAlignment="Center" Name="ConnectionStatusText"></TextBlock>
+              <Image Classes="LoadingImage" IsVisible="False" Name="ConnectingLoadingBar" VerticalAlignment="Center" Margin="10 0 0 0">
+                <Image.Source>
+                  <svg:SvgImage Source="/resources/occlusion_loading.svg" />
+                </Image.Source>
+
+                <Image.RenderTransform>
+                  <RotateTransform Angle="0"></RotateTransform>
+                </Image.RenderTransform>
+
+                <Image.Styles>
+                  <Style Selector="Image.LoadingImage">
+                    <Style.Animations>
+                      <Animation Duration="0:0:0:1" IterationCount="INFINITE">
+                        <KeyFrame Cue="0%">
+                          <Setter Property="RotateTransform.Angle" Value="0"/>
+                        </KeyFrame>
+                        <KeyFrame Cue="100%">
+                          <Setter Property="RotateTransform.Angle" Value="360"/>
+                        </KeyFrame>
+                        <Animation.Easing>
+                          <QuadraticEaseOut></QuadraticEaseOut>
+                        </Animation.Easing>
+                      </Animation>
+                    </Style.Animations>
+                  </Style>
+                </Image.Styles>
+              </Image>
+            </StackPanel>
+          </StackPanel>
+
+          <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="17">
+            <WrapPanel Name="ServerIconsPanel">
+
+            </WrapPanel>
+          </ScrollViewer>
+
+          <Border Grid.Row="1" BorderThickness="0.5" BorderBrush="#282830" HorizontalAlignment="Right"></Border>
+        </Grid>
+        
+        <Border Background="#32323b" Margin="10 0 0 0" CornerRadius="15" Padding="10 0 10 10" Width="370" Height="450">
+           <Grid>
+             <Image Classes="BlogLoadingImage" Width="30" Height="30" HorizontalAlignment="Center" VerticalAlignment="Center" Name="BlogLoadingBar">
+                <Image.Source>
+                  <svg:SvgImage Source="/resources/occlusion_loading.svg" />
+                </Image.Source>
+
+                <Image.RenderTransform>
+                  <RotateTransform Angle="0"></RotateTransform>
+                </Image.RenderTransform>
+
+                <Image.Styles>
+                  <Style Selector="Image.BlogLoadingImage">
+                    <Style.Animations>
+                      <Animation Duration="0:0:0:1" IterationCount="INFINITE">
+                        <KeyFrame Cue="0%">
+                          <Setter Property="RotateTransform.Angle" Value="0"/>
+                        </KeyFrame>
+                        <KeyFrame Cue="100%">
+                          <Setter Property="RotateTransform.Angle" Value="360"/>
+                        </KeyFrame>
+                        <Animation.Easing>
+                          <QuadraticEaseOut></QuadraticEaseOut>
+                        </Animation.Easing>
+                      </Animation>
+                    </Style.Animations>
+                  </Style>
+                </Image.Styles>
+              </Image>
+           
+              <controls1:SmoothScrollViewer>
+                <controls1:SmoothScrollViewer.Styles>
+                  <Style Selector="ScrollBar:vertical">
+                    <Setter Property="Visibility" Value="Hidden"/>
+                  </Style>
+                </controls1:SmoothScrollViewer.Styles>
+            
+                <StackPanel Name="BlogPanel">
+              
+                </StackPanel>
+              </controls1:SmoothScrollViewer>
+           </Grid>
+        </Border>
       </StackPanel>
-
-      <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
-        <WrapPanel Name="ServerIconsPanel">
-
-        </WrapPanel>
-      </ScrollViewer>
-
-      <Border Grid.Row="1" BorderThickness="0.5" BorderBrush="#282830" HorizontalAlignment="Right"></Border>
-    </Grid>
-
+      
     <TextBlock Name="BuildWaterMark" Opacity="1" Foreground="White" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="10" Text="{Binding BuildNumber, StringFormat='Build {0}'}"></TextBlock>
     </Grid>
 

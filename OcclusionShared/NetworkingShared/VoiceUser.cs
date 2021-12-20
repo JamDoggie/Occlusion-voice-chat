@@ -136,7 +136,7 @@ namespace OcclusionShared.NetworkingShared
             }
         }
 
-        private Vector2? earDelays { get; set; }
+        private Vector2 earDelays { get; set; } = new Vector2(0, 0);
 
         private DateTime _lastPanTime = DateTime.Now;
         private DateTime _lastDistTime = DateTime.Now;
@@ -296,8 +296,10 @@ namespace OcclusionShared.NetworkingShared
         private short[] firOutputArray = null;
 
         // Cached audio arrays for processing.
-        private byte[] queueArray = null;
-        private short[] queuedShortArray = null;
+        private byte[] leftQueueArray = null;
+        private byte[] rightQueueArray = null;
+        private short[] queuedLeftShortArray = null;
+        private short[] queuedRightShortArray = null;
 
         private short[] destinationShorts = null;
 
@@ -343,10 +345,13 @@ namespace OcclusionShared.NetworkingShared
 
 
         #region Array Initializations
-                    if (queueArray == null || queueArray.Length != destination.Length)
+                    if (leftQueueArray == null || leftQueueArray.Length != destination.Length)
                     {
-                        queueArray = new byte[destination.Length / 2]; // Divide by 2 because we're mixing out stereo audio, yet the input microphone audio is currently in mono.
-                        queuedShortArray = new short[queueArray.Length / 2];
+                        leftQueueArray = new byte[destination.Length / 2]; // Divide by 2 because we're mixing out stereo audio, yet the input microphone audio is currently in mono.
+                        rightQueueArray = new byte[destination.Length / 2];
+
+                        queuedLeftShortArray = new short[leftQueueArray.Length / 2];
+                        queuedRightShortArray = new short[leftQueueArray.Length / 2];
                     }
 
                     if (processedAudio == null || processedAudio.Length != destination.Length / 2)
@@ -361,11 +366,11 @@ namespace OcclusionShared.NetworkingShared
 
                     if (leftAudioArray == null || rightAudioArray == null)
                     {
-                        leftAudioArray = new short[queuedShortArray.Length];
-                        rightAudioArray = new short[queuedShortArray.Length];
+                        leftAudioArray = new short[queuedLeftShortArray.Length];
+                        rightAudioArray = new short[queuedRightShortArray.Length];
 
-                        leftSignal = new int[queuedShortArray.Length];
-                        rightSignal = new int[queuedShortArray.Length];
+                        leftSignal = new int[queuedLeftShortArray.Length];
+                        rightSignal = new int[queuedRightShortArray.Length];
                     }
 
                     if (App.Options.Obj.UseHRTF && leftConvolver == null || rightConvolver == null)
@@ -377,7 +382,6 @@ namespace OcclusionShared.NetworkingShared
                         leftConvolver = new OlsBlockConvolver(leftFilterArray, 1024);
                         
                         rightConvolver = new OlsBlockConvolver(rightFilterArray, 1024);
-                        
                     }
 
                     if (leftSig == null)
@@ -389,9 +393,10 @@ namespace OcclusionShared.NetworkingShared
 
 
         #region Clear Arrays
-                    for (int i = 0; i < queueArray.Length; i++)
+                    for (int i = 0; i < leftQueueArray.Length; i++)
                     {
-                        queueArray[i] = 0;
+                        leftQueueArray[i] = 0;
+                        rightQueueArray[i] = 0;
                     }
 
                     for (int i = 0; i < processedAudio.Length; i++)
@@ -410,12 +415,15 @@ namespace OcclusionShared.NetworkingShared
                     {
                         if (i < MicQueue.Length)
                         {
-                            queueArray[i] = MicQueue[i];
+                            leftQueueArray[i] = MicQueue[Math.Clamp(i + ((int)earDelays.X * 2), 0, MicQueue.Length)];
+
+                            rightQueueArray[i] = MicQueue[Math.Clamp(i + ((int)earDelays.Y * 2), 0, MicQueue.Length)];
                             amountCut++;
                         }
                     }
 
-                    AudioMath.CopyBytesToShorts(queuedShortArray, queueArray);
+                    AudioMath.CopyBytesToShorts(queuedLeftShortArray, leftQueueArray);
+                    AudioMath.CopyBytesToShorts(queuedRightShortArray, rightQueueArray);
 
 
                     // Move everything in the Mic Queue left the amount of bytes that we have mixed into the speakers.
@@ -436,17 +444,17 @@ namespace OcclusionShared.NetworkingShared
                     if (_queueOffset < 0)
                         _queueOffset = 0;
 
-                    for (int i = 0; i < queuedShortArray.Length; i++)
+                    for (int i = 0; i < queuedLeftShortArray.Length; i++)
                     {
-                        leftSignal[i] = queuedShortArray[i];
-                        rightSignal[i] = queuedShortArray[i];
+                        leftSignal[i] = queuedLeftShortArray[i];
+                        rightSignal[i] = queuedRightShortArray[i];
                     }
         #endregion
 
 
         #region Voice Activity
                     // Voice activity
-                    AudioChunk stereoChunk = new AudioChunk(queuedShortArray, App.samplingRate);
+                    AudioChunk stereoChunk = new AudioChunk(queuedLeftShortArray, App.samplingRate);
                     if (stereoChunk.Volume() < 10)
                     {
                         if (!IsLocalClient && App.EnableVoiceIconMeterOnClients)
@@ -458,10 +466,10 @@ namespace OcclusionShared.NetworkingShared
         #region Audio Processing
         #region HRTF
                     // Fill left and right audio arrays
-                    for (int i = 0; i < queuedShortArray.Length; i++)
+                    for (int i = 0; i < queuedLeftShortArray.Length; i++)
                     {
-                        leftAudioArray[i] = queuedShortArray[i];
-                        rightAudioArray[i] = queuedShortArray[i];
+                        leftAudioArray[i] = queuedLeftShortArray[i];
+                        rightAudioArray[i] = queuedRightShortArray[i];
                     }
 
                     // Apply HRTFs to the audio arrays
@@ -478,8 +486,8 @@ namespace OcclusionShared.NetworkingShared
 
                         if (earDelays != null)
                         {
-                            leftDelay += earDelays.Value.X;
-                            rightDelay += earDelays.Value.Y;
+                            leftDelay += earDelays.X;
+                            rightDelay += earDelays.Y;
                         }
 
                         for (int i = 0; i < leftSig.Samples.Length; i++)
@@ -516,8 +524,8 @@ namespace OcclusionShared.NetworkingShared
                         }
                         else
                         {
-                            processedAudio[k] = AudioMath.AmplifyShort(queuedShortArray[i], leftOffset);
-                            processedAudio[k + 1] = AudioMath.AmplifyShort(queuedShortArray[i], rightOffset);
+                            processedAudio[k] = AudioMath.AmplifyShort(queuedLeftShortArray[i], leftOffset);
+                            processedAudio[k + 1] = AudioMath.AmplifyShort(queuedRightShortArray[i], rightOffset);
                         }
 
                         k += 2;
@@ -611,18 +619,21 @@ namespace OcclusionShared.NetworkingShared
         }
 
 
-        private void PopulateHRTFs(float elevation, float azimuth, ref double[] leftArray, ref double[] rightArray, double distance = 2000)
+        private void PopulateHRTFs(float elevation, float azimuth, ref double[] leftArray, ref double[] rightArray, float distance = 2000)
         {
             // Use our loaded .mhr HRTF file.
             if (HRTF.CurrentHRTFFile != null)
             {
-                earDelays = HRTF.CurrentHRTFFile.GenerateHRTFS(elevation, azimuth, ref leftArray, ref rightArray);
+                var delays = HRTF.CurrentHRTFFile.GenerateHRTFS(elevation, azimuth, ref leftArray, ref rightArray, distance);
+
+                if (delays != null)
+                    earDelays = delays.Value;
             }
             // We don't have a loaded HRTF preset. Fall back to the MIT Kemar data set.
             else
             {
-                if (earDelays != null)
-                    earDelays = null;
+                if (earDelays != Vector2.Zero)
+                    earDelays = Vector2.Zero;
 
                 var taps = HRTF.mit_hrtf_availability((int)azimuth, (int)elevation, App.samplingRate);
 

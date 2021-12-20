@@ -19,6 +19,16 @@ using OcclusionShared.NetworkingShared.Packets;
 using Avalonia.Diagnostics;
 using System.Threading;
 using System.Diagnostics;
+using System.Net;
+using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Occlusion_Voice_Chat_CrossPlatform.util.json_structs;
+using Newtonsoft.Json;
+using Occlusion_Voice_Chat_CrossPlatform.avalonia.controls;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using System.Text.RegularExpressions;
 
 namespace Occlusion_Voice_Chat_CrossPlatform
 {
@@ -161,29 +171,136 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             SettingsActive = false;
 
-            /*Thread x11Thread = new Thread(() => {
-                while (true)
+            // Load blogs from website
+            Task<string> task = HttpGet(App.WebsiteURL + "/api/blogs/filter/;tags=Changelog");
+
+            
+
+            task.ContinueWith((t) => {
+                // When the server responds back, add the first changelog blog that's given.
+                OcclusionBlog[] blogs = JsonConvert.DeserializeObject<OcclusionBlog[]>(t.Result);
+
+                if (blogs != null && blogs.Length > 0)
                 {
-                    if (MainWindow.mainWindow != null)
+                    AddBlogCard(blogs[0]);
+                }
+            }).ContinueWith((t) =>
+            {
+                // Once we've added the latest changelog, add all non changelog blogs
+                Task<string> task = HttpGet(App.WebsiteURL + "/api/blogs/filter/;tags=!Changelog");
+
+                task.ContinueWith((webTask) =>
+                {
+                    OcclusionBlog[] blogs = JsonConvert.DeserializeObject<OcclusionBlog[]>(webTask.Result);
+
+                    if (blogs != null && blogs.Length > 0)
                     {
-                        var platformImpl = MainWindow.mainWindow.PlatformImpl;
-
-                        IntPtr handle = platformImpl.Handle.Handle;
-
-                        X11.XKeyEvent keyEvent = new X11.XKeyEvent();
-
-                        IntPtr ptr = Marshal.AllocHGlobal(Marshal.SizeOf(keyEvent));
-
-                        Marshal.StructureToPtr(keyEvent, ptr, false);
-
-                        X11.Xlib.XNextEvent(handle, ptr);
-
-                        Debug.WriteLine(keyEvent.keycode);
+                        for(int i = 0; i < Math.Min(10, blogs.Length); i++)
+                        {
+                            OcclusionBlog blog = blogs[i];
+                            
+                            AddBlogCard(blog);
+                        }
                     }
 
-                }
+                    Dispatcher.UIThread.InvokeAsync(() =>
+                    {
+                        this.FindControl<Image>("BlogLoadingBar").IsVisible = false;
+                    });
+                });
             });
-            x11Thread.Start();*/
+        }
+
+        public async void AddBlogCard(OcclusionBlog blog)
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+              {
+                  BlogControl blogControl = new BlogControl();
+
+                  blogControl.ViewModel.Title = blog.Title;
+                  blogControl.ViewModel.Subtitle = blog.Subtitle;
+
+                  if (blog.BodyMarkdown.Length > 200)
+                      blog.BodyMarkdown = blog.BodyMarkdown[0..200];
+
+                  blogControl.ViewModel.InnerMarkdown = blog.BodyMarkdown;
+
+                  Task<Stream> task = HttpGetStream($"{App.WebsiteURL}/{blog.BackgroundURL}");
+
+                  task.ContinueWith((t) =>
+                  {
+                      Dispatcher.UIThread.InvokeAsync(() =>
+                      {
+                          blogControl.CardBorder.Background = new ImageBrush(new Bitmap(t.Result)) { Stretch = Stretch.UniformToFill };
+                      });
+                  });
+
+                  blogControl.FindControl<Button>("ReadMoreButton").Click += (o, e) => 
+                  {
+                      OpenUrl($"{App.WebsiteURL}/occlusion/blogs/{blog.FileName}");
+                  };
+
+                  this.FindControl<StackPanel>("BlogPanel").Children.Add(blogControl);
+              });
+        }
+
+        private void OpenUrl(string url)
+        {
+            try
+            {
+                Process.Start(url);
+            }
+            catch
+            {
+                // Hack because of this: https://github.com/dotnet/corefx/issues/10361
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    url = url.Replace("&", "^&");
+                    Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    Process.Start("xdg-open", url);
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                {
+                    Process.Start("open", url);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        private static async Task<string> HttpGet(string uri)
+        {
+            try
+            {
+                HttpResponseMessage response = await App.HttpClient.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadAsStringAsync();
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        private static async Task<Stream> HttpGetStream(string uri)
+        {
+            try
+            {
+                HttpResponseMessage response = await App.HttpClient.GetAsync(uri);
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadAsStreamAsync();
+            }
+            catch
+            {
+                return Stream.Null;
+            }
         }
 
         private void CodeTextBoxOnPropertyChanged(object? sender, AvaloniaPropertyChangedEventArgs e)

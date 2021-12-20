@@ -84,9 +84,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             PlayerIconImg.Source = cropped;
         }
         
-        private void Button_Click(object sender, PointerPressedEventArgs e)
+        private async void Button_Click(object sender, PointerPressedEventArgs e)
         {
-            MainWindow.mainWindow.VoiceChatWindow.UserControlPanel.UserNameText.Text = PlayerCache.GetCachedPlayerUsername(UUID);
+            MainWindow.mainWindow.VoiceChatWindow.UserControlPanel.UserNameText.Text = await PlayerCache.GetCachedPlayerUsername(UUID);
             MainWindow.mainWindow.VoiceChatWindow.UserControlPanel.UUIDText.Text = UUID;
             MainWindow.mainWindow.VoiceChatWindow.UserControlPanel.UUID = UUID;
 

@@ -43,7 +43,7 @@ namespace Occlusion_voice_chat.Mojang
             File.WriteAllText(CachePath, JsonConvert.SerializeObject(CacheFile));
         }
 
-        public static string GetCachedPlayerUUID(string username)
+        public static async Task<string> GetCachedPlayerUUID(string username)
         {
             if ((DateTime.Now - CacheFile.cacheTime).TotalMinutes < cacheInterval)
             {
@@ -65,7 +65,7 @@ namespace Occlusion_voice_chat.Mojang
                 else
                 {
                     // Not already cached, add to cache
-                    var uid = MojangAPI.GetPlayerUUID(username);
+                    var uid = await MojangAPI.GetPlayerUUID(username);
 
                     if (uid != null)
                         CachePlayer(uid);
@@ -81,7 +81,7 @@ namespace Occlusion_voice_chat.Mojang
 
                 RetrieveCacheFile();
 
-                var uid = MojangAPI.GetPlayerUUID(username);
+                var uid = await MojangAPI.GetPlayerUUID(username);
 
                 if (uid != null)
                     CachePlayer(uid);
@@ -91,7 +91,7 @@ namespace Occlusion_voice_chat.Mojang
         }
 
 
-        public static string GetCachedPlayerUsername(string uuid)
+        public static async Task<string> GetCachedPlayerUsername(string uuid)
         {
             if ((DateTime.Now - CacheFile.cacheTime).TotalMinutes < cacheInterval)
             {
@@ -113,7 +113,7 @@ namespace Occlusion_voice_chat.Mojang
                 else
                 {
                     // Not already cached, add to cache
-                    string? username = MojangAPI.GetPlayerProfile(uuid)?.name;
+                    string? username = (await MojangAPI.GetPlayerProfile(uuid))?.name;
 
                     if (username != null)
                         CachePlayer(uuid);
@@ -132,13 +132,13 @@ namespace Occlusion_voice_chat.Mojang
                 PlayerCacheObject obj = new PlayerCacheObject();
 
                 if (uuid != null)
-                    obj = CachePlayer(uuid);
+                    obj = await CachePlayer(uuid);
 
                 return obj.Username;
             }
         }
 
-        public static string GetCachedPlayerSkinURL(string uuid)
+        public static async Task<string> GetCachedPlayerSkinURL(string uuid)
         {
             if ((DateTime.Now - CacheFile.cacheTime).TotalMinutes < cacheInterval)
             {
@@ -163,7 +163,7 @@ namespace Occlusion_voice_chat.Mojang
                     PlayerCacheObject cacheObj;
 
 
-                    cacheObj = CachePlayer(uuid);
+                    cacheObj = await CachePlayer(uuid);
 
                     return cacheObj.SkinURL;
                 }
@@ -178,7 +178,7 @@ namespace Occlusion_voice_chat.Mojang
 
                 PlayerCacheObject cacheObj;
 
-                cacheObj = CachePlayer(uuid);
+                cacheObj = await CachePlayer(uuid);
 
                 return cacheObj.SkinURL;
             }
@@ -186,12 +186,12 @@ namespace Occlusion_voice_chat.Mojang
 
 
 
-        public static PlayerCacheObject CachePlayer(string uid)
+        public static async Task<PlayerCacheObject> CachePlayer(string uid)
         {
             PlayerCacheObject player = new PlayerCacheObject();
             player.UUID = uid;
 
-            MojangProfile profile = MojangAPI.GetPlayerProfile(uid);
+            MojangProfile profile = await MojangAPI.GetPlayerProfile(uid);
 
             if (profile != null)
             {
