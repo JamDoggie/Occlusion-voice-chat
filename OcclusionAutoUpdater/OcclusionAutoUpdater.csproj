@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ApplicationIcon>Occlusion_icon.ico</ApplicationIcon>
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
     <PublishTrimmed>true</PublishTrimmed>
     <Configurations>Debug;Release;Debug Win;Release Win</Configurations>
     <ApplicationManifest>app.manifest</ApplicationManifest>
