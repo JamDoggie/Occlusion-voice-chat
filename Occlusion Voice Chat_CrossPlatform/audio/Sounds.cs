@@ -45,20 +45,20 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
 
         public static void LoadSounds()
         {
-            Assembly assembly = Assembly.GetExecutingAssembly();
+            string dir = Directory.GetCurrentDirectory();
 
-            Console.WriteLine($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_mute.opus bruh");
-            Debug.WriteLine($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_mute.opus bruh");
+            Console.WriteLine($"{dir}/resources/occlusion_mute.opus bruh");
+            Debug.WriteLine($"{dir}/resources/occlusion_mute.opus bruh");
 
-            MicMuteSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_mute.opus");
-            MicUnmuteSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_unmute.opus");
-            DeafenSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_deafen.opus");
-            UndeafenSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_undeafen.opus");
+            MicMuteSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_mute.opus");
+            MicUnmuteSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_unmute.opus");
+            DeafenSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_deafen.opus");
+            UndeafenSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_undeafen.opus");
 
-            PushMuteSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_pushmute.opus");
-            PushUnmuteSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/occlusion_pushunmute.opus");
+            PushMuteSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_pushmute.opus");
+            PushUnmuteSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_pushunmute.opus");
 
-            WavesSound = OggSoundFile.LoadSound($"{Path.GetDirectoryName(assembly.Location)}/resources/waves_sample.opus", 1); 
+            WavesSound = OggSoundFile.LoadSound($"{dir}/resources/waves_sample.opus", 1); 
         }
     }
 }

@@ -253,7 +253,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
                     if (info.Exists)
                     {
                         Assembly assembly = Assembly.GetExecutingAssembly();
-                        File.Copy(s, $"{Path.GetDirectoryName(assembly.Location)}/HRTF sets/{info.Name}", true);
+                        File.Copy(s, $"{Directory.GetCurrentDirectory()}/HRTF sets/{info.Name}", true);
                     }
                 }
 
@@ -271,7 +271,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
                 if (e.AddedItems[0] is string name)
                 {
                     Assembly assembly = Assembly.GetExecutingAssembly();
-                    string? path = $"{Path.GetDirectoryName(assembly.Location)}/HRTF sets/{name}";
+                    string? path = $"{Directory.GetCurrentDirectory()}/HRTF sets/{name}";
                     if (File.Exists(path))
                     {
                         HRTF.HRTF.CurrentHRTFFile = MHRFile.Parse(path);

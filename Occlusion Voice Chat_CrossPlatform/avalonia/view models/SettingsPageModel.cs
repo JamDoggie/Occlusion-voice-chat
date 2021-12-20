@@ -37,7 +37,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.view_models
             HRTFFilters.Clear();
 
             Assembly assembly = Assembly.GetExecutingAssembly();
-            DirectoryInfo dir = new DirectoryInfo($"{Path.GetDirectoryName(assembly.Location)}/HRTF sets/");
+            DirectoryInfo dir = new DirectoryInfo($"{Directory.GetCurrentDirectory()}/HRTF sets/");
             FileInfo[] sets = dir.GetFiles();
 
             for (int i = 0; i < sets.Length; i++)

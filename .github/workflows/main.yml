@@ -29,7 +29,7 @@ jobs:
           
       - name: Publish Occlusion to a folder
         run: 
-          dotnet publish "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -c "Release" -r linux-x64 --self-contained true --output "occlusionlinuxrelease/"
+          dotnet publish "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -c "Release" -r linux-x64 /p:PublishSingleFile=true /p:IncludeNativeLibrariesForSelfExtract=true --self-contained true --output "occlusionlinuxrelease/"
 
       - name: Copy Libraries
         run:
@@ -49,8 +49,8 @@ jobs:
       - name: And upload an artifact.
         uses: actions/upload-artifact@v2
         with:
-          name: occlusion-linux-debian-x64-artifact
-          path: occlusion-linux-debian-x64.tar.gz
+          name: occlusion-linux-x64-binaries-artifact
+          path: occlusion-linux-x64-binaries.tar.gz
 
 
   build-mac:
