@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia.controls;assembly=Occlusion Voice Chat_CrossPlatform"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="100" Height="100"
+             x:Class="Occlusion_Voice_Chat_CrossPlatform.avalonia.controls.PluginEntryControl">
+  <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch">
+      <Grid HorizontalAlignment="Stretch">
+          <StackPanel Orientation="Horizontal">
+              <Image Source="/resources/info_icon.png"  Margin="10" Width="40" Height="40"/>
+              <TextBlock VerticalAlignment="Center" Text="Occlusion Soundboard Plugin" FontSize="18" Margin="10"/>
+              <TextBlock VerticalAlignment="Center" Text="1.0.0" FontSize="15" Margin="0"/>
+          </StackPanel>
+          
+          <Button Content="Disable" Width="100" Height="40" HorizontalAlignment="Right" Margin="0 0 10 0"></Button>
+      </Grid>
+      <controls:SmoothScrollViewer>
+          <Button Content="Test button"/>
+      </controls:SmoothScrollViewer>
+  </StackPanel>
+</UserControl>
