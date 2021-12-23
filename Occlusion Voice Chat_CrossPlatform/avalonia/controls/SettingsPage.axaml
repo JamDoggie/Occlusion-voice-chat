@@ -5,6 +5,7 @@
              xmlns:occ="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia"
              xmlns:controls="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia.controls;assembly=Occlusion Voice Chat_CrossPlatform"
              mc:Ignorable="d" 
+             xmlns:svg="clr-namespace:Avalonia.Svg;assembly=Avalonia.Svg"
              x:Class="Occlusion_Voice_Chat_CrossPlatform.avalonia.controls.SettingsPage" Background="#77282830" FontFamily="Arial">
   <UserControl.Transitions>
     <Transitions>
@@ -185,7 +186,7 @@
                   <Grid>
                     <Image Width="30" Height="30" MinWidth="30" MinHeight="30" Stretch="Fill" Name="DeafenIcon" Margin="0" HorizontalAlignment="Center" VerticalAlignment="Center">
                       <Image.Source>
-                        <SvgImage Source="/resources/occlusion_deafen.svg"/>
+                        <svg:SvgImage Source="/resources/occlusion_deafen.svg"/>
                       </Image.Source>
                     </Image>
 
@@ -225,7 +226,19 @@
               
             </Border>
           </StackPanel>
-
+          <Border BorderThickness="0 0 0 1" BorderBrush="#B331313b">
+            <TextBlock HorizontalAlignment="Stretch" Margin="0 35 0 20" FontWeight="SemiBold" VerticalAlignment="Center" FontSize="16" Foreground="#BDC3C7" TextAlignment="Center" TextWrapping="Wrap">
+              Plug-ins
+            </TextBlock>
+          </Border>
+          
+          <StackPanel Orientation="Horizontal" IsVisible="{Binding PluginsEmpty}" Margin="0 20 0 30" HorizontalAlignment="Center">
+            <TextBlock VerticalAlignment="Center" FontSize="15" Margin="0 0 20 0">No plug-ins are loaded. </TextBlock>
+            <Button VerticalAlignment="Center" Command="{Binding OpenPluginFolder}" Cursor="Hand" Padding="10">
+              Open Plug-ins Folder
+            </Button>
+          </StackPanel>
+          <StackPanel Orientation="Vertical" Name="PluginListPanel"/>
         </StackPanel>
       </controls:SmoothScrollViewer>
       <Button Name="SettingsOkButton" Cursor="Hand" VerticalAlignment="Bottom" Margin="0 0 0 10" BorderBrush="#454552" Width="100" Height="40" Foreground="#BDC3C7" Background="#454552">Looks good!</Button>

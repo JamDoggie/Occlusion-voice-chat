@@ -7,7 +7,7 @@ namespace GlobalLowLevelHooks
     /// <summary>
     /// Class for intercepting low level keyboard hooks
     /// </summary>
-    public class KeyboardHook
+    public class WindowsKeyboardHook
     {
         /// <summary>
         /// Virtual Keys
@@ -289,7 +289,7 @@ namespace GlobalLowLevelHooks
         /// <summary>
         /// Destructor. Unhook current hook
         /// </summary>
-        ~KeyboardHook()
+        ~WindowsKeyboardHook()
         {
             Uninstall();
         }

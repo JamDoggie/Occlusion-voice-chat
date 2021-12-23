@@ -13,7 +13,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.plugin.api.UI
     /// </summary>
     public class ButtonWrapper
     {
-        private Button _button = new Button();
+        private Button _button;
 
         private string _name = string.Empty;
         public string Name
@@ -56,6 +56,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform.plugin.api.UI
         
         public ButtonWrapper(string text, string name)
         {
+            _button = new Button();
+            _button.Classes = Classes.Parse("plugin-button-class");
             Text = text;
             Name = name;
         }

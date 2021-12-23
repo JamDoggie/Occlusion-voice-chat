@@ -3,7 +3,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.platform
     /// <summary>
     /// NOTE: This class is modified to not include secondary symbols that occupy the same key as another primary symbol.
     /// </summary>
-    public enum KeySym
+    public enum LinuxKeySym
     {
         VoidSymbol = 0xffffff /* Void symbol */,
         BackSpace = 0xff08 /* Back space, back char */,

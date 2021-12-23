@@ -5,7 +5,7 @@ namespace GlobalLowLevelHooks
 {
     public class KeybindManager : IDisposable
     {
-        public BindManager? CurrentBindManager { get; private set; }
+        public BindManager? CurrentBindManager { get; }
 
         public KeybindManager()
         {

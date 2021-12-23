@@ -4,7 +4,8 @@ using Avalonia.Controls.Presenters;
 using Avalonia.Markup.Xaml;
 using System.Collections.Generic;
 using GlobalLowLevelHooks;
-using static GlobalLowLevelHooks.KeyboardHook;
+using Occlusion_Voice_Chat_CrossPlatform.keybinds;
+using static GlobalLowLevelHooks.WindowsKeyboardHook;
 
 namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 {
@@ -22,7 +23,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
         public TextBlock WatermarkClickText { get; set; }
         #endregion
 
-        public List<UniversalKey> Hotkey = new List<UniversalKey>();
+        public List<KeyCode> Hotkey = new List<KeyCode>();
 
         #region events
         public delegate void HotkeyPressedDelegate();
@@ -31,7 +32,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
         public delegate void HotkeyReleasedDelegate();
         public event HotkeyReleasedDelegate HotkeyReleased;
 
-        public delegate void HotkeyChangedDelegate(List<UniversalKey> newHotkey);
+        public delegate void HotkeyChangedDelegate(List<KeyCode> newHotkey);
         public event HotkeyChangedDelegate HotkeyChanged;
         #endregion
 
@@ -91,7 +92,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 
         private bool isPressed = false;
 
-        private void App_HotkeyKeyDownEvent(object? sender, UniversalKey key)
+        private void App_HotkeyKeyDownEvent(object? sender, KeyCode key)
         {
             
             if (App.KeybindManager.CurrentBindManager != null)
@@ -102,7 +103,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
                         if (BindContent.IsFocused && BindContent.IsPointerOver)
                         {
                             Hotkey.Clear();
-                            foreach (UniversalKey k in App.KeybindManager.CurrentBindManager.CurrentPressedKeys)
+                            foreach (KeyCode k in App.KeybindManager.CurrentBindManager.CurrentPressedKeys)
                             {
                                 Hotkey.Add(k);
                             }
@@ -119,7 +120,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 
                                 int matchingKeys = 0;
 
-                                foreach (UniversalKey k in App.KeybindManager.CurrentBindManager.CurrentPressedKeys)
+                                foreach (KeyCode k in App.KeybindManager.CurrentBindManager.CurrentPressedKeys)
                                 {
                                     if (Hotkey.Contains(k))
                                         matchingKeys++;
@@ -137,7 +138,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             }
         }
 
-        private void App_HotkeyKeyUpEvent(object? sender, UniversalKey key)
+        private void App_HotkeyKeyUpEvent(object? sender, KeyCode key)
         {
             if (MainWindow.mainWindow.VoiceChatWindow.IsOpen)
                 if (!BindContent.IsFocused || !BindContent.IsPointerOver)
@@ -177,9 +178,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
                 ContentText.Text = ContentText.Text + Hotkey[i];
             }
 
-            List<UniversalKey> newHotkey = new List<UniversalKey>();
+            List<KeyCode> newHotkey = new List<KeyCode>();
 
-            foreach (UniversalKey key in Hotkey)
+            foreach (KeyCode key in Hotkey)
                 newHotkey.Add(key);
 
             if (HotkeyChanged != null)

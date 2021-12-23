@@ -12,13 +12,13 @@ namespace Occlusion_Voice_Chat_CrossPlatform.keybinds
 {
     public class MacBindManager : BindManager
     {
-        public event EventHandler<UniversalKey>? KeyUp;
+        public event EventHandler<KeyCode>? KeyUp;
 
-        public event EventHandler<UniversalKey>? KeyDown;
+        public event EventHandler<KeyCode>? KeyDown;
 
         public object PressedKeyLock { get; } = new object();
 
-        public List<UniversalKey> CurrentPressedKeys { get; set; } = new();
+        public List<KeyCode> CurrentPressedKeys { get; set; } = new();
 
         public void SetupBinds()
         {

@@ -54,8 +54,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                         }
                         catch (IOException e)
                         {
-                            // File already exists, ignore
-                            // We do this instead of a File.Exists check because the file might be in use by another process.
+                            // File already exists, ignore.
+                            // This is safer than File.Exists()
                         }
                     }
                 }

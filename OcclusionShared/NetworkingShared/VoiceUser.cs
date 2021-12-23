@@ -204,7 +204,9 @@ namespace OcclusionShared.NetworkingShared
             }
         }
 
-        private int _queueOffset = 0;
+        private static int activeQueueIndexOffset = App.GetSampleSizeInBytes(TimeSpan.FromMilliseconds(50), App.samplingRate, 1);
+
+        private int _queueOffset = activeQueueIndexOffset;
         public int QueueOffset { get { return _queueOffset; } }
 
         private bool _isTalking = false;
@@ -248,6 +250,7 @@ namespace OcclusionShared.NetworkingShared
         private object _lockObj = new object();
 
 
+
         public void InitializeArrays()
         {
             MicQueue = new byte[App.GetSampleSizeInBytes(TimeSpan.FromMilliseconds(500), App.samplingRate, 1)];
@@ -272,7 +275,7 @@ namespace OcclusionShared.NetworkingShared
                     // If the audio queue gets this big, we need to clear it to sync things back up.
                     if (_queueOffset > MicQueue.Length)
                     {
-                        _queueOffset = 0; 
+                        _queueOffset = activeQueueIndexOffset; 
                         for (int i = 0; i < MicQueue.Length; i++)
                             MicQueue[i] = 0;
                     }
@@ -313,6 +316,8 @@ namespace OcclusionShared.NetworkingShared
 
         private DiscreteSignal leftSig;
         private DiscreteSignal rightSig;
+
+        
 
         private void copyFiltersToFloatArrays()
         {
@@ -415,9 +420,9 @@ namespace OcclusionShared.NetworkingShared
                     {
                         if (i < MicQueue.Length)
                         {
-                            leftQueueArray[i] = MicQueue[Math.Clamp(i + ((int)earDelays.X * 2), 0, MicQueue.Length)];
+                            leftQueueArray[i] = MicQueue[Math.Clamp(i + activeQueueIndexOffset - ((int)earDelays.X * 2), 0, MicQueue.Length)];
 
-                            rightQueueArray[i] = MicQueue[Math.Clamp(i + ((int)earDelays.Y * 2), 0, MicQueue.Length)];
+                            rightQueueArray[i] = MicQueue[Math.Clamp(i + activeQueueIndexOffset - ((int)earDelays.Y * 2), 0, MicQueue.Length)];
                             amountCut++;
                         }
                     }
@@ -433,7 +438,8 @@ namespace OcclusionShared.NetworkingShared
                             MicQueue[i] = MicQueue[i + amountCut];
                     }
 
-                    // Now, set the leftover bytes at the end of the array to silence so if we run out of things to mix we don't end up mixing in ghost audio samples from the past.
+                    // Now, set the leftover bytes at the end of the array to silence so if we run out of things to mix we don't end up mixing in
+                    // ghost audio samples from the past.
                     for (int i = MicQueue.Length - 1; i >= MicQueue.Length - amountCut; i--)
                     {
                         MicQueue[i] = 0;
@@ -441,8 +447,8 @@ namespace OcclusionShared.NetworkingShared
 
                     _queueOffset -= amountCut;
 
-                    if (_queueOffset < 0)
-                        _queueOffset = 0;
+                    if (_queueOffset < activeQueueIndexOffset)
+                        _queueOffset = activeQueueIndexOffset;
 
                     for (int i = 0; i < queuedLeftShortArray.Length; i++)
                     {

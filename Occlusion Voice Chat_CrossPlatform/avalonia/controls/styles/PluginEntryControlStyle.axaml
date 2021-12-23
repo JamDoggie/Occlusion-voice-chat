@@ -2,9 +2,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <Design.PreviewWith>
         <Border Padding="20">
-            <!-- Add Controls for Previewer Here -->
+            <Button Classes="plugin-button-class" Content="test"/>
         </Border>
     </Design.PreviewWith>
 
-    <!-- Add Styles Here -->
+    <Style Selector="Button.plugin-button-class">
+        <Setter Property="Padding" Value="7"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
 </Styles>

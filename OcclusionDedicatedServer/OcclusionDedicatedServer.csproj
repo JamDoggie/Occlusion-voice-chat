@@ -31,7 +31,7 @@
   <ItemGroup>
     <PackageReference Include="DotNetty.Common" Version="0.6.0" />
     <PackageReference Include="LiteNetLib" Version="0.9.5.2" />
-    <PackageReference Include="NBrigadier" Version="1.0.17.4" />
+    <PackageReference Include="NBrigadier" Version="1.0.17.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 

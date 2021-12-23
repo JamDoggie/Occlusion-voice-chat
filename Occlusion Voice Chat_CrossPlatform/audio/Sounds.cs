@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Avalonia.Controls;
 
 namespace Occlusion_Voice_Chat_CrossPlatform.audio
 {
@@ -46,6 +47,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
         public static void LoadSounds()
         {
             string dir = Directory.GetCurrentDirectory();
+
+            // Check if this code is running in the avalonia designer
+            if (Design.IsDesignMode)
+            {
+                dir = AppContext.BaseDirectory;
+            }
 
             Console.WriteLine($"{dir}/resources/occlusion_mute.opus bruh");
             Debug.WriteLine($"{dir}/resources/occlusion_mute.opus bruh");

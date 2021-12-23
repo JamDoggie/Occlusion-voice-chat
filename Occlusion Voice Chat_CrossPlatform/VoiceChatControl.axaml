@@ -270,7 +270,7 @@
           <Border CornerRadius="15 15 0 0" HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="100" Background="#3b3b47"></Border>
           <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Horizontal" Height="100">
-              <TextBlock  FontSize="25" VerticalAlignment="Center" TextAlignment="Center" FontWeight="SemiBold" Width="500">Please reconnect to the game server.</TextBlock>
+              <TextBlock  FontSize="22" VerticalAlignment="Center" TextAlignment="Center" FontWeight="SemiBold" Width="500">Please reconnect to the game server.</TextBlock>
             </StackPanel>
 
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0 50 0 0">

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Avalonia.Input;
+using Occlusion_Voice_Chat_CrossPlatform.keybinds;
 using OcclusionShared.Util;
 
 namespace GlobalLowLevelHooks
@@ -10,11 +11,11 @@ namespace GlobalLowLevelHooks
     {
         public object PressedKeyLock { get; }
         
-        List<UniversalKey> CurrentPressedKeys { get; set; }
+        List<KeyCode> CurrentPressedKeys { get; set; }
 
-        event EventHandler<UniversalKey> KeyDown;
+        event EventHandler<KeyCode> KeyDown;
         
-        event EventHandler<UniversalKey> KeyUp;
+        event EventHandler<KeyCode> KeyUp;
         
         void SetupBinds();
         

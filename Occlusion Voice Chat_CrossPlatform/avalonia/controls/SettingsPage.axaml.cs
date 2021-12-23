@@ -11,7 +11,10 @@ using System.IO;
 using System.Reflection;
 using System.Timers;
 using GlobalLowLevelHooks;
-using static GlobalLowLevelHooks.KeyboardHook;
+using Occlusion_Voice_Chat_CrossPlatform.keybinds;
+using Occlusion_voice_chat_CrossPlatform.plugin;
+using Occlusion_Voice_Chat_CrossPlatform.plugin.api.UI;
+using static GlobalLowLevelHooks.WindowsKeyboardHook;
 
 namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 {
@@ -59,7 +62,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 
 
 
-        private Timer hrtfTimer;
+        private static Timer hrtfTimer;
 
         private bool HRTFRotating { get; set; } = true;
         public SettingsPage()
@@ -131,25 +134,33 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             VoiceActivityBox.SelectedIndex = App.Options.Obj.UseVoiceActivity ? 0 : 1;
 
             // Load hotkeys
-            PushTalkBind.Hotkey.Clear();
-            foreach (string s in App.Options.Obj.PushTalkBind)
-                PushTalkBind.Hotkey.Add(new UniversalKey(s));
+            try
+            {
+                PushTalkBind.Hotkey.Clear();
+                foreach (string s in App.Options.Obj.PushTalkBind)
+                    PushTalkBind.Hotkey.Add(Enum.Parse<KeyCode>(s));
 
-            PushMuteBind.Hotkey.Clear();
-            foreach (string s in App.Options.Obj.PushMuteBind)
-                PushMuteBind.Hotkey.Add(new UniversalKey(s));
+                PushMuteBind.Hotkey.Clear();
+                foreach (string s in App.Options.Obj.PushMuteBind)
+                    PushMuteBind.Hotkey.Add(Enum.Parse<KeyCode>(s));
 
-            PushDeafenBind.Hotkey.Clear();
-            foreach (string s in App.Options.Obj.PushDeafenBind)
-                PushDeafenBind.Hotkey.Add(new UniversalKey(s));
+                PushDeafenBind.Hotkey.Clear();
+                foreach (string s in App.Options.Obj.PushDeafenBind)
+                    PushDeafenBind.Hotkey.Add(Enum.Parse<KeyCode>(s));
 
-            ToggleMuteBind.Hotkey.Clear();
-            foreach (string s in App.Options.Obj.ToggleMuteBind)
-                ToggleMuteBind.Hotkey.Add(new UniversalKey(s));
+                ToggleMuteBind.Hotkey.Clear();
+                foreach (string s in App.Options.Obj.ToggleMuteBind)
+                    ToggleMuteBind.Hotkey.Add(Enum.Parse<KeyCode>(s));
 
-            ToggleDeafenBind.Hotkey.Clear();
-            foreach (string s in App.Options.Obj.ToggleDeafenBind)
-                ToggleDeafenBind.Hotkey.Add(new UniversalKey(s));
+                ToggleDeafenBind.Hotkey.Clear();
+                foreach (string s in App.Options.Obj.ToggleDeafenBind)
+                    ToggleDeafenBind.Hotkey.Add(Enum.Parse<KeyCode>(s));
+            }
+            catch (ArgumentException e)
+            {
+                Console.WriteLine("Error loading hotkeys: \n" + e.Message);
+            }
+            
 
             PushTalkBind.UpdateContent();
             PushMuteBind.UpdateContent();
@@ -163,48 +174,67 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             PushDeafenBind.HotkeyChanged += PushDeafenBind_HotkeyChanged; ;
             ToggleMuteBind.HotkeyChanged += ToggleMuteBind_HotkeyChanged; ;
             ToggleDeafenBind.HotkeyChanged += ToggleDeafenBind_HotkeyChanged; ;
+            
+            // Plugins
+            foreach (Plugin plugin in PluginManager.Plugins)
+            {
+                PluginEntryControl entry = new PluginEntryControl();
+                entry.Plugin = plugin;
+                entry.ViewModel.PluginName = plugin.PluginName;
+                entry.ViewModel.PluginVersion = plugin.PluginVersion;
+                entry.ViewModel.PluginIcon = PluginManager.GetPluginIcon(plugin);
+                foreach(ButtonWrapper btn in entry.Plugin.MenuButtons)
+                {
+                    if (btn.GetNativeControl() is Button button)
+                    {
+                        entry.FindControl<WrapPanel>("PluginListPanel").Children.Add(button);
+                    }
+                }
+
+                this.FindControl<StackPanel>("PluginListPanel").Children.Add(entry);
+            }
         }
 
-        private void ToggleDeafenBind_HotkeyChanged(List<UniversalKey> newHotkey)
+        private void ToggleDeafenBind_HotkeyChanged(List<KeyCode> newHotkey)
         {
             App.Options.Obj.ToggleDeafenBind.Clear();
-            foreach (UniversalKey key in ToggleDeafenBind.Hotkey)
+            foreach (KeyCode key in ToggleDeafenBind.Hotkey)
                 App.Options.Obj.ToggleDeafenBind.Add(key.ToString());
 
             App.Options.Update();
         }
 
-        private void ToggleMuteBind_HotkeyChanged(List<UniversalKey> newHotkey)
+        private void ToggleMuteBind_HotkeyChanged(List<KeyCode> newHotkey)
         {
             App.Options.Obj.ToggleMuteBind.Clear();
-            foreach (UniversalKey key in ToggleMuteBind.Hotkey)
+            foreach (KeyCode key in ToggleMuteBind.Hotkey)
                 App.Options.Obj.ToggleMuteBind.Add(key.ToString());
 
             App.Options.Update();
         }
 
-        private void PushDeafenBind_HotkeyChanged(List<UniversalKey> newHotkey)
+        private void PushDeafenBind_HotkeyChanged(List<KeyCode> newHotkey)
         {
             App.Options.Obj.PushDeafenBind.Clear();
-            foreach (UniversalKey key in PushDeafenBind.Hotkey)
+            foreach (KeyCode key in PushDeafenBind.Hotkey)
                 App.Options.Obj.PushDeafenBind.Add(key.ToString());
 
             App.Options.Update();
         }
 
-        private void PushMuteBind_HotkeyChanged(List<UniversalKey> newHotkey)
+        private void PushMuteBind_HotkeyChanged(List<KeyCode> newHotkey)
         {
             App.Options.Obj.PushMuteBind.Clear();
-            foreach (UniversalKey key in PushMuteBind.Hotkey)
+            foreach (KeyCode key in PushMuteBind.Hotkey)
                 App.Options.Obj.PushMuteBind.Add(key.ToString());
 
             App.Options.Update();
         }
 
-        private void PushTalkBind_HotkeyChanged(List<UniversalKey> newHotkey)
+        private void PushTalkBind_HotkeyChanged(List<KeyCode> newHotkey)
         {
             App.Options.Obj.PushTalkBind.Clear();
-            foreach (UniversalKey key in PushTalkBind.Hotkey)
+            foreach (KeyCode key in PushTalkBind.Hotkey)
                 App.Options.Obj.PushTalkBind.Add(key.ToString());
 
             App.Options.Update();
@@ -244,7 +274,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 
             string[] paths = await fileDialog.ShowAsync(MainWindow.mainWindow);
 
-            if (paths.Length > 0)
+            if (paths != null && paths.Length > 0)
             {
                 foreach(string s in paths)
                 {
@@ -335,8 +365,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
                     }
                 });
             }
-            
-            
         }
 
         private static double ConvertRadiansToDegrees(double radians)

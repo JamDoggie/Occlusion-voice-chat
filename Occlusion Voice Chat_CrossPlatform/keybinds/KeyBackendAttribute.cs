@@ -4,16 +4,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static GlobalLowLevelHooks.KeyboardHook;
+using static GlobalLowLevelHooks.WindowsKeyboardHook;
 
 namespace Occlusion_Voice_Chat_CrossPlatform.keybinds
 {
     public class KeyBackendAttribute : Attribute
     {
-        public LinuxKeySym LinuxKeyCode { get; private set; }
+        public LinuxKeySym LinuxKeyCode { get; }
 
-        public VKeys WindowsKeyCode { get; private set; }
+        public VKeys WindowsKeyCode { get; }
 
-        
+        public KeyBackendAttribute(LinuxKeySym linuxKeyCode, VKeys windowsKeyCode)
+        {
+            LinuxKeyCode = linuxKeyCode;
+            WindowsKeyCode = windowsKeyCode;
+        }
     }
 }

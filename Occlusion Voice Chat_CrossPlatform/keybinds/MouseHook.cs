@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
-using static GlobalLowLevelHooks.KeyboardHook;
+using static GlobalLowLevelHooks.WindowsKeyboardHook;
 
 namespace GlobalLowLevelHooks
 {

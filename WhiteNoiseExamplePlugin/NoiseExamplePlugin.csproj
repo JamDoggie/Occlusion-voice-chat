@@ -7,6 +7,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="icon.png" />
+    </ItemGroup>
+
+    <ItemGroup>
       <ProjectReference Include="..\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" />
     </ItemGroup>
 

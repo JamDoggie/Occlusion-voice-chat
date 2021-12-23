@@ -14,6 +14,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Layout;
+using System.Threading;
 
 #nullable enable
 
@@ -107,7 +108,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
         //private TimeSpan _smoothScrollDuration = TimeSpan.FromMilliseconds(0);
         //private bool _usesSmoothScrolling = true;
         private bool _shouldAnimateOffset = false;
-        private DispatcherTimer _smoothScrollTimer; //Timer(1);
+        private System.Timers.Timer _smoothScrollTimer; //Timer(1);
         private bool _smoothScrollTimerStarted = false;
         private double _animStartOffsetX = 0;
         private double _animStartOffsetY = 0;
@@ -150,7 +151,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 
             this.GetObservable(ChildProperty).Subscribe(UpdateScrollableSubscription);
 
-            _smoothScrollTimer = new DispatcherTimer(TimeSpan.FromMilliseconds(1), DispatcherPriority.Render, SmoothScrollTimer_Elapsed);
+            _smoothScrollTimer = new System.Timers.Timer(1);
+            _smoothScrollTimer.Elapsed += SmoothScrollTimer_Elapsed;
             //SmoothScrollPropertiesChanged();
         }
 
@@ -708,28 +710,30 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             }
         }
 
-        private void SmoothScrollTimer_Elapsed(object sender, EventArgs e)
+        private void SmoothScrollTimer_Elapsed(object? sender, EventArgs e)
         {
-            double totalDistanceX = _offsetX - _animStartOffsetX;
-            double totalDistanceY = _offsetY - _animStartOffsetY;
+            Dispatcher.UIThread.InvokeAsync(() => {
+                double totalDistanceX = _offsetX - _animStartOffsetX;
+                double totalDistanceY = _offsetY - _animStartOffsetY;
 
-            double percentage = 1 - Math.Min(Math.Max(0, _animTimeRemaining / _animDuration), 1);
-            double easedPercentage = _currentEasing.Ease(percentage);
+                double percentage = 1 - Math.Min(Math.Max(0, _animTimeRemaining / _animDuration), 1);
+                double easedPercentage = _currentEasing.Ease(percentage);
 
-            double currentX = _animStartOffsetX + (totalDistanceX * easedPercentage);
-            double currentY = _animStartOffsetY + (totalDistanceY * easedPercentage);
-            _animTimeRemaining--;
-            //Console.WriteLine("_animTimeRemaining: " + _animTimeRemaining);
-            //Console.WriteLine("percentage: " + percentage + "; \teasedPercentage: " + easedPercentage + "; \tcurrent: " + currentX + ", " + currentY + "\n\t\t");
+                double currentX = _animStartOffsetX + (totalDistanceX * easedPercentage);
+                double currentY = _animStartOffsetY + (totalDistanceY * easedPercentage);
+                _animTimeRemaining--;
+                //Console.WriteLine("_animTimeRemaining: " + _animTimeRemaining);
+                //Console.WriteLine("percentage: " + percentage + "; \teasedPercentage: " + easedPercentage + "; \tcurrent: " + currentX + ", " + currentY + "\n\t\t");
 
-            AnimationOffset = new Vector(currentX, currentY);
+                AnimationOffset = new Vector(currentX, currentY);
 
-            if (_animTimeRemaining <= 0)
-            {
-                //Console.WriteLine("Stopping...");
-                _smoothScrollTimerStarted = false;
-                _smoothScrollTimer.Stop();
-            }
+                if (_animTimeRemaining <= 0)
+                {
+                    //Console.WriteLine("Stopping...");
+                    _smoothScrollTimerStarted = false;
+                    _smoothScrollTimer.Stop();
+                }
+            });
         }
 
         /*private void SmoothScrollPropertiesChanged()

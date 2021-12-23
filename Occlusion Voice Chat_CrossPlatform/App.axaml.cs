@@ -38,7 +38,7 @@ using System.Net.Http;
 
 #if WINDOWS
 using GlobalLowLevelHooks;
-using static GlobalLowLevelHooks.KeyboardHook;
+using static GlobalLowLevelHooks.WindowsKeyboardHook;
 #endif
 
 namespace Occlusion_Voice_Chat_CrossPlatform
@@ -219,6 +219,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 }
                 
                 PluginManager.LoadPlugins($"{Directory.GetCurrentDirectory()}/plugins/");
+
+                PluginManager.DefaultPluginFolder = $"{Directory.GetCurrentDirectory()}\\plugins";
             }
             catch (IOException e)
             {

@@ -7,9 +7,11 @@ using Avalonia;
 using Avalonia.Threading;
 using Microsoft.CodeAnalysis;
 using Occlusion_Voice_Chat_CrossPlatform;
+using Occlusion_Voice_Chat_CrossPlatform.keybinds;
 using Occlusion_Voice_Chat_CrossPlatform.platform;
 using OcclusionShared.Util;
 using X11;
+using KeyCode = X11.KeyCode;
 using KeySym = X11.KeySym;
 using Xlib = X11.Xlib;
 
@@ -17,24 +19,42 @@ namespace GlobalLowLevelHooks
 {
     public class LinuxBindManager : BindManager
     {
-        public event EventHandler<UniversalKey>? KeyUp;
+        public event EventHandler<Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode>? KeyUp;
 
-        public event EventHandler<UniversalKey>? KeyDown;
+        public event EventHandler<Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode>? KeyDown;
 
         public object PressedKeyLock { get; } = new object();
 
-        public List<UniversalKey> CurrentPressedKeys { get; set; } = new();
+        public List<Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode> CurrentPressedKeys { get; set; } = new();
 
         private IntPtr x11Display = IntPtr.Zero;
         
-        private List<UniversalKey> _keyCodes = new();
-
         public LinuxBindManager()
         {
-            foreach(Occlusion_Voice_Chat_CrossPlatform.platform.KeySym key in Enum.GetValues(typeof(Occlusion_Voice_Chat_CrossPlatform.platform.KeySym)))
+            
+        }
+
+        private Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode GetUniversalKeycode(LinuxKeySym keySym)
+        {
+            foreach(Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode code in Enum.GetValues(typeof(Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode)))
             {
-                _keyCodes.Add(new UniversalKey(key.ToString()));
+                // Get C# attribute using reflection of the enum
+                var field = code.GetType().GetField(code.ToString());
+                
+                if (field != null && 
+                    field.GetCustomAttributes(typeof(KeyBackendAttribute), false).FirstOrDefault() is KeyBackendAttribute attribute)
+                {
+                    if (attribute.LinuxKeyCode == keySym)
+                    {
+                        return code;
+                    }
+                }
+                
             }
+
+            Console.WriteLine("Could not find keycode for " + keySym);
+            
+            return Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode.INVALID_KEYCODE;
         }
         
         public void SetupBinds()
@@ -44,7 +64,7 @@ namespace GlobalLowLevelHooks
 
                 Window rootWindow = Xlib.XDefaultRootWindow(x11Display);
                 
-                List<UniversalKey> previousKeys = new();
+                List<Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode> previousKeys = new();
                 
                 while (true)
                 {
@@ -57,11 +77,11 @@ namespace GlobalLowLevelHooks
                         Occlusion_Voice_Chat_CrossPlatform.platform.Xlib.XQueryKeymap(x11Display, keymap);
 
 
-                        foreach(Occlusion_Voice_Chat_CrossPlatform.platform.KeySym key in Enum.GetValues(typeof(Occlusion_Voice_Chat_CrossPlatform.platform.KeySym)))
+                        foreach(LinuxKeySym key in Enum.GetValues(typeof(LinuxKeySym)))
                         {
                             KeyCode code = Xlib.XKeysymToKeycode(x11Display, (KeySym) key);
                         
-                            if (key == Occlusion_Voice_Chat_CrossPlatform.platform.KeySym.VoidSymbol)
+                            if (key == LinuxKeySym.VoidSymbol)
                                 continue;
 
                             int keycode = (int)code;
@@ -71,8 +91,14 @@ namespace GlobalLowLevelHooks
                         
                             if ((keymapValue & keycodeMask) != 0)
                             {
-                                // Add key to the queue called CurrentPressedKeys
-                                CurrentPressedKeys.Add(GetKey(key));
+                                Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode universalKey = GetUniversalKeycode(key);
+
+                                if (!CurrentPressedKeys.Contains(universalKey))
+                                {
+                                    // Add key to the queue called CurrentPressedKeys
+                                    CurrentPressedKeys.Add(universalKey);
+                                }
+                                
                                 
                             }
 
@@ -86,13 +112,37 @@ namespace GlobalLowLevelHooks
                         {
                             if ((maskReturn & (int)mask) != 0)
                             {
-                                CurrentPressedKeys.Add(new UniversalKey(mask.ToString()));
+                                switch (mask)
+                                {
+                                    case PointerButtons.Mouse1:
+                                        CurrentPressedKeys.Add(Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode.MOUSE1);
+                                        break;
+                                    
+                                    // Mouse 2 & 3 are flipped because on X11, mouse 2 is middle mouse while mouse 3 is right mouse.
+                                    // On windows however, mouse 2 is right mouse while mouse 3 is middle mouse.
+                                    // The latter makes more sense to me thus it is what I picked.
+                                    case PointerButtons.Mouse2:
+                                        CurrentPressedKeys.Add(Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode.MOUSE3);
+                                        break;
+                                    
+                                    case PointerButtons.Mouse3:
+                                        CurrentPressedKeys.Add(Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode.MOUSE2);
+                                        break;
+
+                                    case PointerButtons.Mouse4:
+                                        CurrentPressedKeys.Add(Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode.MOUSE4);
+                                        break;
+                                    
+                                    case PointerButtons.Mouse5:
+                                        CurrentPressedKeys.Add(Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode.MOUSE5);
+                                        break;
+                                }
                             }
                         }
                         
 
                         // Check if any keys have been pressed, and invoke an event if so.
-                        foreach(UniversalKey key in CurrentPressedKeys)
+                        foreach(Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode key in CurrentPressedKeys)
                         {
                             if (!previousKeys.Contains(key) && CurrentPressedKeys.Contains(key))
                             {
@@ -101,7 +151,7 @@ namespace GlobalLowLevelHooks
                         }
                         
                         // Check if any keys have been released, and invoke an event if so.
-                        foreach(UniversalKey key in previousKeys)
+                        foreach(Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode key in previousKeys)
                         {
                             if (!CurrentPressedKeys.Contains(key) && previousKeys.Contains(key))
                             {
@@ -111,7 +161,7 @@ namespace GlobalLowLevelHooks
                         
                         // Do this last
                         previousKeys.Clear();
-                        foreach(UniversalKey key in CurrentPressedKeys)
+                        foreach(Occlusion_Voice_Chat_CrossPlatform.keybinds.KeyCode key in CurrentPressedKeys)
                         {
                             previousKeys.Add(key);
                         }
@@ -127,11 +177,6 @@ namespace GlobalLowLevelHooks
             x11Thread.Start();
         }
 
-        public UniversalKey GetKey(Occlusion_Voice_Chat_CrossPlatform.platform.KeySym key)
-        {
-            return _keyCodes.Find(k => k.KeyName == key.ToString());
-        }
-        
         public void DisposeBinds()
         {
             lock (PressedKeyLock)

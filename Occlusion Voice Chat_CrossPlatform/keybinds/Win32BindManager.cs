@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
+using Occlusion_Voice_Chat_CrossPlatform.keybinds;
 using OcclusionShared.Util;
 
 namespace GlobalLowLevelHooks
@@ -11,52 +12,66 @@ namespace GlobalLowLevelHooks
     {
         public object PressedKeyLock { get; } = new object();
 
-        public List<UniversalKey> CurrentPressedKeys { get; set; } = new();
+        public List<KeyCode> CurrentPressedKeys { get; set; } = new();
 
-        public KeyboardHook keyboardHook = new KeyboardHook();
+        public WindowsKeyboardHook WindowsKeyboardHook = new WindowsKeyboardHook();
 
         public MouseHook mouseHook = new MouseHook();
 
-        private List<UniversalKey> _keyCodes = new();
+        private List<KeyCode> _keyCodes = new();
         
         // Events
-        public event EventHandler<UniversalKey>? KeyUp;
-        public event EventHandler<UniversalKey>? KeyDown;
+        public event EventHandler<KeyCode>? KeyUp;
+        public event EventHandler<KeyCode>? KeyDown;
 
-        public Win32BindManager()
+        private KeyCode GetUniversalKeycode(WindowsKeyboardHook.VKeys keySym)
         {
-            // Create list of platform-agnostic keys
-            foreach(KeyboardHook.VKeys key in Enum.GetValues(typeof(KeyboardHook.VKeys)))
+            foreach(KeyCode code in Enum.GetValues(typeof(KeyCode)))
             {
-                _keyCodes.Add(new UniversalKey(key.ToString()));
+                // Get C# attribute using reflection of the enum
+                var field = code.GetType().GetField(code.ToString());
+                
+                if (field != null && 
+                    field.GetCustomAttributes(typeof(KeyBackendAttribute), false).FirstOrDefault() is KeyBackendAttribute attribute)
+                {
+                    if (attribute.WindowsKeyCode == keySym)
+                    {
+                        return code;
+                    }
+                }
+                
             }
+
+            Console.WriteLine("Could not find keycode for " + keySym);
+            
+            return KeyCode.INVALID_KEYCODE;
         }
 
         public void SetupBinds()
         {
             if (!Design.IsDesignMode) // Odd behavior occurs when trying to initialize hotkey stuff from design mode. I should really switch to Raw Input at some point, instead of this win32 jank.
             {
-                keyboardHook.KeyDown += KeyboardHook_KeyDown;
-                keyboardHook.KeyUp += KeyboardHook_KeyUp;
+                WindowsKeyboardHook.KeyDown += KeyboardHook_KeyDown;
+                WindowsKeyboardHook.KeyUp += KeyboardHook_KeyUp;
                 mouseHook.KeyDown += KeyboardHook_KeyDown;
                 mouseHook.KeyUp += KeyboardHook_KeyUp;
                 
-                void KeyboardHook_KeyDown(KeyboardHook.VKeys key)
+                void KeyboardHook_KeyDown(WindowsKeyboardHook.VKeys key)
                 {
-                    if (!CurrentPressedKeys.Contains(GetKey(key)))
+                    if (!CurrentPressedKeys.Contains(GetUniversalKeycode(key)))
                     {
-                        CurrentPressedKeys.Add(GetKey(key));
-                        KeyDown.Invoke(this, GetKey(key));
+                        CurrentPressedKeys.Add(GetUniversalKeycode(key));
+                        KeyDown.Invoke(this, GetUniversalKeycode(key));
                     }
                 }
 
-                void KeyboardHook_KeyUp(KeyboardHook.VKeys key)
+                void KeyboardHook_KeyUp(WindowsKeyboardHook.VKeys key)
                 {
-                    CurrentPressedKeys.Remove(GetKey(key));
-                    KeyUp.Invoke(this, GetKey(key));
+                    CurrentPressedKeys.Remove(GetUniversalKeycode(key));
+                    KeyUp.Invoke(this, GetUniversalKeycode(key));
                 }
 
-                keyboardHook.Install();
+                WindowsKeyboardHook.Install();
                 mouseHook.Install();
 
                 KeyUp += (o, k) => { };
@@ -66,13 +81,8 @@ namespace GlobalLowLevelHooks
 
         public void DisposeBinds()
         {
-            keyboardHook?.Uninstall();
+            WindowsKeyboardHook?.Uninstall();
             mouseHook?.Uninstall();
-        }
-
-        public UniversalKey GetKey(KeyboardHook.VKeys key)
-        {
-            return _keyCodes.Find(k => k.KeyName == key.ToString());
         }
     }
 }
