@@ -2,7 +2,172 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="250" 
+             Width="360" Height="215"
+             xmlns:md="clr-namespace:Markdown.Avalonia;assembly=Markdown.Avalonia"
+             xmlns:ctxt="clr-namespace:ColorTextBlock.Avalonia;assembly=ColorTextBlock.Avalonia"
              x:Class="Occlusion_Voice_Chat_CrossPlatform.avalonia.controls.LoadingBlogControl">
-    Welcome to Avalonia!
+    <UserControl.Styles>
+      <StyleInclude Source="/avalonia/styles/OcclusionMarkdownStyles.axaml"/>
+      
+      <Style Selector="Border.title-placeholder">
+        <Setter Property="CornerRadius" Value="10"></Setter>
+        <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+        <Setter Property="Margin" Value="0 15 5 0 "></Setter>
+        <Setter Property="Height" Value="20"></Setter>
+      </Style>
+      
+      <Style Selector="Border.subtitle-placeholder">
+        <Setter Property="CornerRadius" Value="10"></Setter>
+        <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+        <Setter Property="Margin" Value="0 15 5 0 "></Setter>
+        <Setter Property="Height" Value="15"></Setter>
+        <Setter Property="Opacity" Value="0.5"></Setter>
+      </Style>
+      
+      <Style Selector="Border.placeholder">
+        <Setter Property="Background">
+          <RadialGradientBrush GradientOrigin="0% 50%">
+            <RadialGradientBrush.GradientStops>
+              <GradientStop Offset="0" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+              <GradientStop Offset="0.5" Color="{DynamicResource ThemeControlMidColor}"></GradientStop>
+              <GradientStop Offset="1" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+            </RadialGradientBrush.GradientStops>
+          </RadialGradientBrush>
+        </Setter>
+        
+        <Style.Animations>
+          <Animation Duration="0:0:1" IterationCount="INFINITE">
+            <KeyFrame Cue="0%">
+              <Setter Property="Background">
+                <Setter.Value>
+                  <RadialGradientBrush GradientOrigin="-300% 50%" Radius="2">
+                    <RadialGradientBrush.GradientStops>
+                      <GradientStop Offset="0" Color="{DynamicResource ThemeControlMidColor}"></GradientStop>
+                      <GradientStop Offset="0.5" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+                      <GradientStop Offset="1" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+                    </RadialGradientBrush.GradientStops>
+                  </RadialGradientBrush>
+                </Setter.Value>
+              </Setter>
+            </KeyFrame>
+            <KeyFrame Cue="100%">
+              <Setter Property="Background">
+                <Setter.Value>
+                  <RadialGradientBrush GradientOrigin="300% 50%" Radius="2">
+                    <RadialGradientBrush.GradientStops>
+                      <GradientStop Offset="0" Color="{DynamicResource ThemeControlMidColor}"></GradientStop>
+                      <GradientStop Offset="0.5" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+                      <GradientStop Offset="1" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+                    </RadialGradientBrush.GradientStops>
+                  </RadialGradientBrush>
+                </Setter.Value>
+              </Setter>
+            </KeyFrame>
+          </Animation>
+        </Style.Animations>
+      </Style>
+      
+      <Style Selector="Button">
+        <Setter Property="Background">
+          <Setter.Value>
+            <RadialGradientBrush GradientOrigin="50% 50%" Radius="1">
+              <RadialGradientBrush.GradientStops>
+                <GradientStop Offset="0" Color="{DynamicResource ThemeControlMidColor}"></GradientStop>
+                <GradientStop Offset="0.5" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+                <GradientStop Offset="1" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+              </RadialGradientBrush.GradientStops>
+            </RadialGradientBrush>
+          </Setter.Value>
+        </Setter>
+        
+        <Style.Animations>
+          <Animation Duration="0:0:1.5" IterationCount="INFINITE">
+            <KeyFrame Cue="0%">
+              <Setter Property="Background">
+                <Setter.Value>
+                  <RadialGradientBrush GradientOrigin="-300% 50%" Radius="1">
+                    <RadialGradientBrush.GradientStops>
+                      <GradientStop Offset="0" Color="{DynamicResource ThemeControlMidColor}"></GradientStop>
+                      <GradientStop Offset="0.5" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+                      <GradientStop Offset="1" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+                    </RadialGradientBrush.GradientStops>
+                  </RadialGradientBrush>
+                </Setter.Value>
+              </Setter>
+            </KeyFrame>
+            <KeyFrame Cue="100%">
+              <Setter Property="Background">
+                <Setter.Value>
+                  <RadialGradientBrush GradientOrigin="300% 50%" Radius="1">
+                    <RadialGradientBrush.GradientStops>
+                      <GradientStop Offset="0" Color="{DynamicResource ThemeControlMidColor}"></GradientStop>
+                      <GradientStop Offset="0.5" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+                      <GradientStop Offset="1" Color="{DynamicResource ThemeControlLowerColor}"></GradientStop>
+                    </RadialGradientBrush.GradientStops>
+                  </RadialGradientBrush>
+                </Setter.Value>
+              </Setter>
+            </KeyFrame>
+          </Animation>
+        </Style.Animations>
+      </Style>
+    </UserControl.Styles>
+  
+  <Grid>
+    <Border ClipToBounds="True" Background="#32323b" CornerRadius="16">
+      <Grid>
+        <StackPanel Orientation="Vertical">
+          <Border Name="CardBorder" Padding="20 0 20 0" Height="125" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+            <Border.Background>
+              <ImageBrush Stretch="UniformToFill" BitmapInterpolationMode="LowQuality"></ImageBrush>
+            </Border.Background>
+            <StackPanel ClipToBounds="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
+              <WrapPanel Orientation="Horizontal" ItemHeight="25">
+                <Border Classes="title-placeholder placeholder" Width="100"/>
+                <Border Classes="title-placeholder placeholder" Width="50"/>
+                <Border Classes="title-placeholder placeholder" Width="90"/>
+                <Border Classes="title-placeholder placeholder" Width="70"/>
+                <Border Classes="title-placeholder placeholder" Width="100"/>
+                <Border Classes="title-placeholder placeholder" Width="120"/>
+              </WrapPanel>
+              <WrapPanel Margin="0 5 0 0" Orientation="Horizontal" ItemHeight="20">
+                <Border Classes="subtitle-placeholder placeholder" Width="50"/>
+                <Border Classes="subtitle-placeholder placeholder" Width="100"/>
+                <Border Classes="subtitle-placeholder placeholder" Width="130"/>
+                <Border Classes="subtitle-placeholder placeholder" Width="90"/>
+              </WrapPanel>
+            </StackPanel>
+          </Border>
+
+          <Grid Height="200">
+            <StackPanel Margin="15 0 5 0" Orientation="Vertical">
+              <WrapPanel Orientation="Horizontal" ItemHeight="25">
+                <Border Classes="title-placeholder placeholder" Width="100"/>
+                <Border Classes="title-placeholder placeholder" Width="50"/>
+                <Border Classes="title-placeholder placeholder" Width="90"/>
+                <Border Classes="title-placeholder placeholder" Width="70"/>
+              </WrapPanel>
+              <WrapPanel Margin="0 5 0 0" Orientation="Horizontal" ItemHeight="20">
+                <Border Classes="subtitle-placeholder placeholder" Width="110"/>
+                <Border Classes="subtitle-placeholder placeholder" Width="130"/>
+                <Border Classes="subtitle-placeholder placeholder" Width="80"/>
+                <Border Classes="subtitle-placeholder placeholder" Width="80"/>
+                <Border Classes="subtitle-placeholder placeholder" Width="90"/>
+                <Border Classes="subtitle-placeholder placeholder" Width="100"/>
+              </WrapPanel>
+            </StackPanel>
+          </Grid>
+        </StackPanel>
+        <Grid VerticalAlignment="Bottom" Height="90">
+          <Grid.Background>
+            #801e1e1e
+          </Grid.Background>
+        </Grid>
+        <Button IsEnabled="False" Name="ReadMoreButton" Opacity="0.9" Width="100" Height="40" VerticalAlignment="Bottom" 
+        Margin="0 0 0 5" 
+        Cursor="Hand" FontWeight="SemiBold"/>
+      </Grid>
+    </Border>
+  </Grid>
 </UserControl>

@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ctxt="clr-namespace:ColorTextBlock.Avalonia;assembly=ColorTextBlock.Avalonia"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="250" 
-             Width="350" Height="205"
+             Width="360" Height="215"
              x:Class="Occlusion_Voice_Chat_CrossPlatform.avalonia.controls.BlogControl"
              xmlns:md="clr-namespace:Markdown.Avalonia;assembly=Markdown.Avalonia"
-             FontFamily="Verdana" Margin="0 10 0 10">
+             FontFamily="Verdana">
   <UserControl.Styles>
     <StyleInclude Source="/avalonia/styles/OcclusionMarkdownStyles.axaml"/>
     
@@ -16,12 +16,12 @@
     <Border ClipToBounds="True" Background="#32323b" CornerRadius="16">
       <Grid>
         <StackPanel Orientation="Vertical">
-          <Border Name="CardBorder" Padding="20 0 20 0"  Height="115" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+          <Border Name="CardBorder" Padding="20 0 20 0" Height="125" HorizontalAlignment="Stretch" VerticalAlignment="Top">
             <Border.Background>
-              <ImageBrush Stretch="UniformToFill"></ImageBrush>
+              <ImageBrush Stretch="UniformToFill" BitmapInterpolationMode="LowQuality"></ImageBrush>
             </Border.Background>
             <StackPanel ClipToBounds="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Orientation="Vertical">
-              <TextBlock Name="Title" Foreground="White" HorizontalAlignment="Left" Margin="0 15 0 0" TextWrapping="Wrap" FontSize="24" Text="{Binding Title}">
+              <TextBlock Name="Title" Foreground="White" HorizontalAlignment="Left" Margin="0 15 0 0" TextWrapping="Wrap" FontWeight="Thin" FontSize="24" Text="{Binding Title}">
               </TextBlock>
               <TextBlock Name="Subtitle" Foreground="White" HorizontalAlignment="Left" Margin="0 5 0 0" FontSize="14" TextWrapping="Wrap" Text="{Binding Subtitle}">
               </TextBlock>
@@ -29,22 +29,23 @@
           </Border>
 
           <Grid Height="200">
-            <md:MarkdownScrollViewer Markdown="{Binding InnerMarkdown}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <md:MarkdownScrollViewer Margin="20 0 20 0" Markdown="{Binding InnerMarkdown}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
               <md:MarkdownScrollViewer.Styles>
                 <Style Selector="ctxt|CTextBlock.Heading1">
-                  <Setter Property="FontSize" Value="21"/>
+                  <Setter Property="FontSize" Value="25"/>
                   <Setter Property="Foreground" Value="#FFFFFF"/>
                 </Style>
               </md:MarkdownScrollViewer.Styles>
             </md:MarkdownScrollViewer>
           </Grid>
         </StackPanel>
-        <Grid VerticalAlignment="Bottom" Height="85">
+        <Grid VerticalAlignment="Bottom" Height="90">
           <Grid.Background>
             #801e1e1e
           </Grid.Background>
         </Grid>
-        <Button Name="ReadMoreButton" Width="100" Height="40" VerticalAlignment="Bottom" Margin="0 0 0 5" Cursor="Hand" FontWeight="SemiBold">Read more</Button>
+        <Button Name="ReadMoreButton" Opacity="0.9" Width="100" Height="40" VerticalAlignment="Bottom" Margin="0 0 0 5" 
+        Cursor="Hand" FontWeight="SemiBold">Read more</Button>
       </Grid>
     </Border>
   </Grid>

@@ -26,7 +26,7 @@ namespace NoiseExamplePlugin
             Console.WriteLine("Example plugin has been loaded!");
 
             // Hook onto the audio processing event and mix in a basic sine wave
-            AudioAPI.HookProcessAudioOutputEvent(AudioOutputProcess);
+            AudioAPI.HookProcessPostAudioOutputEvent(AudioOutputProcess);
             
             // Add a button to the menu
             MenuButtons.Add(new ButtonWrapper("Noise Example", "NoiseExampleButton"));

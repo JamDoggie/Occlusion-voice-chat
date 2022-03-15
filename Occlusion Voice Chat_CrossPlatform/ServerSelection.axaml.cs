@@ -39,12 +39,14 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             {
                 if (control is ServerSelection selection)
                 {
-                    selection.SelectionButton.Background = new SolidColorBrush(Color.FromRgb(69,69,82));
+                    //selection.SelectionButton.Background = new SolidColorBrush(Color.FromRgb(69,69,82));
+                    selection.SelectionButton.Classes.Remove("selected");
                 }
             }
 
-            SelectionButton.Background = new SolidColorBrush(Color.FromRgb(79, 79, 94));
-
+            //SelectionButton.Background = new SolidColorBrush(Color.FromRgb(79, 79, 94));
+            SelectionButton.Classes.Add("selected");
+            
             MainWindow.mainWindow.PopulateServerSettings();
         }
     }

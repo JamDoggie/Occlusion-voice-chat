@@ -15,7 +15,7 @@
       <StyleInclude Source="avares://Occlusion Voice Chat_CrossPlatform/DefaultTheme.xaml"></StyleInclude>
       <StyleInclude Source="avares://Occlusion Voice Chat_CrossPlatform/avalonia/Slider.axaml"></StyleInclude>
       <StyleInclude Source="resm:OxyPlot.Avalonia.Themes.Default.xaml?assembly=OxyPlot.Avalonia"/>
-
+      
       
 
       <Style Selector="ScrollBar:vertical /template/ Thumb#thumb">
@@ -140,9 +140,34 @@
         <Setter Property="CornerRadius" Value="6" />
       </Style>
       
-      <Style Selector="ScrollBar /template/ Thumb">
-        <Setter Property="Width" Value="7" />
+      <Style Selector="ScrollBar:vertical /template/ Thumb">
+        <Setter Property="Width" Value="8" />
       </Style>
+      
+      <Style Selector="ScrollBar:horizontal /template/ Thumb">
+        <Setter Property="Height" Value="8" />
+      </Style>
+      
+      <Style Selector="Button">
+        <Setter Property="Transitions">
+          <Setter.Value>
+            <Transitions>
+              <BrushTransition Property="Background" Duration="0:0:0.2">
+                <BrushTransition.Easing>
+                  <QuadraticEaseOut></QuadraticEaseOut>
+                </BrushTransition.Easing>
+              </BrushTransition>
+            </Transitions>
+          </Setter.Value>
+        </Setter>
+      </Style>
+        
+      <Style Selector="Button:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ThemeControlHoverBrush}"></Setter>
+      </Style>
+
+      <StyleInclude Source="avares://Occlusion Voice Chat_CrossPlatform/avalonia/controls/styles/ScrollbarStyles.axaml"/>
+      <StyleInclude Source="avares://Occlusion Voice Chat_CrossPlatform/avalonia/styles/ContextMenuStyles.axaml"/>
     </Application.Styles>
   
 </Application>

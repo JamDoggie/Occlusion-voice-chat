@@ -10,4 +10,10 @@
       <ProjectReference Include="..\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Reference Include="Concentus, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>..\Occlusion Voice Chat_CrossPlatform\bin\x64\Debug Win\net6.0\Concentus.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
 </Project>

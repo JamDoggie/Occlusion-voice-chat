@@ -1,103 +1,60 @@
 ﻿using Occlusion_voice_chat.Opus;
 using OcclusionShared.NetworkingShared;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Occlusion_Voice_Chat_CrossPlatform.audio
 {
-    public class SoundEffect
+    public abstract class SoundEffect
     {
-        public short[] AudioData { get; set; }
-
-        public virtual bool IsPlaying { get; internal set; } = false;
+        public bool IsPlaying { get; internal set; } = false;
 
         public float Volume { get; set; } = 1.0f;
 
-        internal int _queueOffset = 0;
-
-        internal object _queueLock = new object();
-
+        public bool Loop { get; set; } = false;
+        
         public SoundEffect()
         {
 
         }
 
-        public SoundEffect(OggSoundFile file, float volume = 1f)
+        public SoundEffect(float volume)
         {
-            AudioData = new short[file.AudioData.Length];
-
-            for(int i = 0; i < file.AudioData.Length; i++)
-            {
-                AudioData[i] = file.AudioData[i];
-            }
-
             Volume = volume;
         }
 
+        /// <summary>
+        /// Plays the sound from the current position in our stream.
+        /// </summary>
         public virtual void Play()
         {
-            lock(_queueLock)
+            if (!IsPlaying)
             {
-                if (!IsPlaying)
-                {
-                    if (AudioData != null)
-                    {
-                        _queueOffset = 0;
-
-                        IsPlaying = true;
-                    }
-
-                    Sounds.ActiveSounds.Add(this);
-                }
+                IsPlaying = true;
                 
+                Sounds.ActiveSounds.Add(this);
             }
-            
         }
 
-        public virtual void MixAudioIntoArray(ref Span<byte> destination)
+        /// <summary>
+        /// Pauses the sound, and resets the audio stream to the beginning.
+        /// </summary>
+        public virtual void Stop()
         {
-            lock(_queueLock)
-            {
-                #region Grab Audio From Queue
-                int amountCut = 0;
-                
-                for (int i = 0; i < destination.Length / 2; i++)
-                {
-                    if (i < AudioData.Length - _queueOffset)
-                    {
-                        int currentDataOffset = i + _queueOffset;
+            IsPlaying = false;
+        }        
+        
+        /// <summary>
+        /// Mixes the audio into the given ref Span<byte>, preserving the audio that is already in the Span<byte>.
+        /// The base of this method does nothing by default.
+        /// </summary>
+        /// <param name="destination"></param>
+        public virtual void MixAudioIntoSpan(ref Span<byte> destination)
+        {
 
-                        short currentDestinationValue = 0;
-                        short currentSampleValue = AudioMath.AmplifyShort(AudioData[currentDataOffset], Volume * App.Options.Obj.SoundEffectVolume);
-
-                        // Convert from bytes to short
-                        currentDestinationValue = (short)(((int)destination[(i * 2)]) << 0);
-                        currentDestinationValue += (short)(((int)destination[(i * 2) + 1]) << 8);
-
-
-                        // Mix them
-                        short finalSample = (short)(Math.Clamp(currentDestinationValue + currentSampleValue, short.MinValue, short.MaxValue));
-
-                        // Convert back to bytes and set in destination
-                        destination[i * 2] = (byte)(finalSample & 0xFF);
-                        destination[i * 2 + 1] = (byte)((finalSample >> 8) & 0xFF);
-
-                        amountCut += 1;
-                    }
-                }
-
-                _queueOffset += amountCut;
-
-                if (_queueOffset >= AudioData.Length)
-                {
-                    _queueOffset = AudioData.Length - 1;
-                    IsPlaying = false;
-                }
-                    
-                #endregion
-            }
         }
     }
 }

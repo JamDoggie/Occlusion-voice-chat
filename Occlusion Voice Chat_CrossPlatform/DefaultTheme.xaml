@@ -6,12 +6,13 @@
         <Color x:Key="ThemeAccentColor">#CC7F2EDB</Color>
         <Color x:Key="ThemeAccentColor2">#CC7F2EDB</Color>
         <Color x:Key="ThemeAccentColor3">#CC7F2EDB</Color>
-        <Color x:Key="ThemeAccentColor4">#FF282830</Color>
+        <Color x:Key="ThemeAccentColor4">#CC7F2EDB</Color>
 
         <Color x:Key="ThemeBackgroundColor">#FF3F3F4A</Color>
         <Color x:Key="ThemeBorderLowColor">#FF31313B</Color>
         <Color x:Key="ThemeBorderMidColor">#00FFFFFF</Color>
         <Color x:Key="ThemeBorderHighColor">#FF282830</Color>
+        <Color x:Key="ThemeControlLowerColor">#3b3b47</Color>
         <Color x:Key="ThemeControlLowColor">#FF3F3F4A</Color>
         <Color x:Key="ThemeControlMidColor">#FF454552</Color>
         <Color x:Key="ThemeControlHighColor">#FF808080</Color>
@@ -31,6 +32,7 @@
         <SolidColorBrush x:Key="ThemeBorderHighBrush" Color="{DynamicResource ThemeBorderHighColor}"></SolidColorBrush>
         <SolidColorBrush x:Key="ThemeControlLowBrush" Color="{DynamicResource ThemeControlLowColor}"></SolidColorBrush>
         <SolidColorBrush x:Key="ThemeControlMidBrush" Color="{DynamicResource ThemeControlMidColor}"></SolidColorBrush>
+        <SolidColorBrush x:Key="ThemeControlHoverBrush" Color="#4f4f5e"/>
         <SolidColorBrush x:Key="ThemeControlHighBrush" Color="{DynamicResource ThemeControlHighColor}"></SolidColorBrush>
         <SolidColorBrush x:Key="ThemeControlHighlightLowBrush" Color="{DynamicResource ThemeControlHighlightLowColor}"></SolidColorBrush>
         <SolidColorBrush x:Key="ThemeControlHighlightMidBrush" Color="{DynamicResource ThemeControlHighlightMidColor}"></SolidColorBrush>

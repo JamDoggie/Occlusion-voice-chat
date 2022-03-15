@@ -4,12 +4,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="100" d:DesignHeight="100"
         x:Class="Occlusion_Voice_Chat_CrossPlatform.PlayerIcon">
-  <Button Name="IconButton" Margin="10" Background="Transparent" Cursor="Hand">
+  <Button Name="IconButton" ClipToBounds="True" CornerRadius="0" Margin="10" Background="Transparent" Cursor="Hand">
     <Grid Classes="playerIconGrid" Width="100" Height="100" Name="PlayerIconButton">
       <Image x:Name="PlayerIconImg" Width="100" Height="100" RenderOptions.BitmapInterpolationMode="Default">
       </Image>
       
-      <Border Name="VoiceActivityBorder" BorderBrush="#32a852" BorderThickness="0" Width="100" Height="100">
+      <Border Name="VoiceActivityBorder" BorderBrush="#32a852" CornerRadius="0" BorderThickness="0" Width="100" Height="100">
         <Border.Transitions>
           <Transitions>
             <ThicknessTransition Property="BorderThickness" Duration="0:0:0.1">

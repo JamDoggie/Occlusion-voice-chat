@@ -2,8 +2,30 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="125" Width="400" Height="125"
         x:Class="Occlusion_Voice_Chat_CrossPlatform.avalonia.controls.messagebox.MessageBoxWindow"
-        Title="MessageBoxWindow">
-    Welcome to Avalonia!
+        Title="{Binding WindowTitle}" Background="#3b3b47"
+        CanResize="False">
+    <!-- Styles -->
+    <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="Padding" Value="10 0 10 0"></Setter>
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Height" Value="25"></Setter>
+            
+            <Setter Property="Cursor" Value="Hand"></Setter>
+        </Style>
+    </Window.Styles>
+    
+    <!-- Markup -->
+    <StackPanel Orientation="Vertical" VerticalAlignment="Stretch">
+        <StackPanel Orientation="Horizontal" Margin="10">
+            <Image Margin="0 0 10 0" Source="avares://Occlusion Voice Chat_CrossPlatform/resources/info_icon.png"/>
+            <TextBlock TextWrapping="Wrap" VerticalAlignment="Center" Width="325" FontSize="16" Text="{Binding Message}"/>
+        </StackPanel>
+        
+        <StackPanel Name="ButtonsPanel" Orientation="Horizontal" Height="80" HorizontalAlignment="Center">
+            
+        </StackPanel>
+    </StackPanel>
 </Window>

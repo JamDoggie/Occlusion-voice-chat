@@ -97,12 +97,19 @@ namespace Concentus.Oggfile
         public long PageCount { get; private set; }
 
         /// <summary>
-        /// Reads the next packet from the Ogg stream and decodes it, returning the decoded PCM buffer.
+        /// The number of channels this opus file is encoded in. 1 = mono, 2 = stereo. There can also be more than 2 channels.
+        /// If this value is 0, then this was not read correctly, or the number of channels is somehow unknown.
+        /// </summary>
+        public int NumChannels { get; private set; }
+        
+        /// <summary>
+        /// Reads the next packet from the Ogg stream and decodes it, filling the the input buffer with the decoded PCM data,
+        /// and recreating the input buffer if it is not the right size, or it is null.
         /// If there are no more packets to decode, this returns NULL. If an error occurs, this also returns
         /// NULL and puts the error message into the LastError field
         /// </summary>
-        /// <returns>The decoded audio for the next packet in the stream, or NULL</returns>
-        public short[] DecodeNextPacket()
+        /// <returns></returns>
+        public void DecodeNextPacket(ref short[]? buffer)
         {
             if (_decoder == null)
             {
@@ -112,23 +119,23 @@ namespace Concentus.Oggfile
             if (_nextDataPacket == null || _nextDataPacket.Length == 0)
             {
                 _endOfStream = true;
-                return null;
+                return;
             }
 
             try
             {
                 int numSamples = OpusPacketInfo.GetNumSamples(_nextDataPacket, 0, _nextDataPacket.Length, _decoder.SampleRate);
-                short[] output = new short[numSamples * _decoder.NumChannels];
-                _decoder.Decode(_nextDataPacket, 0, _nextDataPacket.Length, output, 0, numSamples, false);
+
+                if (buffer == null || buffer.Length != numSamples * _decoder.NumChannels)
+                    buffer = new short[numSamples * _decoder.NumChannels];
+                
+                _decoder.Decode(_nextDataPacket, 0, _nextDataPacket.Length, buffer, 0, numSamples, false);
 
                 QueueNextPacket();
-
-                return output;
             }
             catch (OpusException e)
             {
                 LastError = "Opus decoder threw exception: " + e.Message;
-                return null;
             }
         }
 
@@ -139,7 +146,7 @@ namespace Concentus.Oggfile
         /// <returns>True if the stream is valid and ready to be decoded</returns>
         private bool Initialize()
         {
-            try
+            try  
             {
                 var oggContainerReader = new OggContainerReader(_stream, true);
                 if (!oggContainerReader.Init())
@@ -211,7 +218,7 @@ namespace Concentus.Oggfile
             }
 
             // Find a packet based on offset and return 1 in the callback if the packet is valid
-            var foundPacket = _packetProvider.FindPacket(granulePosition, GetPacketLength);
+            DataPacket foundPacket = _packetProvider.FindPacket(granulePosition, GetPacketLength);
 
             // Check of the found packet is valid
             if (foundPacket == null || foundPacket.IsEndOfStream)
@@ -229,6 +236,8 @@ namespace Concentus.Oggfile
 
             // Reset the state from the decoder to start processing a fresh stream
             _decoder.ResetState();
+
+            _endOfStream = false;
         }
 
         private int GetPacketLength(DataPacket curPacket, DataPacket lastPacket)
@@ -244,6 +253,7 @@ namespace Concentus.Oggfile
             {
                 return 0;
             }
+            
             if (lastPacket.ReadBit())
             {
                 return 0;
@@ -253,6 +263,8 @@ namespace Concentus.Oggfile
             return 1;
         }
 
+        private byte[] buf;
+        
         /// <summary>
         /// Looks for the next opus data packet in the Ogg stream and queues it up.
         /// If the end of stream has been reached, this does nothing.
@@ -275,12 +287,19 @@ namespace Concentus.Oggfile
             PageGranulePosition = packet.PageGranulePosition;
             PagePosition = packet.PageSequenceNumber;
 
-            byte[] buf = new byte[packet.Length];
+            if (buf == null || buf.Length != packet.Length)
+                buf = new byte[packet.Length];
+            
+            Array.Clear(buf, 0, buf.Length);
+            
             packet.Read(buf, 0, packet.Length);
             packet.Done();
 
             if (buf.Length > 8 && "OpusHead".Equals(Encoding.UTF8.GetString(buf, 0, 8)))
             {
+                // Get channel count from the OpusHead packet
+                NumChannels = buf[9];
+                
                 QueueNextPacket();
             }
             else if (buf.Length > 8 && "OpusTags".Equals(Encoding.UTF8.GetString(buf, 0, 8)))

@@ -177,7 +177,9 @@ namespace OcclusionServerLib
                                     Vector3 playerDiff = (otherPlayerVec - recievingPlayerVec);
                                         
                                     // Elevation (height from player)
-                                    voicePacket.HRTFElevation = (float)ConvertRadiansToDegrees(Math.Asin(playerDiff.Y / playerDiff.Length()));
+                                    voicePacket.HRTFElevation = (float)Math.Clamp(ConvertRadiansToDegrees(Math.Asin
+                                    (playerDiff
+                                    .Y / playerDiff.Length())), -90, 90);
                                 }
                                 else
                                 {

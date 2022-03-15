@@ -43,20 +43,23 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.11" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.11" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.11" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11" />
-    <PackageReference Include="Avalonia.Svg" Version="0.10.11" />
+    <PackageReference Include="Avalonia" Version="0.10.12" />
+    <PackageReference Include="Avalonia.AvaloniaEdit" Version="0.10.12.1" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.12" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.12" />
+    <PackageReference Include="Avalonia.Native" Version="0.10.12" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.12" />
+    <PackageReference Include="Avalonia.Svg" Version="0.10.12" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.12" />
     <PackageReference Include="libogg" Version="1.3.0.1" />
     <PackageReference Include="LiteNetLib" Version="0.9.5.2" />
-    <PackageReference Include="Markdown.Avalonia" Version="0.10.9" />
-    <PackageReference Include="MessageBox.Avalonia" Version="1.7.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-20201211.2" />
+    <PackageReference Include="OxyPlot.Avalonia" Version="2.1.0-Preview1" />
+    <PackageReference Include="RawInput.Sharp" Version="0.0.4" />
     <PackageReference Include="SdlSharp" Version="0.9.3-alpha" />
     <PackageReference Include="Dotnet.Bundle" Version="*" />
     <PackageReference Include="X11" Version="1.0.6" />
+    <PackageReference Include="z440.atl.core" Version="4.2.0" />
    </ItemGroup>
   <ItemGroup>
 	<AvaloniaResource Include="resources\**" />
@@ -319,7 +322,7 @@
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|x64'">
-    <DefineConstants>DEBUG;CLIENT, CLIENT_CROSSPLATFORM, WINDOWS</DefineConstants>
+    <DefineConstants>DEBUG;CLIENT, CLIENT_CROSSPLATFORM, WINDOWS, HRTFDEBUG</DefineConstants>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   
@@ -541,10 +544,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libopusfile-0.dll" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libpng16-16.dll" />
   </ItemGroup>
   
@@ -641,10 +640,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libopusfile-0.dll" />
-  </ItemGroup>
-  
-  <ItemGroup>
     <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libpng16-16.dll" />
   </ItemGroup>
   
@@ -717,11 +712,14 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Reference Include="ColorTextBlock.Avalonia">
+      <HintPath>..\..\..\Markdown.Avalonia\Markdown.Avalonia\bin\Debug\netstandard2.0\ColorTextBlock.Avalonia.dll</HintPath>
+    </Reference>
     <Reference Include="Concentus">
       <HintPath>..\Concentus.dll</HintPath>
     </Reference>
-    <Reference Include="Concentus.Oggfile">
-      <HintPath>Concentus.Oggfile.dll</HintPath>
+    <Reference Include="Markdown.Avalonia">
+      <HintPath>..\..\..\Markdown.Avalonia\Markdown.Avalonia\bin\Debug\netstandard2.0\Markdown.Avalonia.dll</HintPath>
     </Reference>
     <Reference Include="NWaves">
       <HintPath>NWaves.dll</HintPath>
@@ -729,6 +727,7 @@
   </ItemGroup>
   
   <ItemGroup>
+    <Folder Include="audio\opusfile\concentus" />
     <Folder Include="winlibs\" />
   </ItemGroup>
   
@@ -736,6 +735,10 @@
     <Compile Update="avalonia\controls\OcclusionBackground.axaml.cs">
       <DependentUpon>OcclusionBackground.axaml</DependentUpon>
     </Compile>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Remove="C:\Users\JamDo\.nuget\packages\sdlsharp\0.9.3-alpha\build\x64\libopusfile-0.dll" />
   </ItemGroup>
 
   

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Avalonia.Controls;
 using Occlusion_Voice_Chat_CrossPlatform.keybinds;
 using OcclusionShared.Util;
@@ -47,6 +48,8 @@ namespace GlobalLowLevelHooks
             return KeyCode.INVALID_KEYCODE;
         }
 
+        public static Thread BindThread { get; set; }
+        
         public void SetupBinds()
         {
             if (!Design.IsDesignMode) // Odd behavior occurs when trying to initialize hotkey stuff from design mode. I should really switch to Raw Input at some point, instead of this win32 jank.
@@ -55,7 +58,7 @@ namespace GlobalLowLevelHooks
                 WindowsKeyboardHook.KeyUp += KeyboardHook_KeyUp;
                 mouseHook.KeyDown += KeyboardHook_KeyDown;
                 mouseHook.KeyUp += KeyboardHook_KeyUp;
-                
+
                 void KeyboardHook_KeyDown(WindowsKeyboardHook.VKeys key)
                 {
                     if (!CurrentPressedKeys.Contains(GetUniversalKeycode(key)))

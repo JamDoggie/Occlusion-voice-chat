@@ -35,6 +35,7 @@ using GlobalLowLevelHooks;
 using Occlusion_voice_chat_CrossPlatform.plugin;
 using Occlusion_voice_chat_CrossPlatform.plugin.api;
 using System.Net.Http;
+using Avalonia.Controls.Templates;
 
 #if WINDOWS
 using GlobalLowLevelHooks;
@@ -173,7 +174,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             VoiceActivity = Options.Obj.VoiceActivity;
 
             // HRTF
-            HRTFPreview = new HRTFTestSoundEffect(Sounds.WavesSound);
+            HRTFPreview = new HRTFTestSoundEffect(1.0f, Sounds.WavesSound, 1);
 
             if (File.Exists($"{Directory.GetCurrentDirectory()}/HRTF sets/{Options.Obj.CurrentHRTFSet}"))
             {
@@ -389,11 +390,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
 
             // Audio Recorder
-            AudioSpec wantedSettingsMic = new AudioSpec(samplingRate, AudioFormat.Signed16Bit, 1, 0, (ushort)(queueLength / 2), 0, micCallback, 0);
+            AudioSpec wantedSettingsMic = new AudioSpec(samplingRate, AudioFormat.Signed16Bit, 1, 0, (ushort)(queueLength / 2), 0, AudioInputCallback, 0);
             RecordingDevice = Audio.Open(inputDevice, true, wantedSettingsMic, out finalSettingsMic, AudioAllowChange.None);
 
             // Speaker output
-            AudioSpec wantedSettingsSpeaker = new AudioSpec(samplingRate, AudioFormat.Signed16Bit, 2, 0, (ushort)((queueLength / 2) * 2), 0, speakerCallback, 0);
+            AudioSpec wantedSettingsSpeaker = new AudioSpec(samplingRate, AudioFormat.Signed16Bit, 2, 0, (ushort)((queueLength / 2) * 2), 0, AudioOutputCallback, 0);
             PlaybackDevice = Audio.Open(outputDevice, false, wantedSettingsSpeaker, out finalSettingsSpeaker, AudioAllowChange.None);
 
 
@@ -406,7 +407,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             PlaybackDevice.Unpause();
         }
 
-        void speakerCallback(Span<byte> stream, nint userdata)
+        private void AudioOutputCallback(Span<byte> stream, nint userdata)
         {
             // Ensure this current chunk of audio data starts as silence.
             for (int i = 0; i < stream.Length; i++)
@@ -424,29 +425,45 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             }
             
             // Change output volume based on global volume slider
-            short[] shorts = AudioMath.BytesToShorts(stream.ToArray());
-            for (int i = 0; i < shorts.Length; i++)
+            for (int i = 0; i < stream.Length; i+=2)
             {
-                shorts[i] = (short)Math.Clamp(shorts[i] * OutputVolume, short.MinValue, short.MaxValue);
+                // Convert current bytes to a short (16-bit) sample with quick bit conversion.
+                short sample = (short)((stream[i + 1] << 8) | stream[i]);
+
+                // Multiply the sample by the global sound volume.
+                sample = (short)Math.Clamp(sample * OutputVolume, short.MinValue, short.MaxValue);
+                
+                // Convert the short sample back to bytes.
+                stream[i] = (byte)(sample & 0xFF);
+                stream[i + 1] = (byte)((sample >> 8) & 0xFF);
             }
 
-            byte[] newBytes = AudioMath.ShortsToBytes(shorts);
-            for (int i = 0; i < stream.Length; i++)
+            // Speaker volume bar. Here we calculate the volume that will be shown on the GUI volume meters.
+            double volume = 0;
+            
+            // Iterate through each byte in the stream, skipping every byte.
+            for(int i = 0; i < stream.Length; i+=2)
             {
-                stream[i] = newBytes[i];
+                // Convert current bytes to a short (16-bit) sample.
+                short sample = (short)((stream[i] << 8) | stream[i + 1]);
+                
+                // Add the sample's absolute value (distance from zero) to the volume.
+                // We will divide this by stream.Length / 2 later.
+                volume += Math.Abs(Math.Max(sample, (short)-32767));
             }
-
-            // Speaker volume bar
-            AudioChunk chunk = new AudioChunk(stream.ToArray(), samplingRate);
+            
+            // Finally, divide our volume by the amount of shorts in the stream.
+            volume /= (stream.Length / 2);
+            
             Dispatcher.UIThread.InvokeAsync(() =>
             {
                 if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen && PlaybackDevice.Status == AudioStatus.Playing)
                 {
-                    MainWindow.mainWindow.VoiceChatWindow.SpeakerDecibalMeter.Value = Math.Clamp(chunk.Volume(), 0, 3000);
+                    MainWindow.mainWindow.VoiceChatWindow.SpeakerDecibalMeter.Value = Math.Clamp(volume, 0, 3000);
 
                     if (MainWindow.mainWindow.VoiceChatWindow.AudioSettingsOpen && MainWindow.mainWindow.VoiceChatWindow.SettingsSpeakerMeter != null)
                     {
-                        ProgressBarAnimationExtensions.SetValue(MainWindow.mainWindow.VoiceChatWindow.SettingsSpeakerMeter, Math.Clamp(chunk.Volume(), 0, 3000));
+                        ProgressBarAnimationExtensions.SetValue(MainWindow.mainWindow.VoiceChatWindow.SettingsSpeakerMeter, Math.Clamp(volume, 0, 3000));
                     }
                 }
             });
@@ -468,7 +485,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 }
                 else
                 {
-                    sound.MixAudioIntoArray(ref stream);
+                    sound.MixAudioIntoSpan(ref stream);
                 }
             }
 
@@ -482,7 +499,6 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (NewInputDevice != null && RecordingDevice != null)
             {
-
                 string? newDevice = NewInputDevice;
                 if (newDevice == "Default")
                     newDevice = null;
@@ -502,7 +518,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         private short _residualVoiceVolume = 0;
 
-        void micCallback(Span<byte> stream, nint userdata)
+        private void AudioInputCallback(Span<byte> stream, nint userdata)
         {
             if (Client.IsConnected())
             {
@@ -673,6 +689,29 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             ) / 8; // Divide by 8 because we need to convert from bits to bytes.
         }
 
+        // GetTimeFromBytes
+        //
+        // Calculates the time from the number of bytes.
+        //
+        // Parameters:
+        //      bytes - The number of bytes.
+        //      sampleRate - The sample rate.
+        //      channels - The number of channels.
+        //
+        // Returns:
+        //      The time in seconds.
+        public static TimeSpan GetTimeFromBytes(
+            int bytes,
+            int sampleRate,
+            int channels
+        )
+        {
+            return TimeSpan.FromSeconds(
+                (double)bytes /
+                (sampleRate * channels * 16) // 16-bit PCM
+            );
+        }
+        
         public static void Connect(string ip, int port, int verificationCode)
         {
             // Client thread

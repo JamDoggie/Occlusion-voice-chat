@@ -51,7 +51,7 @@ namespace Occlusion_voice_chat.util
         /**
          * Serializes and writes the internal object to the file path.
          */
-        public void Update()
+        public void Save()
         {
             lock(lockObj)
             {

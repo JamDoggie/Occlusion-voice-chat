@@ -82,7 +82,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 {
                     App.Options.Obj.UserVolumes[UUID] = (float)VolumeSlider.Value;
 
-                    App.Options.Update();
+                    App.Options.Save();
                 }
 
                 if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)

@@ -8,9 +8,6 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Avalonia.Threading;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.DTO;
-using MessageBox.Avalonia.Enums;
 using Occlusion_voice_chat.Mojang;
 using Occlusion_Voice_Chat_CrossPlatform.audio;
 using Occlusion_Voice_Chat_CrossPlatform.avalonia.controls;
@@ -24,6 +21,7 @@ using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Occlusion_Voice_Chat_CrossPlatform.avalonia.controls.messagebox;
 
 namespace Occlusion_Voice_Chat_CrossPlatform
 {
@@ -228,19 +226,10 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
         private async void LeaveButton_Click(object? sender, RoutedEventArgs e)
         {
-            var msBoxStandardWindow = MessageBoxManager.GetMessageBoxStandardWindow(
-                    new MessageBoxStandardParams
-                    {
-                        ButtonDefinitions = ButtonEnum.YesNoCancel,
-                        ContentTitle = "Warning",
-                        ContentMessage = "Really disconnect from the server?",
-                        Icon = MessageBox.Avalonia.Enums.Icon.Warning,
-                        Style = Style.None,
+            OcclusionMessageBox msgBox = OcclusionMessageBox.GetMessageBox(MessageBoxType.YES_CANCEL, "Warning", "Really disconnect from the server?");
 
-                    });
-
-            var result = await msBoxStandardWindow.ShowDialog(MainWindow.mainWindow);
-            if (result == ButtonResult.Yes)
+            MessageBoxResult result = await msgBox.Show(MainWindow.mainWindow);
+            if (result.Result != null && result.Result.Equals("yes", StringComparison.CurrentCultureIgnoreCase))
             {
                 App.Client.DisconnectClient("", false);
                 Close();
@@ -253,11 +242,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (App.Deafened)
             {
-                new SoundEffect(Sounds.DeafenSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.DeafenSound, 0.7f, filePreloaded: true).Play();
             }
             else
             {
-                new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.UndeafenSound, 0.7f, filePreloaded: true).Play();
             }
         }
 
@@ -268,14 +257,14 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (App.MicMuted)
             {
-                new SoundEffect(Sounds.MicMuteSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.MicMuteSound, 0.7f, filePreloaded: true).Play();
             }
             else
             {
                 if (wasDeaf && !App.Deafened)
-                    new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+                    new OggOpusSoundEffect(Sounds.UndeafenSound, 0.7f, filePreloaded: true).Play();
                 else
-                    new SoundEffect(Sounds.MicUnmuteSound, 0.7f).Play();
+                    new OggOpusSoundEffect(Sounds.MicUnmuteSound, 0.7f, filePreloaded: true).Play();
             }
         }
 
@@ -289,11 +278,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (App.PushToDeafenHeld)
             {
-                new SoundEffect(Sounds.DeafenSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.DeafenSound, 0.7f, filePreloaded: true).Play();
             }
             else
             {
-                new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.UndeafenSound, 0.7f, filePreloaded: true).Play();
             }
         }
 
@@ -308,11 +297,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (App.PushToDeafenHeld)
             {
-                new SoundEffect(Sounds.DeafenSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.DeafenSound, 0.7f, filePreloaded: true).Play();
             }
             else
             {
-                new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.UndeafenSound, 0.7f, filePreloaded: true).Play();
             }
         }
 
@@ -324,11 +313,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (App.PushToTalkHeld)
             {
-                new SoundEffect(Sounds.PushUnmuteSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.PushUnmuteSound, 0.7f, filePreloaded: true).Play();
             }
             else
             {
-                new SoundEffect(Sounds.PushMuteSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.PushMuteSound, 0.7f, filePreloaded: true).Play();
             }
         }
 
@@ -338,11 +327,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (App.PushToTalkHeld)
             {
-                new SoundEffect(Sounds.PushUnmuteSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.PushUnmuteSound, 0.7f, filePreloaded: true).Play();
             }
             else
             {
-                new SoundEffect(Sounds.PushMuteSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.PushMuteSound, 0.7f, filePreloaded: true).Play();
             }
         }
 
@@ -355,11 +344,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (App.PushToMuteHeld)
             {
-                new SoundEffect(Sounds.MicMuteSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.MicMuteSound, 0.7f, filePreloaded: true).Play();
             }
             else
             {
-                new SoundEffect(Sounds.MicUnmuteSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.MicUnmuteSound, 0.7f, filePreloaded: true).Play();
             }
         }
 
@@ -369,11 +358,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (App.PushToMuteHeld)
             {
-                new SoundEffect(Sounds.MicMuteSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.MicMuteSound, 0.7f, filePreloaded: true).Play();
             }
             else
             {
-                new SoundEffect(Sounds.MicUnmuteSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.MicUnmuteSound, 0.7f, filePreloaded: true).Play();
             }
 
             if (!App.MicMuted)
@@ -615,7 +604,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             App.Options.Obj.InputVolume = (float)InputVolumeSlider.Value;
             App.Options.Obj.OutputVolume = (float)OutputVolumeSlider.Value;
 
-            App.Options.Update();
+            App.Options.Save();
 
             CloseAudioSettings();
         }
@@ -628,7 +617,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public void InputDeviceDropdown_DropDownClosed(object sender, SelectionChangedEventArgs e)
         {
             App.Options.Obj.InputDevice = (string)InputDeviceDropdown.SelectedItem;
-            App.Options.Update();
+            App.Options.Save();
 
             App.NewInputDevice = App.Options.Obj.InputDevice;
         }
@@ -638,7 +627,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             if (OutputDeviceDropdown.SelectedItem != null)
             {
                 App.Options.Obj.OutputDevice = (string)OutputDeviceDropdown.SelectedItem;
-                App.Options.Update();
+                App.Options.Save();
 
                 App.NewOutputDevice = App.Options.Obj.OutputDevice;
             }
@@ -687,14 +676,14 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (App.MicMuted)
             {
-                new SoundEffect(Sounds.MicMuteSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.MicMuteSound, 0.7f, filePreloaded: true).Play();
             }
             else
             {
                 if (wasDeaf && !App.Deafened)
-                    new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+                    new OggOpusSoundEffect(Sounds.UndeafenSound, 0.7f, filePreloaded: true).Play();
                 else
-                    new SoundEffect(Sounds.MicUnmuteSound, 0.7f).Play();
+                    new OggOpusSoundEffect(Sounds.MicUnmuteSound, 0.7f, filePreloaded: true).Play();
             }
         }
 
@@ -704,11 +693,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
             if (App.Deafened)
             {
-                new SoundEffect(Sounds.DeafenSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.DeafenSound, 0.7f, filePreloaded: true).Play();
             }
             else
             {
-                new SoundEffect(Sounds.UndeafenSound, 0.7f).Play();
+                new OggOpusSoundEffect(Sounds.UndeafenSound, 0.7f, filePreloaded: true).Play();
             }
         }
 

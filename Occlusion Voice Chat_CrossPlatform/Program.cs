@@ -54,8 +54,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                         }
                         catch (IOException e)
                         {
-                            // File already exists, ignore.
-                            // This is safer than File.Exists()
+                            // File already exists, or we have invalid permissions.
                         }
                     }
                 }
@@ -72,7 +71,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                         }
                         catch (IOException e)
                         {
-                            // File already exists, ignore
+                            // File already exists, or we have invalid permissions.
                         }
                     }
                 }

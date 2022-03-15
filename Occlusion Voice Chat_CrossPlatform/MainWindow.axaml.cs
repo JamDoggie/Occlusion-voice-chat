@@ -8,9 +8,6 @@ using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
 using LiteNetLib.Utils;
-using MessageBox.Avalonia;
-using MessageBox.Avalonia.DTO;
-using MessageBox.Avalonia.Enums;
 using Occlusion.NetworkingShared;
 using Occlusion_voice_chat.Networking;
 using Occlusion_voice_chat.util.json_structs;
@@ -21,6 +18,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Net;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Occlusion_Voice_Chat_CrossPlatform.util.json_structs;
@@ -29,6 +27,9 @@ using Occlusion_Voice_Chat_CrossPlatform.avalonia.controls;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using System.Text.RegularExpressions;
+using Avalonia.Visuals.Media.Imaging;
+using Avalonia.VisualTree;
+using Occlusion_Voice_Chat_CrossPlatform.avalonia.controls.messagebox;
 
 namespace Occlusion_Voice_Chat_CrossPlatform
 {
@@ -157,7 +158,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             Closing += MainWindow_Closing;
             Closed += MainWindow_Closed;
 
-                App.Client.PacketRecievedEvent += Client_PacketRecievedEvent;
+            App.Client.PacketRecievedEvent += Client_PacketRecievedEvent;
 
             ConnectButton.Click += Connect_Click;
             this.FindControl<Button>("ErrorMessageOk").Click += Error_Message_Ok_Click;
@@ -205,7 +206,11 @@ namespace Occlusion_Voice_Chat_CrossPlatform
 
                     Dispatcher.UIThread.InvokeAsync(() =>
                     {
-                        this.FindControl<Image>("BlogLoadingBar").IsVisible = false;
+                        foreach (LoadingBlogControl loadingControl in this.GetVisualDescendants()
+                        .OfType<LoadingBlogControl>())
+                        {
+                            loadingControl.IsVisible = false;
+                        }
                     });
                 });
             });
@@ -231,7 +236,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                   {
                       Dispatcher.UIThread.InvokeAsync(() =>
                       {
-                          blogControl.CardBorder.Background = new ImageBrush(new Bitmap(t.Result)) { Stretch = Stretch.UniformToFill };
+                          blogControl.CardBorder.Background = new ImageBrush(new Bitmap(t.Result)) { Stretch = 
+                          Stretch.UniformToFill, BitmapInterpolationMode = BitmapInterpolationMode.MediumQuality};
                       });
                   });
 
@@ -321,19 +327,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             if (App.Client.IsConnected())
             {
                 e.Cancel = true;
-                var msBoxStandardWindow = MessageBoxManager.GetMessageBoxStandardWindow(
-                    new MessageBoxStandardParams
-                    {
-                        ButtonDefinitions = ButtonEnum.YesNoCancel,
-                        ContentTitle = "Warning",
-                        ContentMessage = "Really close the program and disconnect from the server?",
-                        Icon = MessageBox.Avalonia.Enums.Icon.Warning,
-                        Style = Style.None,
 
-                    });
+                OcclusionMessageBox msgBox = OcclusionMessageBox.GetMessageBox(MessageBoxType.YES_CANCEL, "Warning",
+                    "Really close the program and disconnect from the server?");
 
-                var result = await msBoxStandardWindow.ShowDialog(this);
-                if (result == ButtonResult.Yes)
+                MessageBoxResult result = await msgBox.Show(this);
+                if (result.Result != null && result.Result.Equals("yes", StringComparison.CurrentCultureIgnoreCase))
                 {
                     App.Client.DisconnectClient("", false);
                     Close();
@@ -362,7 +361,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                             if (int.TryParse(PortTextbox.Text, out int port))
                             {
                                 selection.Port = port;
-                                App.Options.Update();
+                                App.Options.Save();
                             }
                         }
                     }
@@ -384,7 +383,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                             out selection))
                         {
                             selection.IP = IpTextbox.Text;
-                            App.Options.Update();
+                            App.Options.Save();
                         }
                     }
                 }
@@ -408,7 +407,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                         CurrentServerSelection.BackingName = NameTextbox.Text;
                         CurrentServerSelection.NameText.Text = NameTextbox.Text;
                         
-                        App.Options.Update();
+                        App.Options.Save();
                     }
                 }
             }
@@ -422,7 +421,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 ServerIconsPanel.Children.Remove(CurrentServerSelection);
 
                 App.Options.Obj.ServerSelections.Remove(CurrentServerSelection.BackingName);
-                App.Options.Update();
+                App.Options.Save();
 
                 SettingsActive = false;
             }
@@ -464,7 +463,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public void AddNewServerListing(string name)
         {
             App.Options.Obj.ServerSelections[name] = new Occlusion_voice_chat.util.json_structs.ServerSelection();
-            App.Options.Update();
+            App.Options.Save();
 
             ShowServerListing(name);
         }

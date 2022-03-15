@@ -12,15 +12,16 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
 {
     public static class Sounds
     {
-        public static OggSoundFile MicMuteSound;
-        public static OggSoundFile MicUnmuteSound;
-        public static OggSoundFile DeafenSound;
-        public static OggSoundFile UndeafenSound;
+        public static string MicMuteSound;
+        public static string MicUnmuteSound;
+        public static string DeafenSound;
+        public static string UndeafenSound;
 
-        public static OggSoundFile PushMuteSound;
-        public static OggSoundFile PushUnmuteSound;
+        public static string PushMuteSound;
+        public static string PushUnmuteSound;
 
-        public static OggSoundFile WavesSound;
+        public static string WavesSound;
+        public static string DrumSound;
 
 
         private static object _soundLock = new object();
@@ -57,15 +58,16 @@ namespace Occlusion_Voice_Chat_CrossPlatform.audio
             Console.WriteLine($"{dir}/resources/occlusion_mute.opus bruh");
             Debug.WriteLine($"{dir}/resources/occlusion_mute.opus bruh");
 
-            MicMuteSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_mute.opus");
-            MicUnmuteSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_unmute.opus");
-            DeafenSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_deafen.opus");
-            UndeafenSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_undeafen.opus");
+            MicMuteSound = $"{dir}/resources/occlusion_mute.opus";
+            MicUnmuteSound = $"{dir}/resources/occlusion_unmute.opus";
+            DeafenSound = $"{dir}/resources/occlusion_deafen.opus";
+            UndeafenSound = $"{dir}/resources/occlusion_undeafen.opus";
 
-            PushMuteSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_pushmute.opus");
-            PushUnmuteSound = OggSoundFile.LoadSound($"{dir}/resources/occlusion_pushunmute.opus");
+            PushMuteSound = $"{dir}/resources/occlusion_pushmute.opus";
+            PushUnmuteSound = $"{dir}/resources/occlusion_pushunmute.opus";
 
-            WavesSound = OggSoundFile.LoadSound($"{dir}/resources/waves_sample.opus", 1); 
+            WavesSound = $"{dir}/resources/waves_sample.opus"; 
+            DrumSound = $"{dir}/resources/occlusion_drum_pattern.opus"; 
         }
     }
 }

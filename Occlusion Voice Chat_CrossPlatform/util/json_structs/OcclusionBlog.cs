@@ -24,6 +24,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform.util.json_structs
 
         public string DatePosted { get; set; }
 
+        public string TimeZone { get; set; }
+
         public string BackgroundURL { get; set; }
 
         public string BodyMarkdown { get; set; }

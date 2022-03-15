@@ -17,6 +17,12 @@ namespace Occlusion_voice_chat.Mojang
     /// </summary>
     public static class MojangAPI
     {
+        /// <summary>
+        /// Queries the Mojang API to get a UUID from a given username.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <exception cref="Occlusion_voice_chat.Mojang.MojangAPIException">Make sure you handle this exception. This occurs any time the Mojang API returns an error code.</exception>
+        /// <returns></returns>
         public static async Task<string> GetPlayerUUID(string username)
         {
             var json = await HttpGet($"https://api.mojang.com/users/profiles/minecraft/{ username }");
@@ -29,7 +35,12 @@ namespace Occlusion_voice_chat.Mojang
             else
                 return string.Empty;
         }
-
+        
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="uuid">The UUID of the player</param>
+        /// <returns>A MojangProfile object containing all data returned from a standard profile API call. This includes data like skin URL & username.</returns>
         public static async Task<MojangProfile> GetPlayerProfile(string uuid)
         {
             var json = await HttpGet($"https://sessionserver.mojang.com/session/minecraft/profile/{ uuid }");

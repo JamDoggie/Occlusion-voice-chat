@@ -541,43 +541,43 @@ namespace OcclusionShared.NetworkingShared
                     // Debug code to draw a graph of the HRTFs when we're looking at a user's user panel.
                     // This does not compile in release mode.
                     if (App.Options.Obj.UseHRTF)
-                    Dispatcher.UIThread.InvokeAsync(() => {
-                        if (App.VoiceChatWindow != null && App.VoiceChatWindow.IsOpen)
-                        {
-                            VoiceChatWindow voiceWindow = App.VoiceChatWindow;
+                        Dispatcher.UIThread.InvokeAsync(() => {
+                            if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen)
+                            {
+                                VoiceChatControl voiceWindow = MainWindow.mainWindow.VoiceChatWindow;
 
-                            if (voiceWindow.UserPanelOpen && voiceWindow.UserControlPanel.UUID == MCUUID)
-                                if (voiceWindow.UserControlPanel.DataContext is UserPanelViewModel viewModel)
-                                {
-                                    foreach (Series series in viewModel.PlotModelLeft.Series)
+                                if (voiceWindow.UserPanelOpen && voiceWindow.UserControlPanel.UUID == MCUUID)
+                                    if (voiceWindow.UserControlPanel.DataContext is UserPanelViewModel viewModel)
                                     {
-                                        if (series is LineSeries lines)
+                                        foreach (Series series in viewModel.PlotModelLeft.Series)
                                         {
-                                            lines.Points.Clear();
-                                            for (int i = 0; i < leftFilterArray.Length; i++)
+                                            if (series is LineSeries lines)
                                             {
-                                                lines.Points.Add(new OxyPlot.DataPoint(i, leftFilterArray[i]));
+                                                lines.Points.Clear();
+                                                for (int i = 0; i < leftFilterArray.Length; i++)
+                                                {
+                                                    lines.Points.Add(new OxyPlot.DataPoint(i, leftFilterArray[i]));
+                                                }
                                             }
                                         }
-                                    }
 
-                                    foreach (Series series in viewModel.PlotModelRight.Series)
-                                    {
-                                        if (series is LineSeries lines)
+                                        foreach (Series series in viewModel.PlotModelRight.Series)
                                         {
-                                            lines.Points.Clear();
-                                            for (int i = 0; i < rightFilterArray.Length; i++)
+                                            if (series is LineSeries lines)
                                             {
-                                                lines.Points.Add(new OxyPlot.DataPoint(i, rightFilterArray[i]));
+                                                lines.Points.Clear();
+                                                for (int i = 0; i < rightFilterArray.Length; i++)
+                                                {
+                                                    lines.Points.Add(new OxyPlot.DataPoint(i, rightFilterArray[i]));
+                                                }
                                             }
                                         }
-                                    }
 
-                                    viewModel.PlotModelLeft.InvalidatePlot(true);
-                                    viewModel.PlotModelRight.InvalidatePlot(true);
-                                }
-                        }
-                    });
+                                        viewModel.PlotModelLeft.InvalidatePlot(true);
+                                        viewModel.PlotModelRight.InvalidatePlot(true);
+                                    }
+                            }
+                        });
 
 #endif
         #endregion
@@ -625,12 +625,13 @@ namespace OcclusionShared.NetworkingShared
         }
 
 
-        private void PopulateHRTFs(float elevation, float azimuth, ref double[] leftArray, ref double[] rightArray, float distance = 2000)
+        // ReSharper disable once InconsistentNaming
+        private void PopulateHRTFs(float elev, float azim, ref double[] leftArray, ref double[] rightArray, float distance = 2000)
         {
             // Use our loaded .mhr HRTF file.
             if (HRTF.CurrentHRTFFile != null)
             {
-                var delays = HRTF.CurrentHRTFFile.GenerateHRTFS(elevation, azimuth, ref leftArray, ref rightArray, distance);
+                var delays = HRTF.CurrentHRTFFile.GenerateHRTFS(elev, azim, ref leftArray, ref rightArray, distance);
 
                 if (delays != null)
                     earDelays = delays.Value;
@@ -641,7 +642,7 @@ namespace OcclusionShared.NetworkingShared
                 if (earDelays != Vector2.Zero)
                     earDelays = Vector2.Zero;
 
-                var taps = HRTF.mit_hrtf_availability((int)azimuth, (int)elevation, App.samplingRate);
+                var taps = HRTF.mit_hrtf_availability((int)azim, (int)elev, App.samplingRate);
 
                 if (leftArray.Length != taps)
                     leftArray = new double[taps];
@@ -649,8 +650,8 @@ namespace OcclusionShared.NetworkingShared
                 if (rightArray.Length != taps)
                     rightArray = new double[taps];
 
-                int iAzi = (int)azimuth;
-                int iElev = (int)elevation;
+                int iAzi = (int)azim;
+                int iElev = (int)elev;
 
                 HRTF.mit_hrtf_get(ref iAzi, ref iElev, App.samplingRate, 0, ref leftArray, ref rightArray);
             }

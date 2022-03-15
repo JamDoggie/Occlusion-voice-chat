@@ -41,7 +41,6 @@ namespace OcclusionDedicatedServer
             serverThread.Start();
 
 
-
             CommandDispatcher<CommandContext> cmdDispatcher = new CommandDispatcher<CommandContext>();
 
             cmdDispatcher.Register(
@@ -90,9 +89,7 @@ namespace OcclusionDedicatedServer
                 {
                     Server.ServerLogger.Log(e.Message);
                 }
-                
             }
-            
         }
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

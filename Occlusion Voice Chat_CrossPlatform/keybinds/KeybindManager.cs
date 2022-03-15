@@ -1,12 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Occlusion_Voice_Chat_CrossPlatform.keybinds;
 
 namespace GlobalLowLevelHooks
 {
     public class KeybindManager : IDisposable
     {
         public BindManager? CurrentBindManager { get; }
-
+        
         public KeybindManager()
         {
             // We use the win32 manager to hook onto key binds for now.

@@ -4,9 +4,16 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="150" d:DesignHeight="40"
              x:Class="Occlusion_Voice_Chat_CrossPlatform.ServerSelection" Cursor="Hand">
-    <Grid>
+  
+  <UserControl.Styles>
+    <Style Selector="Button.selected">
+      <Setter Property="Background" Value="{DynamicResource ThemeControlHoverBrush}"/>
+    </Style>
+  </UserControl.Styles>
+  
+  <Grid>
         <StackPanel Name="ServerPanel" Orientation="Vertical" VerticalAlignment="Center">
-          <Button Name="SelectionButton" Background="#454552" Margin="0" HorizontalContentAlignment="Left" Height="40" Width="150" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+          <Button Name="SelectionButton" Margin="0" HorizontalContentAlignment="Left" Height="40" Width="150" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
             <TextBlock Name="NameText" Margin="5 0 0 0" HorizontalAlignment="Left" FontSize="17">...</TextBlock>
             <Button.Styles>
               <Style Selector="Button /template/ ContentPresenter">

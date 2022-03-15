@@ -60,7 +60,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
 
         public HotkeyBindingControl ToggleDeafenBind { get; set; }
 
-
+        public HotkeyBindingControl TogglePushBind { get; set; }
+        
+        public static ToggleSwitch HRTFTogglePreviewDelays { get; set; }
 
         private static Timer hrtfTimer;
 
@@ -103,7 +105,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             PushDeafenBind = this.FindControl<HotkeyBindingControl>("PushDeafenBind");
             ToggleMuteBind = this.FindControl<HotkeyBindingControl>("ToggleMuteBind");
             ToggleDeafenBind = this.FindControl<HotkeyBindingControl>("ToggleDeafenBind");
-
+            HRTFTogglePreviewDelays = this.FindControl<ToggleSwitch>("HRTFTogglePreviewDelays");
+            
+            #if HRTFDEBUG
+                HRTFTogglePreviewDelays.IsVisible = true;
+            #endif
+            
             foreach (string s in HRTFFilterList.Items)
             {
                 if (HRTF.HRTF.CurrentHRTFFile != null && s == HRTF.HRTF.CurrentHRTFFile.FileInformation.Name)
@@ -201,7 +208,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             foreach (KeyCode key in ToggleDeafenBind.Hotkey)
                 App.Options.Obj.ToggleDeafenBind.Add(key.ToString());
 
-            App.Options.Update();
+            App.Options.Save();
         }
 
         private void ToggleMuteBind_HotkeyChanged(List<KeyCode> newHotkey)
@@ -210,7 +217,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             foreach (KeyCode key in ToggleMuteBind.Hotkey)
                 App.Options.Obj.ToggleMuteBind.Add(key.ToString());
 
-            App.Options.Update();
+            App.Options.Save();
         }
 
         private void PushDeafenBind_HotkeyChanged(List<KeyCode> newHotkey)
@@ -219,7 +226,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             foreach (KeyCode key in PushDeafenBind.Hotkey)
                 App.Options.Obj.PushDeafenBind.Add(key.ToString());
 
-            App.Options.Update();
+            App.Options.Save();
         }
 
         private void PushMuteBind_HotkeyChanged(List<KeyCode> newHotkey)
@@ -228,7 +235,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             foreach (KeyCode key in PushMuteBind.Hotkey)
                 App.Options.Obj.PushMuteBind.Add(key.ToString());
 
-            App.Options.Update();
+            App.Options.Save();
         }
 
         private void PushTalkBind_HotkeyChanged(List<KeyCode> newHotkey)
@@ -237,7 +244,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             foreach (KeyCode key in PushTalkBind.Hotkey)
                 App.Options.Obj.PushTalkBind.Add(key.ToString());
 
-            App.Options.Update();
+            App.Options.Save();
         }
 
         private void VoiceActivityBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
@@ -253,7 +260,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             if (e.Property == Avalonia.Controls.Slider.ValueProperty)
             {
                 App.Options.Obj.SoundEffectVolume = (float)SoundVolumeSlider.Value;
-                App.Options.Update();
+                App.Options.Save();
 
                 SoundVolumeText.Text = $"{(int)(SoundVolumeSlider.Value * 100)}%";
             }
@@ -306,7 +313,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
                     {
                         HRTF.HRTF.CurrentHRTFFile = MHRFile.Parse(path);
                         App.Options.Obj.CurrentHRTFSet = name;
-                        App.Options.Update();
+                        App.Options.Save();
                     }
                 }
             }
@@ -390,7 +397,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.controls
             if (HRTFSwitch.IsChecked != null)
                 App.Options.Obj.UseHRTF = HRTFSwitch.IsChecked.Value;
 
-            App.Options.Update();
+            App.Options.Save();
         }
 
         private void InitializeComponent()

@@ -4,6 +4,44 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="OcclusionMixerPlugin.MixingWindow"
+        xmlns:controls="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia.controls;assembly=Occlusion Voice Chat_CrossPlatform"
         Title="MixingWindow">
-    Welcome to Avalonia!
+    
+    <Window.Styles>
+        <StyleInclude Source="avares://OcclusionMixerPlugin/styles/MixingWindowStyles.axaml"></StyleInclude>
+    </Window.Styles>
+    
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="90"/>
+            </Grid.RowDefinitions>
+            <ListBox Name="SoundList" Grid.Row="0" Margin="7" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" 
+            Items="{Binding SoundFiles}">
+            </ListBox>
+            
+            
+            <WrapPanel Grid.Row="1" Classes="bottom-stack-panel" Orientation="Horizontal">
+                <Button Content="Add Sound" Command="{Binding AddSoundCommand}"/>
+                <Button Content="Remove Sound" Command="{Binding RemoveSoundCommand}"/>
+            
+                <TextBlock VerticalAlignment="Center" Classes="label">Sound Volume</TextBlock>
+                <Slider Name="SoundVolume" VerticalAlignment="Center" Minimum="0" Maximum="2" Value="1"/>
+                <TextBlock VerticalAlignment="Center" Classes="label">Preview Volume</TextBlock>
+                <Slider Name="PreviewVolume" VerticalAlignment="Center" Minimum="0" Maximum="2" Value="1"/>
+                
+            
+                <Button Name="PlayButton" Content="Play Sound"></Button>
+                <Button Name="StopButton" Content="Stop Sound"></Button>
+            
+                <TextBlock VerticalAlignment="Center" Classes="label">This sound's hotkey:</TextBlock>
+                <controls:HotkeyBindingControl Name="PlaySoundBind" IsEnabled="False"></controls:HotkeyBindingControl>
+                
+                <TextBlock VerticalAlignment="Center" Classes="label">Stop current sound hotkey:</TextBlock>
+                <controls:HotkeyBindingControl Name="StopSoundBind"></controls:HotkeyBindingControl>
+            </WrapPanel>
+            
+        </Grid>
+    </Grid>
 </Window>
