@@ -713,13 +713,13 @@
   
   <ItemGroup>
     <Reference Include="ColorTextBlock.Avalonia">
-      <HintPath>..\..\..\Markdown.Avalonia\Markdown.Avalonia\bin\Debug\netstandard2.0\ColorTextBlock.Avalonia.dll</HintPath>
+      <HintPath>ColorTextBlock.Avalonia.dll</HintPath>
     </Reference>
     <Reference Include="Concentus">
       <HintPath>..\Concentus.dll</HintPath>
     </Reference>
     <Reference Include="Markdown.Avalonia">
-      <HintPath>..\..\..\Markdown.Avalonia\Markdown.Avalonia\bin\Debug\netstandard2.0\Markdown.Avalonia.dll</HintPath>
+      <HintPath>Markdown.Avalonia.dll</HintPath>
     </Reference>
     <Reference Include="NWaves">
       <HintPath>NWaves.dll</HintPath>
