@@ -56,7 +56,7 @@ namespace OcclusionAutoUpdater.Views
 
         private void UpdateButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            PageSlider.Start(MainPage, DownloadPage, true);
+            PageSlider.Start(MainPage, DownloadPage, true, new CancellationToken());
 
 
             if (!string.IsNullOrEmpty(App.DownloadLink))
