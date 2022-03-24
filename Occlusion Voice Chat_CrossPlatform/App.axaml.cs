@@ -221,7 +221,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
                 
                 PluginManager.LoadPlugins($"{Directory.GetCurrentDirectory()}/plugins/");
 
-                PluginManager.DefaultPluginFolder = $"{Directory.GetCurrentDirectory()}\\plugins";
+                PluginManager.DefaultPluginFolder = $"{Directory.GetCurrentDirectory()}/plugins/";
             }
             catch (IOException e)
             {
@@ -457,7 +457,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             
             Dispatcher.UIThread.InvokeAsync(() =>
             {
-                if (MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen && PlaybackDevice.Status == AudioStatus.Playing)
+                if (MainWindow.mainWindow != null &&
+                    MainWindow.mainWindow.VoiceChatWindow != null && MainWindow.mainWindow.VoiceChatWindow.IsOpen && PlaybackDevice.Status == AudioStatus.Playing)
                 {
                     MainWindow.mainWindow.VoiceChatWindow.SpeakerDecibalMeter.Value = Math.Clamp(volume, 0, 3000);
 

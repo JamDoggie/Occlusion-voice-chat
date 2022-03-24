@@ -2,12 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using Occlusion_Voice_Chat_CrossPlatform.avalonia.controls;
 using Occlusion_voice_chat_CrossPlatform.plugin;
 using Avalonia.Dialogs;
@@ -45,7 +47,52 @@ namespace Occlusion_Voice_Chat_CrossPlatform.avalonia.view_models
             
             // Using Avalonia, open this folder in the default file explorer in a cross platform way.
             // Maybe abstract this out later.
-            AboutAvaloniaDialog.OpenBrowser(folderPath);
+            OpenBrowser(folderPath);
+        }
+        
+        public static void OpenBrowser(string url)
+        {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                // If no associated application/json MimeType is found xdg-open opens retrun error
+                // but it tries to open it anyway using the console editor (nano, vim, other..)
+                ShellExec($"xdg-open {url}", waitForExit: false);
+            }
+            else
+            {
+                using (Process process = Process.Start(new ProcessStartInfo
+                       {
+                           FileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? url : "open",
+                           Arguments = RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? $"\"{url}\"" : "",
+                           CreateNoWindow = true,
+                           UseShellExecute = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                       }));
+            }
+            
+        }
+        
+        private static void ShellExec(string cmd, bool waitForExit = true)
+        {
+            var escapedArgs = Regex.Replace(cmd, "(?=[`~!#&*()|;'<>])", "\\")
+                .Replace("\"", "\\\\\\\"");
+
+            using (var process = Process.Start(
+                       new ProcessStartInfo
+                       {
+                           FileName = "/bin/sh",
+                           Arguments = $"-c \"{escapedArgs}\"",
+                           RedirectStandardOutput = true,
+                           UseShellExecute = false,
+                           CreateNoWindow = true,
+                           WindowStyle = ProcessWindowStyle.Hidden
+                       }
+                   ))
+            {
+                if (waitForExit)
+                {
+                    process.WaitForExit();
+                }
+            }
         }
         
         public void RefreshListBox()

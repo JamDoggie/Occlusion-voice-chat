@@ -17,7 +17,6 @@ namespace GlobalLowLevelHooks
                 CurrentBindManager = new Win32BindManager();
             }
             
-            
             // On Linux, we use X11 to query the keyboard and get key binds that way.
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {

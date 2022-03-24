@@ -96,6 +96,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
+                .With(new SkiaOptions { MaxGpuResourceSizeBytes = 256000000})
+                .With(new Win32PlatformOptions { AllowEglInitialization = true })
                 .LogToTrace();
 
         

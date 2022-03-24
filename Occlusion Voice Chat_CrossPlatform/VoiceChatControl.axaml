@@ -24,7 +24,8 @@
       </Style>
     </Styles>
   </UserControl.Styles>
-
+  
+  
   <UserControl.Transitions>
     <Transitions>
       <DoubleTransition Property="Opacity" Duration="0:0:1">

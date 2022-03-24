@@ -22,6 +22,7 @@
   </Window.Styles>
   
   <Grid>
+    
     <Grid Name="MainWindowGrid" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
       <controls1:OcclusionBackground HorizontalAlignment="Stretch" VerticalAlignment="Stretch"></controls1:OcclusionBackground>
 

@@ -3,7 +3,8 @@
              xmlns:system="clr-namespace:System;assembly=netstandard"
              x:Class="Occlusion_Voice_Chat_CrossPlatform.App"
              xmlns:controls="clr-namespace:Occlusion_Voice_Chat_CrossPlatform.avalonia.controls;assembly=Occlusion Voice Chat_CrossPlatform"
-             xmlns:converters="clr-namespace:Avalonia.Controls.Converters;assembly=Avalonia.Controls">
+             xmlns:converters="clr-namespace:Avalonia.Controls.Converters;assembly=Avalonia.Controls"
+             Name="Occlusion Voice Chat">
     <Application.Styles>
       <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
       <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/BaseDark.xaml" />

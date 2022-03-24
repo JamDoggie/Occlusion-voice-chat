@@ -22,7 +22,8 @@ namespace Occlusion_Voice_Chat_CrossPlatform.keybinds
 
         public void SetupBinds()
         {
-            Thread coreGraphicsThread = new Thread(() => {
+            Thread coreGraphicsThread = new Thread(() => { 
+                // Hook on to Mac OS event loop for key events using Apple's CoreGraphics API
                 
             });
 
