@@ -54,8 +54,8 @@ jobs:
 
 
   build-mac:
-    # Mac OS 10.15 Catalina
-    runs-on: macos-10.15
+    # Mac OS 11 Big Sur
+    runs-on: macos-11
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
