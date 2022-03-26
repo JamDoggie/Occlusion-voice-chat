@@ -38,7 +38,7 @@ jobs:
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/opus.so" "${{ github.workspace }}/occlusionlinuxrelease/opus.so"
           
       - name: Zip the published binaries.
-        uses: master-atul/tar-action@v1.0.2
+        uses: master-atul/tar-action@v1.1.0
         with:
           command: c
           cwd: '${{ github.workspace }}/'
