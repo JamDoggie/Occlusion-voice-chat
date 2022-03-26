@@ -87,7 +87,7 @@ jobs:
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/opus.dylib" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/opus.dylib"
           
       - name: Zip the published binaries.
-        uses: master-atul/tar-action@v1.0.2
+        uses: master-atul/tar-action@v1.1.0
         with:
           command: c
           cwd: '${{ github.workspace }}/'
