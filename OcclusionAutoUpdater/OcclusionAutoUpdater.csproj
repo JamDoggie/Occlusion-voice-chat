@@ -10,7 +10,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants></DefineConstants>
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|AnyCPU'">
@@ -32,7 +31,7 @@
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup> 
     <PackageReference Include="Avalonia" Version="0.10.12" />
     <PackageReference Include="Avalonia.Desktop" Version="0.10.12" />
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.12" />

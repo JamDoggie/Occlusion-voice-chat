@@ -188,7 +188,7 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             // Key binds
             KeybindManager.EnableKeybinds();
             
-#if !DEBUG // Occlusion was constantly opening the auto updater while testing and pissing me off, so I disabled in in debug mode since it's irrelevant here anyway.
+#if DEBUG // Occlusion was constantly opening the auto updater while testing and pissing me off, so I disabled in in debug mode since it's irrelevant here anyway.
             // Auto updater
             
             string exePath = AppContext.BaseDirectory;

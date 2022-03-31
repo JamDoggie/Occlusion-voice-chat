@@ -85,7 +85,7 @@ namespace OcclusionAutoUpdater
                                     }
                                     break;
                                 case OperatingSystem.Mac:
-                                    if (asset.ContentType == "application/gzip" && asset.Name.StartsWith("occlusion-mac-x64-binaries"))
+                                    if (asset.ContentType == "application/x-gzip" && asset.Name.StartsWith("occlusion-mac-x64-binaries"))
                                     {
                                         DownloadLink = asset.BrowserDownloadUrl;
                                         return true;
@@ -111,20 +111,16 @@ namespace OcclusionAutoUpdater
         // Method that gets the current operating system and returns an enum.
         public static OperatingSystem? GetOperatingSystem()
         {
-            var os = Environment.OSVersion;
-            var platform = os.Platform;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                return OperatingSystem.Windows;
+            
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+                return OperatingSystem.Mac;
+            
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                return OperatingSystem.Linux;
 
-            switch (platform)
-            {
-                case PlatformID.Win32NT:
-                    return OperatingSystem.Windows;
-                case PlatformID.Unix:
-                    return OperatingSystem.Linux;
-                case PlatformID.MacOSX:
-                    return OperatingSystem.Mac;
-                default:
-                    return null;
-            }
+            return null;
         }
         
         

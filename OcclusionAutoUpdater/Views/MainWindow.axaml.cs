@@ -57,8 +57,7 @@ namespace OcclusionAutoUpdater.Views
         private void UpdateButton_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             PageSlider.Start(MainPage, DownloadPage, true, new CancellationToken());
-
-
+            
             if (!string.IsNullOrEmpty(App.DownloadLink))
             {
                 using (WebClient wc = new WebClient())
@@ -84,7 +83,6 @@ namespace OcclusionAutoUpdater.Views
                     
                     wc.DownloadFileAsync(new Uri(App.DownloadLink), installerPath);
 
-                    
                     // Progress bar
                     wc.DownloadProgressChanged += (sender, e) =>
                     {
@@ -110,109 +108,149 @@ namespace OcclusionAutoUpdater.Views
                         OperatingSystem? os = App.GetOperatingSystem();
 
                         // Once the installer is run, we can exit both the auto updater and occlusion (which should be the assembly that ran us in the first place)
-                        
-
-                        
-                        
                         if (os != null)
                         {
                             switch (os)
                             {
                                 case OperatingSystem.Windows:
-                                    {
-                                        // When the file is finished downloading, run it.
-                                        Process installer = new Process();
-                                        installer.StartInfo.FileName = installerPath;
-                                        installer.StartInfo.Arguments = "-updatemode";
+                                    // When the file is finished downloading, run it.
+                                    Process installer = new Process();
+                                    installer.StartInfo.FileName = installerPath;
+                                    installer.StartInfo.Arguments = "-updatemode";
 
-                                        installer.Start();
-                                        break;
-                                    }
+                                    installer.Start();
+                                    break;
+                                    
                                 case OperatingSystem.Linux:
+                                    // Extract the tar.gz file located at installerPath to a temporary location.
+                                    using (FileStream fs = new FileStream(installerPath, FileMode.Open))
                                     {
-                                        // Extract the tar.gz file located at installerPath to a temporary location.
-                                        using (FileStream fs = new FileStream(installerPath, FileMode.Open))
+                                        using (GZipStream gz = new(fs, CompressionMode.Decompress))
                                         {
-                                            using (GZipStream gz = new(fs, CompressionMode.Decompress))
+                                            using (TarArchive tar = TarArchive.CreateInputTarArchive(gz, TarBuffer.DefaultBlockFactor, Encoding.Default))
                                             {
-                                                using (TarArchive tar = TarArchive.CreateInputTarArchive(gz, TarBuffer.DefaultBlockFactor, Encoding.Default))
+                                                tar.ExtractContents(localPath);
+
+                                                string[] files = Directory.GetFiles(
+                                                    $"{localPath}/occlusionlinuxrelease/");
+
+                                                string[] directories = Directory.GetDirectories(
+                                                    $"{localPath}/occlusionlinuxrelease/");
+                                                
+                                                // Get the path to the currently executing executable
+                                                string exePath = $"{localPath}/{exeAssembly.GetName().Name}";
+                                                
+                                                // Rename the auto updater so that it can essentially overwrite itself.
+                                                
+                                                MoveFileAndReplace(exePath, exePath + ".bak");
+                                                
+                                                if (File.Exists(exePath + ".dll"))
+                                                    MoveFileAndReplace(exePath + ".dll", exePath + ".dll.bak");
+                                                
+                                                foreach (string file in files)
                                                 {
-                                                    
-                                                    tar.ExtractContents(localPath);
+                                                    FileInfo fi = new(file);
 
-                                                    string[] files = Directory.GetFiles(
-                                                        $"{localPath}/occlusionlinuxrelease/");
+                                                    MoveFileAndReplace(fi, $"{localPath}/{fi.Name}");
+                                                }
+                                                
+                                                foreach (string dir in directories)
+                                                {
+                                                    DirectoryInfo di = new(dir);
 
-                                                    string[] directories = Directory.GetDirectories(
-                                                        $"{localPath}/occlusionlinuxrelease/");
-                                                    
-                                                    // Get the path to the currently executing executable
-                                                    string exePath = $"{localPath}/{exeAssembly.GetName().Name}";
-                                                    
-                                                    // Rename the auto updater so that it can essentially overwrite itself.
-                                                    
-                                                    MoveFileAndReplace(exePath, exePath + ".bak");
-                                                    
-                                                    if (File.Exists(exePath + ".dll"))
-                                                        MoveFileAndReplace(exePath + ".dll", exePath + ".dll.bak");
-                                                    
-                                                    foreach (string file in files)
-                                                    {
-                                                        FileInfo fi = new(file);
+                                                    MoveDirAndReplace(di, $"{localPath}/{di.Name}/");
+                                                }
 
-                                                        MoveFileAndReplace(fi, $"{localPath}/{fi.Name}");
-                                                    }
-                                                    
-                                                    foreach (string dir in directories)
-                                                    {
-                                                        DirectoryInfo di = new(dir);
+                                                
+                                                // Try catch to catch IO exceptions.
+                                                try
+                                                {
+                                                    // Chmod the executable so that it can be executed.
+                                                    Process chmod = new();
+                                                    chmod.StartInfo.FileName = "chmod";
+                                                    chmod.StartInfo.Arguments = "+x \"Occlusion Voice Chat_CrossPlatform\"";
 
-                                                        MoveDirAndReplace(di, $"{localPath}/{di.Name}/");
-                                                    }
+                                                    chmod.Start();
+                                                    chmod.WaitForExit();
 
-                                                    
-                                                    // Try catch to catch IO exceptions.
-                                                    try
-                                                    {
-                                                        // Chmod the executable so that it can be executed.
-                                                        Process chmod = new();
-                                                        chmod.StartInfo.FileName = "chmod";
-                                                        chmod.StartInfo.Arguments = "+x \"Occlusion Voice Chat_CrossPlatform\"";
-
-                                                        chmod.Start();
-                                                        chmod.WaitForExit();
-
-                                                        // Execute the executable.
-                                                        Process exe = new();
-                                                        exe.StartInfo.FileName = $"Occlusion Voice Chat_CrossPlatform";
-                                                    
-                                                        // Block this thread until the process has started.
-                                                        exe.Start();
-                                                    }
-                                                    catch (IOException)
-                                                    {
-                                                        // Do nothing... for now. In the future, we need to show a page to the user 
-                                                        // that says that the update failed.
-                                                    }
-                                                    
-                                                    
-                                                    
+                                                    // Execute the executable.
+                                                    Process exe = new();
+                                                    exe.StartInfo.FileName = $"Occlusion Voice Chat_CrossPlatform";
+                                                
+                                                    // Block this thread until the process has started.
+                                                    exe.Start();
+                                                }
+                                                catch (IOException)
+                                                {
+                                                    // Do nothing... for now. In the future, we need to show a page to the user 
+                                                    // that says that the update failed.
                                                 }
                                             }
                                         }
-                                        break;
                                     }
-                                
+                                    break;
+                                    
                                 case OperatingSystem.Mac:
+                                    // Extract the tar.gz file located at installerPath to a temporary location.
+                                    using (FileStream fs = new FileStream(installerPath, FileMode.Open))
                                     {
-                                        
-                                        break;
+                                        using (GZipStream gz = new(fs, CompressionMode.Decompress))
+                                        {
+                                            using (TarArchive tar = TarArchive.CreateInputTarArchive(gz, TarBuffer.DefaultBlockFactor, Encoding.Default))
+                                            {
+                                                tar.ExtractContents(localPath);
+
+                                                string[] files = Directory.GetFiles(
+                                                    $"{localPath}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/");
+
+                                                string[] directories = Directory.GetDirectories(
+                                                    $"{localPath}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/");
+                                                
+                                                // Get the path to the currently executing executable
+                                                string exePath = $"{localPath}/{exeAssembly.GetName().Name}";
+                                                
+                                                // Rename the auto updater so that it can essentially overwrite itself.
+                                                
+                                                MoveFileAndReplace(exePath, exePath + ".bak");
+                                                
+                                                if (File.Exists(exePath + ".dll"))
+                                                    MoveFileAndReplace(exePath + ".dll", exePath + ".dll.bak");
+                                                
+                                                foreach (string file in files)
+                                                {
+                                                    FileInfo fi = new(file);
+
+                                                    MoveFileAndReplace(fi, $"{localPath}/{fi.Name}");
+                                                }
+                                                
+                                                foreach (string dir in directories)
+                                                {
+                                                    DirectoryInfo di = new(dir);
+
+                                                    MoveDirAndReplace(di, $"{localPath}/{di.Name}/");
+                                                }
+
+                                                
+                                                // Try catch to catch IO exceptions.
+                                                
+                                                // Chmod the executable so that it can be executed.
+                                                Process chmod = new();
+                                                chmod.StartInfo.FileName = "chmod";
+                                                chmod.StartInfo.Arguments = $"+x \"{localPath}/Occlusion Voice Chat_CrossPlatform\"";
+
+                                                chmod.Start();
+                                                chmod.WaitForExit();
+
+                                                // Execute the executable.
+                                                Process.Start("open", "-a " +
+                                                                      $"\"{localPath}/Occlusion Voice Chat_CrossPlatform\"");
+                                            }
+                                        }
                                     }
+                                    break;
                             }
                         }
-
                         
-
                         if (Avalonia.Application.Current.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime lifetime)
                         {
                             lifetime.Shutdown();
