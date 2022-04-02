@@ -93,10 +93,22 @@ namespace OcclusionAutoUpdater.Views
                         });
                     };
 
-                    // Close Occlusion
+                    // Close all instances of Occlusion
                     Process[] runningProcesses = Process.GetProcesses();
                     foreach (Process process in runningProcesses)
                     {
+                        // process.ProcessName does not get the full name. 
+                        // That's why we use the following workaround.
+                        if (App.GetOperatingSystem() == OperatingSystem.Mac &&
+                            process.MainModule != null &&
+                            process.MainModule.ModuleName != null && 
+                            process.MainModule.ModuleName == "Occlusion Voice Chat_CrossPlatform")
+                        {
+                            process.Kill();
+                            continue;
+                        }
+                        
+                        
                         if (process.ProcessName == "Occlusion Voice Chat_CrossPlatform")
                         {
                             process.Kill();
