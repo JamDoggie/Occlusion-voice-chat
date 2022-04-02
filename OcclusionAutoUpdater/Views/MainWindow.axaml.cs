@@ -168,7 +168,7 @@ namespace OcclusionAutoUpdater.Views
                                                     // Chmod the executable so that it can be executed.
                                                     Process chmod = new();
                                                     chmod.StartInfo.FileName = "chmod";
-                                                    chmod.StartInfo.Arguments = "+x \"Occlusion Voice Chat_CrossPlatform\"";
+                                                    chmod.StartInfo.Arguments = $"+x \"Occlusion Voice Chat_CrossPlatform\"";
 
                                                     chmod.Start();
                                                     chmod.WaitForExit();
