@@ -122,7 +122,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: occlusion-mac64-updater-artifact
-          path: occlusion-mac-updater-binaries.tar.gz
+          path: occlusion-mac-updater.tar.gz
 
   build-win:
     # Windows Server 2019
