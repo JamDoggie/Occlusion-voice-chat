@@ -86,6 +86,10 @@ jobs:
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.a" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.a";
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/opus.dylib" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/opus.dylib"
           
+      - name: Publish the auto updater into the published occlusion directory.
+        run:
+          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release" -r osx-x64 --self-contained true --output "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/"
+          
       - name: Zip the published binaries.
         uses: master-atul/tar-action@v1.1.0
         with:
