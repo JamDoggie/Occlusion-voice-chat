@@ -88,7 +88,20 @@ jobs:
           
       - name: Publish the auto updater into the published occlusion directory.
         run:
-          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release" -r osx-x64 --self-contained true --output "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/"
+          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release" -r osx-x64 --self-contained true --output "${{ github.workspace }}/macupdater/"
+          
+      - name: Zip the auto updater binaries.
+        uses: master-atul/tar-action@v1.1.0
+        with:
+          command: c
+          cwd: '${{ github.workspace }}/'
+          files: |
+            ./macupdater
+          outPath: occlusion-mac-updater.tar.gz
+          
+      - name: Copy published auto updater to the folder.
+        run:
+          cp -R "${{ github.workspace }}/macupdater/." "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/"
           
       - name: Zip the published binaries.
         uses: master-atul/tar-action@v1.1.0
@@ -104,6 +117,12 @@ jobs:
         with:
           name: occlusion-mac64-installer-artifact
           path: occlusion-mac-x64-binaries.tar.gz
+          
+      - name: And also upload an artifact for the updater
+        uses: actions/upload-artifact@v2
+        with:
+          name: occlusion-mac64-updater-artifact
+          path: occlusion-mac-updater-binaries.tar.gz
 
   build-win:
     # Windows Server 2019
