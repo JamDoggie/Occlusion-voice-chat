@@ -10,6 +10,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using ICSharpCode.SharpZipLib.Tar;
@@ -28,6 +29,7 @@ namespace OcclusionAutoUpdater.Views
         public TextBlock ProgressText { get; set; }
         #endregion
 
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -40,6 +42,7 @@ namespace OcclusionAutoUpdater.Views
             int val = 1;
             int i = App.DwmSetWindowAttribute(PlatformImpl.Handle.Handle, attr, ref val, sizeof(int));
 #endif
+            
 
             RemindButton = this.FindControl<Button>("RemindButton");
             UpdateButton = this.FindControl<Button>("UpdateButton");
@@ -246,12 +249,36 @@ namespace OcclusionAutoUpdater.Views
                                                 // Try catch to catch IO exceptions.
                                                 
                                                 // Chmod the executable so that it can be executed.
-                                                Process chmod = new();
+                                                
+                                                /*Process chmod = new();
                                                 chmod.StartInfo.FileName = "chmod";
                                                 chmod.StartInfo.Arguments = $"+x \"Occlusion Voice Chat_CrossPlatform\"";
 
                                                 chmod.Start();
-                                                chmod.WaitForExit();
+                                                chmod.WaitForExit();*/
+
+                                                // user permissions
+                                                const int S_IRUSR = 0x100;
+                                                const int S_IWUSR = 0x80;
+                                                const int S_IXUSR = 0x40;
+
+                                                // group permission
+                                                const int S_IRGRP = 0x20;
+                                                const int S_IWGRP = 0x10;
+                                                const int S_IXGRP = 0x8;
+
+                                                // other permissions
+                                                const int S_IROTH = 0x4;
+                                                const int S_IWOTH = 0x2;
+                                                const int S_IXOTH = 0x1;
+
+                                                const int _0755 =
+                                                    S_IRUSR | S_IXUSR | S_IWUSR
+                                                    | S_IRGRP | S_IXGRP
+                                                    | S_IROTH | S_IXOTH;
+                                                
+                                                MacOSFunctions.chmod($"{localPath}/Occlusion Voice Chat_CrossPlatform", _0755);
+                                                
 
                                                 // Execute the executable.
                                                 Process.Start("open", "-a " +
