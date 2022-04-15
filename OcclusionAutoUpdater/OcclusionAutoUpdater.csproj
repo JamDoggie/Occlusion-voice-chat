@@ -5,7 +5,6 @@
     <Nullable>enable</Nullable>
     <ApplicationIcon>Occlusion_icon.ico</ApplicationIcon>
     <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
-    <PublishTrimmed>true</PublishTrimmed>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <Configurations>Debug;Release;Debug Win;Release Win</Configurations>
     <ApplicationManifest>app.manifest</ApplicationManifest>
