@@ -144,7 +144,7 @@ namespace OcclusionAutoUpdater.Views
                                         {
                                             using (TarArchive tar = TarArchive.CreateInputTarArchive(gz, TarBuffer.DefaultBlockFactor, Encoding.Default))
                                             {
-                                                tar.ExtractContents(localPath);
+                                                tar.ExtractContents($"{localPath}/../");
 
                                                 string[] files = Directory.GetFiles(
                                                     $"{localPath}/occlusionlinuxrelease/");
@@ -213,7 +213,7 @@ namespace OcclusionAutoUpdater.Views
                                         {
                                             using (TarArchive tar = TarArchive.CreateInputTarArchive(gz, TarBuffer.DefaultBlockFactor, Encoding.Default))
                                             {
-                                                tar.ExtractContents(localPath);
+                                                tar.ExtractContents($"{localPath}/../");
 
                                                 string[] files = Directory.GetFiles(
                                                     $"{localPath}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/");
