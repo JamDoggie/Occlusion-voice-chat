@@ -188,17 +188,17 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             // Key binds
             KeybindManager.EnableKeybinds();
             
-#if !DEBUG // Occlusion was constantly opening the auto updater while testing and pissing me off, so I disabled in in debug mode since it's irrelevant here anyway.
+#if DEBUG // Occlusion was constantly opening the auto updater while testing and pissing me off, so I disabled in in debug mode since it's irrelevant here anyway.
             // Auto updater
             
             string exePath = AppContext.BaseDirectory;
             
-            string autoUpdaterPath = $"OcclusionAutoUpdater.exe";
+            string autoUpdaterPath = $"autoupdater/OcclusionAutoUpdater.exe";
 
             // Check if we're on Linux or Mac
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                autoUpdaterPath = $"{exePath}/OcclusionAutoUpdater";
+                autoUpdaterPath = $"{exePath}/autoupdater/OcclusionAutoUpdater";
             }
             
             if (File.Exists(autoUpdaterPath))
