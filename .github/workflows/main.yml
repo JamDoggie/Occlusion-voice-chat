@@ -101,7 +101,7 @@ jobs:
           
       - name: Copy published auto updater to the folder.
         run:
-          cp -R "${{ github.workspace }}/macupdater/." "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/"
+          cp -R "${{ github.workspace }}/macupdater/." "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/autoupdater/"
           
       - name: Zip the published binaries.
         uses: master-atul/tar-action@v1.1.0
@@ -148,7 +148,7 @@ jobs:
 
       - name: Publish the auto updater into the published occlusion directory.
         run:
-          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\"
+          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\autoupdater\"
 
       #- name: Zip the published binaries.
       #  uses: papeloto/action-zip@v1
