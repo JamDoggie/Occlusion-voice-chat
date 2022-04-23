@@ -147,10 +147,10 @@ namespace OcclusionAutoUpdater.Views
                                                 tar.ExtractContents($"{localPath}/../");
 
                                                 string[] files = Directory.GetFiles(
-                                                    $"{localPath}/occlusionlinuxrelease/");
+                                                    $"{localPath}/../occlusionlinuxrelease/");
 
                                                 string[] directories = Directory.GetDirectories(
-                                                    $"{localPath}/occlusionlinuxrelease/");
+                                                    $"{localPath}/../occlusionlinuxrelease/");
                                                 
                                                 // Get the path to the currently executing executable
                                                 string exePath = $"{localPath}/{exeAssembly.GetName().Name}";
@@ -166,14 +166,14 @@ namespace OcclusionAutoUpdater.Views
                                                 {
                                                     FileInfo fi = new(file);
 
-                                                    MoveFileAndReplace(fi, $"{localPath}/{fi.Name}");
+                                                    MoveFileAndReplace(fi, $"{localPath}/../{fi.Name}");
                                                 }
                                                 
                                                 foreach (string dir in directories)
                                                 {
                                                     DirectoryInfo di = new(dir);
 
-                                                    MoveDirAndReplace(di, $"{localPath}/{di.Name}/");
+                                                    MoveDirAndReplace(di, $"{localPath}/../{di.Name}/");
                                                 }
 
                                                 
@@ -183,14 +183,14 @@ namespace OcclusionAutoUpdater.Views
                                                     // Chmod the executable so that it can be executed.
                                                     Process chmod = new();
                                                     chmod.StartInfo.FileName = "chmod";
-                                                    chmod.StartInfo.Arguments = $"+x \"Occlusion Voice Chat_CrossPlatform\"";
+                                                    chmod.StartInfo.Arguments = $"+x \"../Occlusion Voice Chat_CrossPlatform\"";
 
                                                     chmod.Start();
                                                     chmod.WaitForExit();
 
                                                     // Execute the executable.
                                                     Process exe = new();
-                                                    exe.StartInfo.FileName = $"Occlusion Voice Chat_CrossPlatform";
+                                                    exe.StartInfo.FileName = $"../Occlusion Voice Chat_CrossPlatform";
                                                 
                                                     // Block this thread until the process has started.
                                                     exe.Start();
@@ -235,14 +235,14 @@ namespace OcclusionAutoUpdater.Views
                                                 {
                                                     FileInfo fi = new(file);
 
-                                                    MoveFileAndReplace(fi, $"{localPath}/{fi.Name}");
+                                                    MoveFileAndReplace(fi, $"{localPath}/../{fi.Name}");
                                                 }
                                                 
                                                 foreach (string dir in directories)
                                                 {
                                                     DirectoryInfo di = new(dir);
 
-                                                    MoveDirAndReplace(di, $"{localPath}/{di.Name}/");
+                                                    MoveDirAndReplace(di, $"{localPath}/../{di.Name}/");
                                                 }
 
                                                 
@@ -277,12 +277,12 @@ namespace OcclusionAutoUpdater.Views
                                                     | S_IRGRP | S_IXGRP
                                                     | S_IROTH | S_IXOTH;
                                                 
-                                                MacOSFunctions.chmod($"{localPath}/Occlusion Voice Chat_CrossPlatform", _0755);
+                                                MacOSFunctions.chmod($"{localPath}/../Occlusion Voice Chat_CrossPlatform", _0755);
                                                 
 
                                                 // Execute the executable.
                                                 Process.Start("open", "-a " +
-                                                                      $"\"{localPath}/Occlusion Voice Chat_CrossPlatform\"");
+                                                                      $"\"{localPath}/../Occlusion Voice Chat_CrossPlatform\"");
                                             }
                                         }
                                     }
