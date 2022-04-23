@@ -216,10 +216,10 @@ namespace OcclusionAutoUpdater.Views
                                                 tar.ExtractContents($"{localPath}/../");
 
                                                 string[] files = Directory.GetFiles(
-                                                    $"{localPath}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/");
+                                                    $"{localPath}/../occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/");
 
                                                 string[] directories = Directory.GetDirectories(
-                                                    $"{localPath}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/");
+                                                    $"{localPath}/../occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/");
                                                 
                                                 // Get the path to the currently executing executable
                                                 string exePath = $"{localPath}/{exeAssembly.GetName().Name}";
