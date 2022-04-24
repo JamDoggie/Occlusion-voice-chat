@@ -88,7 +88,7 @@ jobs:
           
       - name: Publish the auto updater into the published occlusion directory.
         run:
-          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release" -r osx-x64 -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true --self-contained true --output "${{ github.workspace }}/macupdater/"
+          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release" -r osx-x64 -p:PublishSingleFile=false -p:IncludeNativeLibrariesForSelfExtract=false --self-contained false --output "${{ github.workspace }}/macupdater/"
           
       - name: Zip the auto updater binaries.
         uses: master-atul/tar-action@v1.1.0
