@@ -226,10 +226,10 @@ namespace OcclusionAutoUpdater.Views
                                                 
                                                 // Rename the auto updater so that it can essentially overwrite itself.
                                                 
-                                                //MoveFileAndReplace(exePath, exePath + ".bak");
+                                                MoveFileAndReplace(exePath, exePath + ".bak");
                                                 
-                                                //if (File.Exists(exePath + ".dll"))
-                                                //    MoveFileAndReplace(exePath + ".dll", exePath + ".dll.bak");
+                                                if (File.Exists(exePath + ".dll"))
+                                                    MoveFileAndReplace(exePath + ".dll", exePath + ".dll.bak");
                                                 
                                                 foreach (string file in files)
                                                 {
