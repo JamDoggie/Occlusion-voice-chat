@@ -37,6 +37,10 @@ jobs:
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/SDL2.a" "${{ github.workspace }}/occlusionlinuxrelease/SDL2.a";
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/opus.so" "${{ github.workspace }}/occlusionlinuxrelease/opus.so"
           
+      - name: Publish the auto updater into the published occlusion directory.
+        run:
+          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release" -r linux-x64 -p:PublishSingleFile=false -p:IncludeNativeLibrariesForSelfExtract=false --self-contained false --output "${{ github.workspace }}/occlusionlinuxrelease/autoupdater/"
+          
       - name: Zip the published binaries.
         uses: master-atul/tar-action@v1.1.0
         with:
