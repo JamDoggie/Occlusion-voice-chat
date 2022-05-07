@@ -173,7 +173,7 @@ jobs:
           
       - name: Finally, publish the installer
         run: 
-          dotnet publish "${{ github.workspace }}\occlusioninstallerclone\CrossPlatformInstallerBase\CrossPlatformInstallerBase.csproj" -c "Release" -r win-x64 --self-contained true --output "installerpublish\"
+          dotnet publish "${{ github.workspace }}\occlusioninstallerclone\CrossPlatformInstallerBase\CrossPlatformInstallerBase.csproj" -p:PublishSingleFile=true -c "Release" -r win-x64 --self-contained true --output "installerpublish\"
           
       - name: Rename the installer.
         run:
