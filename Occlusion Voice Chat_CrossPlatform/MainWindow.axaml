@@ -38,7 +38,7 @@
               <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
 
-            <Border 
+            <Border
               HorizontalAlignment="Stretch" 
               VerticalAlignment="Stretch" 
               CornerRadius="15" 

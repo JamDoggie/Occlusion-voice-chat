@@ -101,7 +101,7 @@ namespace OcclusionAutoUpdater
                             }
                         }
 
-                        return true;
+                        return false;
                     }
                 }
             }
