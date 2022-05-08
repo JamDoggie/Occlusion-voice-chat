@@ -13,17 +13,48 @@
         <Setter Property="Background" Value="#4f4f5e"></Setter>
       </Style>
 
-      <StyleInclude Source="avares://Avalonia.Themes.Default/DefaultTheme.xaml"/>
+      <StyleInclude Source="avares://OcclusionAutoUpdater/DefaultTheme.xaml"/>
       <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/BaseDark.xaml" />
       <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/Base.xaml" />
       <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/AccentColors.xaml" />
       <StyleInclude Source="avares://Avalonia.Themes.Fluent/Accents/FluentControlResourcesDark.xaml" />
-      <Style Selector="TextBox /template/ Border">
+      
+      <Style Selector="TextBox">
         <Setter Property="CornerRadius" Value="5" />
       </Style>
 
-      <Style Selector="Button /template/ ContentPresenter">
+      <Style Selector="Button">
         <Setter Property="CornerRadius" Value="5" />
+      </Style>
+
+      <Style Selector="ScrollBar /template/ Border">
+        <Setter Property="CornerRadius" Value="6" />
+      </Style>
+      
+      <Style Selector="ScrollBar:vertical /template/ Thumb">
+        <Setter Property="Width" Value="8" />
+      </Style>
+      
+      <Style Selector="ScrollBar:horizontal /template/ Thumb">
+        <Setter Property="Height" Value="8" />
+      </Style>
+      
+      <Style Selector="Button">
+        <Setter Property="Transitions">
+          <Setter.Value>
+            <Transitions>
+              <BrushTransition Property="Background" Duration="0:0:0.2">
+                <BrushTransition.Easing>
+                  <QuadraticEaseOut></QuadraticEaseOut>
+                </BrushTransition.Easing>
+              </BrushTransition>
+            </Transitions>
+          </Setter.Value>
+        </Setter>
+      </Style>
+        
+      <Style Selector="Button:pointerover">
+        <Setter Property="Background" Value="{DynamicResource ThemeControlHoverBrush}"></Setter>
       </Style>
 
       <Style Selector="ProgressBar /template/ Border">

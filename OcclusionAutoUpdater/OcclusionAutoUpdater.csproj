@@ -1,16 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk" TreatAsLocalProperty="SelfContained">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ApplicationIcon>Occlusion_icon.ico</ApplicationIcon>
-    <RuntimeIdentifiers>win-x64;linux-x64</RuntimeIdentifiers>
-    <PublishTrimmed>true</PublishTrimmed>
+    <RuntimeIdentifiers>win-x64;linux-x64;osx-x64</RuntimeIdentifiers>
     <Configurations>Debug;Release;Debug Win;Release Win</Configurations>
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants></DefineConstants>
     <DebugType>pdbonly</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Win|AnyCPU'">
@@ -32,12 +30,12 @@
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaResource>
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.12" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.12" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.12" />
-    <PackageReference Include="Avalonia.Native" Version="0.10.12" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.12" />
+  <ItemGroup> 
+    <PackageReference Include="Avalonia" Version="0.10.13" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.13" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.13" />
+    <PackageReference Include="Avalonia.Native" Version="0.10.13" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.13" />
     <PackageReference Include="Octokit" Version="0.50.0" />
     <PackageReference Include="SharpZipLib" Version="1.3.3" />
   </ItemGroup>

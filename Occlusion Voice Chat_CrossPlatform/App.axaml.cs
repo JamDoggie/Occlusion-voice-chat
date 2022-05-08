@@ -193,12 +193,12 @@ namespace Occlusion_Voice_Chat_CrossPlatform
             
             string exePath = AppContext.BaseDirectory;
             
-            string autoUpdaterPath = $"OcclusionAutoUpdater.exe";
+            string autoUpdaterPath = $"autoupdater/OcclusionAutoUpdater.exe";
 
             // Check if we're on Linux or Mac
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
             {
-                autoUpdaterPath = $"{exePath}/OcclusionAutoUpdater";
+                autoUpdaterPath = $"{exePath}/autoupdater/OcclusionAutoUpdater";
             }
             
             if (File.Exists(autoUpdaterPath))

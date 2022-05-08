@@ -37,8 +37,12 @@ jobs:
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/SDL2.a" "${{ github.workspace }}/occlusionlinuxrelease/SDL2.a";
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/linuxdeblibs/opus.so" "${{ github.workspace }}/occlusionlinuxrelease/opus.so"
           
+      - name: Publish the auto updater into the published occlusion directory.
+        run:
+          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release" -r linux-x64 -p:PublishSingleFile=false -p:IncludeNativeLibrariesForSelfExtract=false --self-contained false --output "${{ github.workspace }}/occlusionlinuxrelease/autoupdater/"
+          
       - name: Zip the published binaries.
-        uses: master-atul/tar-action@v1.0.2
+        uses: master-atul/tar-action@v1.1.0
         with:
           command: c
           cwd: '${{ github.workspace }}/'
@@ -54,15 +58,15 @@ jobs:
 
 
   build-mac:
-    # Mac OS 10.15 Catalina
-    runs-on: macos-10.15
+    # Mac OS 11 Big Sur
+    runs-on: macos-11
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '6.0.x'
+          dotnet-version: '6.0.202'
 
       - name: Restore Occlusions libraries
         run: 
@@ -70,7 +74,7 @@ jobs:
 
       - name: Publish Occlusion to a folder.
         run: 
-          dotnet msbuild "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -t:BundleApp -p:UseAppHost=true -p:RuntimeIdentifier=osx-x64 -property:Configuration=Release
+          dotnet msbuild "${{ github.workspace }}\Occlusion Voice Chat_CrossPlatform\Occlusion Voice Chat_CrossPlatform.csproj" -t:BundleApp -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:UseAppHost=true -p:RuntimeIdentifier=osx-x64 -property:Configuration=Release
 
       - name: Create publish folder.
         run:
@@ -86,8 +90,25 @@ jobs:
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/SDL2.a" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/SDL2.a";
           cp "${{ github.workspace }}/Occlusion Voice Chat_CrossPlatform/maclibs/opus.dylib" "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/opus.dylib"
           
+      - name: Publish the auto updater into the published occlusion directory.
+        run:
+          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release" -r osx-x64 -p:PublishSingleFile=false -p:IncludeNativeLibrariesForSelfExtract=false --self-contained false --output "${{ github.workspace }}/macupdater/"
+          
+      - name: Zip the auto updater binaries.
+        uses: master-atul/tar-action@v1.1.0
+        with:
+          command: c
+          cwd: '${{ github.workspace }}/'
+          files: |
+            ./macupdater
+          outPath: occlusion-mac-updater.tar.gz
+          
+      - name: Copy published auto updater to the folder.
+        run:
+          cp -R "${{ github.workspace }}/macupdater/." "${{ github.workspace }}/occlusionmacbuild/Occlusion Voice Chat.app/Contents/MacOS/autoupdater/"
+          
       - name: Zip the published binaries.
-        uses: master-atul/tar-action@v1.0.2
+        uses: master-atul/tar-action@v1.1.0
         with:
           command: c
           cwd: '${{ github.workspace }}/'
@@ -100,6 +121,12 @@ jobs:
         with:
           name: occlusion-mac64-installer-artifact
           path: occlusion-mac-x64-binaries.tar.gz
+          
+      - name: And also upload an artifact for the updater
+        uses: actions/upload-artifact@v2
+        with:
+          name: occlusion-mac64-updater-artifact
+          path: occlusion-mac-updater.tar.gz
 
   build-win:
     # Windows Server 2019
@@ -125,7 +152,7 @@ jobs:
 
       - name: Publish the auto updater into the published occlusion directory.
         run:
-          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\"
+          dotnet publish "${{ github.workspace }}\OcclusionAutoUpdater\OcclusionAutoUpdater.csproj" -c "Release Win" -r win-x64 --self-contained true --output "occlusionwinrelease\autoupdater\"
 
       #- name: Zip the published binaries.
       #  uses: papeloto/action-zip@v1
@@ -146,7 +173,7 @@ jobs:
           
       - name: Finally, publish the installer
         run: 
-          dotnet publish "${{ github.workspace }}\occlusioninstallerclone\CrossPlatformInstallerBase\CrossPlatformInstallerBase.csproj" -c "Release" -r win-x64 --self-contained true --output "installerpublish\"
+          dotnet publish "${{ github.workspace }}\occlusioninstallerclone\CrossPlatformInstallerBase\CrossPlatformInstallerBase.csproj" -p:PublishSingleFile=true -c "Release" -r win-x64 --self-contained true --output "installerpublish\"
           
       - name: Rename the installer.
         run:
