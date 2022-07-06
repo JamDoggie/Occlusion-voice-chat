@@ -159,9 +159,9 @@ namespace Occlusion_Voice_Chat_CrossPlatform.HRTF
                     HRTFs.Fields.Add(field);
                 }
 
-                // Impulse delays. Basically, when sound travels to your head, it travels slow enough that you brain can subconciously notice it. 
-                // This means if some loud sound happened to your right, your brain will subconciously notice it hit your right ear drum first, right before it hit the left.
-                // This is what impulse delays are for. It tells us how we should delay the sound per ear so that the user gets a more natural experience.
+                // Impulse delays. Basically, when sound travels to your head, it travels slow enough that your brain can subconsciously notice it. 
+                // This means if some loud sound happened to your right, your brain will subconsciously notice it hit your right ear drum first, right before it hit the left.
+                // This is what impulse delays are for. They tell us how we should delay the sound per ear so that the user gets a more natural experience.
 
                 for (int i = 0; i < fields.Count; i++)
                 {
