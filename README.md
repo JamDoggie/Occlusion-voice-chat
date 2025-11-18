@@ -9,3 +9,4 @@ A directional VoIP client &amp; server for minecraft. Uses Avalonia and is cross
 - Authentication using an in-game serverside plugin
 - Fetches player skins from the Mojang API to display connected users
 - Built on a thin audio layer using SDL.
+- Auto updater
